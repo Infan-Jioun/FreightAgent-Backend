@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  AGENT
+  CUSTOMER
+}
+
+enum ShipmentStatus {
+  PENDING
+  PICKED_UP
+  IN_TRANSIT
+  AT_CUSTOMS
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id        String   @id
+  email     String   @unique
+  name      String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shipments    Shipment[]
+  chatSessions ChatSession[]
+
+  @@map("users")
+}
+
+model Shipment {
+  id            String         @id @default(uuid())
+  trackingId    String         @unique @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  origin        String
+  destination   String
+  weight        Float
+  description   String?
+  status        ShipmentStatus @default(PENDING)
+  estimatedDate DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  statusLogs StatusLog[]
+
+  @@map("shipments")
+}
+
+model StatusLog {
+  id         String         @id @default(uuid())
+  shipmentId String
+  shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  status     ShipmentStatus
+  location   String
+  note       String?
+  createdAt  DateTime       @default(now())
+
+  @@map("status_logs")
+}
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  messages  Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("chat_sessions")
+}
+
+model KnowledgeChunk {
+  id        String   @id @default(uuid())
+  content   String
+  source    String
+  category  String?
+  createdAt DateTime @default(now())
+
+  @@map("knowledge_chunks")
+}
