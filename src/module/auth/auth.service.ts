@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { IRegisterInput } from "./auth.interface";
+import { ILoginInput, IRegisterInput } from "./auth.interface";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../app/errorHelper/AppError";
 import status from "http-status";
@@ -58,6 +58,39 @@ const register = async (payload: IRegisterInput, req: Request) => {
     }
 
 }
+const loginUser = async (payload: ILoginInput) => {
+    const result = await auth.api.signInEmail({
+        body: {
+            email: payload.email as string,
+            password: payload.password,
+        },
+        asResponse: false,
+    });
+
+    if (!result) {
+        throw new AppError(status.BAD_REQUEST, "Invalid Email or Password");
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { id: result.user.id },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+        },
+    });
+
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    return {
+        user,
+        token: result.token,
+    };
+};
 export const authService = {
-    register
+    register,
+    loginUser
 }
