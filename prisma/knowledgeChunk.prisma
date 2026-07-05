@@ -1,0 +1,9 @@
+model KnowledgeChunk {
+    id        String   @id @default(uuid())
+    content   String
+    source    String
+    category  String?
+    createdAt DateTime @default(now())
+
+    @@map("knowledge_chunks")
+}

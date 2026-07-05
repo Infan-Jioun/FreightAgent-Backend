@@ -1,0 +1,11 @@
+model StatusLog {
+    id         String         @id @default(uuid())
+    shipmentId String
+    shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+    status     ShipmentStatus
+    location   String
+    note       String?
+    createdAt  DateTime       @default(now())
+
+    @@map("status_logs")
+}

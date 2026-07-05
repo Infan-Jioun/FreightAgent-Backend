@@ -1,0 +1,18 @@
+model Shipment {
+    id            String         @id @default(uuid())
+    trackingId    String         @unique @default(uuid())
+    userId        String
+    user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    origin        String
+    destination   String
+    weight        Float
+    description   String?
+    status        ShipmentStatus @default(PENDING)
+    estimatedDate DateTime?
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+
+    statusLogs StatusLog[]
+
+    @@map("shipments")
+}
