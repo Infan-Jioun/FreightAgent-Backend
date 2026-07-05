@@ -1,6 +1,13 @@
 import { envConfig } from "./_config/env";
 import app from "./app";
-
 app.listen(envConfig.PORT, () => {
-    console.log(`Server is running on port ${envConfig.PORT} in ${envConfig.NODE_ENV} mode`);
-})
+    console.log(`
+┌─────────────────────────────────────────┐
+│         🚢 FreightAgent Server          │
+├─────────────────────────────────────────┤
+│  Status  : ✅ Running                   │
+│  Port    : ${envConfig.PORT}                        │
+│  Mode    : ${envConfig.NODE_ENV}                │
+└─────────────────────────────────────────┘
+  `);
+});
