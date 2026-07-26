@@ -5,8 +5,9 @@ import AppError from "../../app/errorHelper/AppError";
 import status from "http-status";
 import { auth } from "../../lib/auth";
 import { Role } from "../../generated/prisma";
+import { email } from "zod";
 
-const register = async (payload: IRegisterInput, req: Request) => {
+const register = async (payload: IRegisterInput) => {
     const existingUser = await prisma.user.findUnique({
         where: {
             email: payload.email
@@ -15,49 +16,37 @@ const register = async (payload: IRegisterInput, req: Request) => {
     if (existingUser) {
         throw new AppError(status.CONFLICT, "Email Already Exits!")
     }
-    const result = await auth.api.signUpEmail({
+    const { name, email, password } = payload;
+    const data = await auth.api.signUpEmail({
         body: {
-            name: payload.name,
-            email: payload.email,
-            password: payload.password
+            name, email, password
+
         },
-        asResponse: false
     })
-    // ensure session is present before accessing it (result may be union without session)
-    const session = (result as any).session ? { id: (result as any).session.id, expiresAt: (result as any).session.expiresAt } : undefined
+    if (!data.user) {
+        throw new AppError(status.CREATED, "Successfully Registerd")
+    }
 
-    if (payload.role && payload.role !== Role.CUSTOMER) {
-        await prisma.user.update({
-            where: {
-                email: payload.email,
-            },
-            data: { role: payload.role }
+    try {
+        const customer = await prisma.$transaction(async (tx) => {
+            // No customer model available on Prisma transaction. Remove or replace this operation.
+            const customerTx = await tx.customer.create({
+                data: {
+                    userId: data.user.id,
+                    name: payload.name,
+                    email: payload.email
+
+                }
+            })
+            return customerTx
         })
-        return {
-            user: {
-                id: result.user.id,
-                name: result.user.name,
-                email: result.user.email,
-                role: payload.role || Role.CUSTOMER,
-            },
-            token: result.token,
-            ...(session ? { session } : {}),
-        }
+    } catch (error) {
+
     }
-
-
-    return {
-        user: {
-            id: result.user.id,
-            name: result.user.name,
-            email: result.user.email,
-            role: Role.CUSTOMER,
-        },
-        token: result.token,
-        ...(session ? { session } : {}),
-    }
-
 }
+
+
+
 const loginUser = async (payload: ILoginInput) => {
     const result = await auth.api.signInEmail({
         body: {
@@ -90,6 +79,15 @@ const loginUser = async (payload: ILoginInput) => {
         token: result.token,
     };
 };
+const logout = async (payload: string) => {
+    const result = await auth.api.signOut({
+        body: {
+            email: payload.email as string,
+            password: payload.password,
+        },
+        asResponse: false,
+    })
+}
 export const authService = {
     register,
     loginUser
