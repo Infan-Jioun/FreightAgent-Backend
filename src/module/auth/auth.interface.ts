@@ -1,4 +1,5 @@
 import { Role } from "@prisma/client";
+import e from "express";
 
 export interface IRegisterInput {
     name: string;
@@ -8,6 +9,10 @@ export interface IRegisterInput {
 }
 
 export interface ILoginInput {
+    email: string;
+    password: string;
+}
+export interface ILogoutInput {
     email: string;
     password: string;
 }
