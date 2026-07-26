@@ -1,5 +1,5 @@
-import { JWTPayload } from "jsonwebtoken";
+import { JwtPayload, SignOptions } from "jsonwebtoken";
 
-const getAccessToken = (payload: JWTPayload) => {
-
+const getAccessToken = (payload: JwtPayload) => {
+  const accessToken =
 }

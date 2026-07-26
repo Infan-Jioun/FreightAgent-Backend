@@ -19,4 +19,13 @@ const verifyToken = (token: string, secret: string) => {
             error
         };
     }
+};
+const decodedToken = (token: string) => {
+    const decode = jwt.decode(token) as JwtPayload
+    return decode
+}
+export const JwtTokenUtils = {
+    createToken,
+    verifyToken,
+    decodedToken
 }
