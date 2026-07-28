@@ -4,18 +4,11 @@ import { prisma } from "../../lib/prisma";
 import AppError from "../../app/errorHelper/AppError";
 import status from "http-status";
 import { auth } from "../../lib/auth";
-import { Role } from "../../generated/prisma";
 import { email } from "zod";
+import { tokenUtils } from "../../utils/token";
+import { Role } from "@prisma/client";
 
 const register = async (payload: IRegisterInput) => {
-    const existingUser = await prisma.user.findUnique({
-        where: {
-            email: payload.email
-        }
-    })
-    if (existingUser) {
-        throw new AppError(status.CONFLICT, "Email Already Exits!")
-    }
     const { name, email, password } = payload;
     const data = await auth.api.signUpEmail({
         body: {
@@ -40,10 +33,38 @@ const register = async (payload: IRegisterInput) => {
             })
             return customerTx
         })
+        const accessToken = tokenUtils.getAccessToken({
+            userId: data.user.id,
+            email: data.user.email,
+            role: Role,
+            image: data.user.image,
+            createdAt: data.user.createdAt,
+            emailVerified: data.user.emailVerified
+        })
+        const refreshToken = tokenUtils.getRefreshToken({
+            userId: data.user.id,
+            email: data.user.email,
+            role: Role,
+            image: data.user.image,
+            createdAt: data.user.createdAt,
+            emailVerified: data.user.emailVerified
+        })
+        return {
+            ...data,
+            accessToken,
+            refreshToken
+        }
     } catch (error) {
-
+        console.log("Transaction error", error);
+        await prisma.user.delete({
+            where: {
+                id: data.user.id
+            }
+        })
+        throw error;
     }
 }
+
 
 
 
@@ -79,15 +100,6 @@ const loginUser = async (payload: ILoginInput) => {
         token: result.token,
     };
 };
-const logout = async (payload: string) => {
-    const result = await auth.api.signOut({
-        body: {
-            email: payload.email as string,
-            password: payload.password,
-        },
-        asResponse: false,
-    })
-}
 export const authService = {
     register,
     loginUser

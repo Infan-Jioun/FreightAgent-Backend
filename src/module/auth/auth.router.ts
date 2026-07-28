@@ -7,7 +7,7 @@ import { Role } from "../../generated/prisma";
 const router = Router();
 
 // Public routes
-router.post("/register", validateRequest(registerSchema), authController.register)
+router.post("/register", authController.register)
 router.post("/login", validateRequest(loginSchema), authController.loginUser)
 router.post("/logout", authenticate)
 

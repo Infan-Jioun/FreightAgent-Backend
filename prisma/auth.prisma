@@ -1,4 +1,4 @@
-model User {
+model Customer {
     id        String   @id
     email     String   @unique
     name      String
@@ -14,7 +14,7 @@ model User {
     sessions      Session[]
     accounts      Account[]
 
-    @@map("users")
+    @@map("customer")
 }
 
 model Session {
@@ -26,7 +26,7 @@ model Session {
     ipAddress String?
     userAgent String?
     userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user      Customer @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([token])
     @@index([userId])
@@ -38,7 +38,7 @@ model Account {
     accountId             String
     providerId            String
     userId                String
-    user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user                  Customer  @relation(fields: [userId], references: [id], onDelete: Cascade)
     accessToken           String?
     refreshToken          String?
     idToken               String?

@@ -2,7 +2,7 @@ model Shipment {
     id            String         @id @default(uuid())
     trackingId    String         @unique @default(uuid())
     userId        String
-    user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user          Customer       @relation(fields: [userId], references: [id], onDelete: Cascade)
     origin        String
     destination   String
     weight        Float
