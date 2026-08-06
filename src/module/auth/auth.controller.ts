@@ -10,13 +10,13 @@ const register = catchAsync(async (req: Request, res: Response) => {
     const payload = req.body;
     const result = await authService.register(payload);
     const { accessToken, refreshToken, token, ...rest } = result;
-    tokenUtils.setAccessTokenCookie(res, accessToken)
+    tokenUtils.setAccessTokenCookie(res, req, accessToken)
     tokenUtils.setRefreshTokenCookie(res, refreshToken)
     tokenUtils.setBetterAuthSessionCookie(res, token as string)
     sendResposne(res, {
         httpStatusCode: status.CREATED,
         success: true,
-        message: "Patient Successfully Register",
+        message: "User Successfully Register",
         data: {
             accessToken,
             refreshToken,

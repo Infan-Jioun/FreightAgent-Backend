@@ -1,5 +1,4 @@
-import { Role } from "@prisma/client";
-import e from "express";
+import { Role } from "../../generated/prisma";
 
 export interface IRegisterInput {
     name: string;
