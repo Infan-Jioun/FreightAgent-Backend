@@ -4,16 +4,25 @@ import { authService } from "./auth.service";
 import { sendResposne } from "../../shared/sendResonse";
 import status from "http-status";
 import { IRegisterInput } from "./auth.interface";
+import { tokenUtils } from "../../utils/token";
 
 const register = catchAsync(async (req: Request, res: Response) => {
     const payload = req.body;
-    const result = await authService.register(payload as IRegisterInput)
+    const result = await authService.register(payload);
+    const { accessToken, refreshToken, token, ...rest } = result;
+    tokenUtils.setAccessTokenCookie(res, req, accessToken)
+    tokenUtils.setRefreshTokenCookie(res, refreshToken)
+    tokenUtils.setBetterAuthSessionCookie(res, token as string)
     sendResposne(res, {
         httpStatusCode: status.CREATED,
         success: true,
-        message: "Registration successful",
-        data: result,
-    });
+        message: "User Successfully Register",
+        data: {
+            accessToken,
+            refreshToken,
+            ...rest
+        }
+    })
 });
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await authService.loginUser(req.body);

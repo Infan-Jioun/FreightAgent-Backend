@@ -23,7 +23,7 @@ const loadVariabales = (): EnvConfig => {
         "BETTER_AUTH_URL",
         "DATABASE_URL",
         "ACCESS_TOKEN_SECRET",
-        "ACCESS_TOKEN _EXPIRES_IN",
+        "ACCESS_TOKEN_EXPIRES_IN",
         "REFRESH_TOKEN_SECRET",
         "REFRESH_TOKEN_EXPIRES_IN"
 
