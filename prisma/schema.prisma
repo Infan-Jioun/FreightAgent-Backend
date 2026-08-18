@@ -140,37 +140,37 @@ enum ShipmentStatus {
 
 // ─── Shipment Models ──────────────────────────────────────────────────────────
 
-model Shipment {
-  id            String         @id @default(uuid())
-  trackingId    String         @unique @default(uuid())
-  userId        String
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  origin        String
-  destination   String
-  weight        Float
-  description   String?
-  status        ShipmentStatus @default(PENDING)
-  estimatedDate DateTime?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+// model Shipment {
+//   id            String         @id @default(uuid())
+//   trackingId    String         @unique @default(uuid())
+//   userId        String
+//   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   origin        String
+//   destination   String
+//   weight        Float
+//   description   String?
+//   status        ShipmentStatus @default(PENDING)
+//   estimatedDate DateTime?
+//   createdAt     DateTime       @default(now())
+//   updatedAt     DateTime       @updatedAt
 
-  statusLogs StatusLog[]
+//   statusLogs StatusLog[]
 
-  @@index([userId])
-  @@index([status]) // ✅ status দিয়ে filter fast হবে
-  @@index([trackingId]) // ✅ tracking lookup fast
-  @@map("shipments")
-}
+//   @@index([userId])
+//   @@index([status]) // ✅ status দিয়ে filter fast হবে
+//   @@index([trackingId]) // ✅ tracking lookup fast
+//   @@map("shipments")
+// }
 
-model StatusLog {
-  id         String         @id @default(uuid())
-  shipmentId String
-  shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-  status     ShipmentStatus
-  location   String
-  note       String?
-  createdAt  DateTime       @default(now())
+// model StatusLog {
+//   id         String         @id @default(uuid())
+//   shipmentId String
+//   shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+//   status     ShipmentStatus
+//   location   String
+//   note       String?
+//   createdAt  DateTime       @default(now())
 
-  @@index([shipmentId, createdAt]) // ✅ fix — timeline query fast হবে
-  @@map("status_logs")
-}
+//   @@index([shipmentId, createdAt]) // ✅ fix — timeline query fast হবে
+//   @@map("status_logs")
+// }
