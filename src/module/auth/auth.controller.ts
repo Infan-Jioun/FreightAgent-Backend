@@ -34,16 +34,18 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     })
 })
 const logout = catchAsync(async (req: Request, res: Response) => {
-    const result = await authService.logout(req.body)
+    const payload = req.body;
+    const result = authService.logout(payload as string)
     sendResposne(res, {
         httpStatusCode: status.OK,
         success: true,
         message: "Logout Successfully",
         data: result,
-        meta: result
+
     })
 })
 export const authController = {
     register,
-    loginUser
+    loginUser,
+    logout
 } 

@@ -76,7 +76,11 @@ const loginUser = async (payload: ILoginInput) => {
         token: result.token,
     };
 };
+const logout = (payload: string) => {
+
+}
 export const authService = {
     register,
-    loginUser
+    loginUser,
+    logout
 }

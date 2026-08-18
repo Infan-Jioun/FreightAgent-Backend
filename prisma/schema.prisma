@@ -7,6 +7,8 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
 enum Role {
   ADMIN
   AGENT
@@ -23,21 +25,24 @@ enum ShipmentStatus {
   CANCELLED
 }
 
-model User {
-  id        String   @id
-  email     String   @unique
-  name      String
-  role      Role     @default(CUSTOMER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ─── Better Auth Models ───────────────────────────────────────────────────────
 
+model User {
+  id            String   @id // Better Auth নিজে set করে
+  email         String   @unique
+  name          String
+  role          Role     @default(CUSTOMER)
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+
+  // Business relations
   shipments    Shipment[]
   chatSessions ChatSession[]
-
-  emailVerified Boolean   @default(false)
-  image         String?
-  sessions      Session[]
-  accounts      Account[]
 
   @@map("users")
 }
@@ -45,7 +50,7 @@ model User {
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
@@ -53,7 +58,6 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@index([userId])
   @@map("session")
 }
@@ -90,27 +94,51 @@ model Verification {
   @@map("verification")
 }
 
+// ─── Chat / AI Models ─────────────────────────────────────────────────────────
+
 model ChatSession {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String?
-  messages  Json     @default("[]")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  messages ChatMessage[] // ✅ JSON থেকে proper relation এ নিলাম
+
+  @@index([userId])
   @@map("chat_sessions")
 }
 
+// ✅ নতুন — JSON এর বদলে proper Message model
+// sort, paginate, delete individual message সব easy হবে
+model ChatMessage {
+  id        String      @id @default(uuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String // "user" | "assistant" | "system"
+  content   String      @db.Text
+  createdAt DateTime    @default(now())
+
+  @@index([sessionId, createdAt]) // ✅ chronological fetch fast হবে
+  @@map("chat_messages")
+}
+
+// ✅ KnowledgeChunk — embedding column add করা (pgvector)
 model KnowledgeChunk {
   id        String   @id @default(uuid())
-  content   String
+  content   String   @db.Text
   source    String
   category  String?
+  // embedding  Unsupported("vector(1536)")?   // pgvector enable করলে uncomment করো
   createdAt DateTime @default(now())
 
+  @@index([source])
+  @@index([category])
   @@map("knowledge_chunks")
 }
+
+// ─── Shipment Models ──────────────────────────────────────────────────────────
 
 model Shipment {
   id            String         @id @default(uuid())
@@ -128,6 +156,9 @@ model Shipment {
 
   statusLogs StatusLog[]
 
+  @@index([userId])
+  @@index([status]) // ✅ status দিয়ে filter fast হবে
+  @@index([trackingId]) // ✅ tracking lookup fast
   @@map("shipments")
 }
 
@@ -140,5 +171,6 @@ model StatusLog {
   note       String?
   createdAt  DateTime       @default(now())
 
+  @@index([shipmentId, createdAt]) // ✅ fix — timeline query fast হবে
   @@map("status_logs")
 }
