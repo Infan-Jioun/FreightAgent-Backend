@@ -9,23 +9,23 @@ datasource db {
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
-// enum Role {
-//   ADMIN
-//   AGENT
-//   CUSTOMER
-// }
+enum Role {
+  ADMIN
+  AGENT
+  CUSTOMER
+}
 
-// enum ShipmentStatus {
-//   PENDING
-//   PICKED_UP
-//   IN_TRANSIT
-//   AT_CUSTOMS
-//   OUT_FOR_DELIVERY
-//   DELIVERED
-//   CANCELLED
-// }
+enum ShipmentStatus {
+  PENDING
+  PICKED_UP
+  IN_TRANSIT
+  AT_CUSTOMS
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
 
-// ─── Better Auth Models ───────────────────────────────────────────────────────
+// // ─── Better Auth Models ───────────────────────────────────────────────────────
 
 // model User {
 //   id            String   @id // Better Auth নিজে set করে
@@ -94,7 +94,7 @@ datasource db {
 //   @@map("verification")
 // }
 
-// ─── Chat / AI Models ─────────────────────────────────────────────────────────
+// // ─── Chat / AI Models ─────────────────────────────────────────────────────────
 
 // model ChatSession {
 //   id        String   @id @default(uuid())
@@ -138,7 +138,7 @@ datasource db {
 //   @@map("knowledge_chunks")
 // }
 
-// ─── Shipment Models ──────────────────────────────────────────────────────────
+// // ─── Shipment Models ──────────────────────────────────────────────────────────
 
 // model Shipment {
 //   id            String         @id @default(uuid())
