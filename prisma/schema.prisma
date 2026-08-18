@@ -27,72 +27,72 @@ enum ShipmentStatus {
 
 // ─── Better Auth Models ───────────────────────────────────────────────────────
 
-model User {
-  id            String   @id // Better Auth নিজে set করে
-  email         String   @unique
-  name          String
-  role          Role     @default(CUSTOMER)
-  emailVerified Boolean  @default(false)
-  image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+// model User {
+//   id            String   @id // Better Auth নিজে set করে
+//   email         String   @unique
+//   name          String
+//   role          Role     @default(CUSTOMER)
+//   emailVerified Boolean  @default(false)
+//   image         String?
+//   createdAt     DateTime @default(now())
+//   updatedAt     DateTime @updatedAt
 
-  sessions Session[]
-  accounts Account[]
+//   sessions Session[]
+//   accounts Account[]
 
-  // Business relations
-  shipments    Shipment[]
-  chatSessions ChatSession[]
+//   // Business relations
+//   shipments    Shipment[]
+//   chatSessions ChatSession[]
 
-  @@map("users")
-}
+//   @@map("users")
+// }
 
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// model Session {
+//   id        String   @id
+//   expiresAt DateTime
+//   token     String   @unique
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   ipAddress String?
+//   userAgent String?
+//   userId    String
+//   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@map("session")
-}
+//   @@index([userId])
+//   @@map("session")
+// }
 
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+// model Account {
+//   id                    String    @id
+//   accountId             String
+//   providerId            String
+//   userId                String
+//   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   accessToken           String?
+//   refreshToken          String?
+//   idToken               String?
+//   accessTokenExpiresAt  DateTime?
+//   refreshTokenExpiresAt DateTime?
+//   scope                 String?
+//   password              String?
+//   createdAt             DateTime  @default(now())
+//   updatedAt             DateTime  @updatedAt
 
-  @@index([userId])
-  @@map("account")
-}
+//   @@index([userId])
+//   @@map("account")
+// }
 
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+// model Verification {
+//   id         String   @id
+//   identifier String
+//   value      String
+//   expiresAt  DateTime
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
 
-  @@index([identifier])
-  @@map("verification")
-}
+//   @@index([identifier])
+//   @@map("verification")
+// }
 
 // ─── Chat / AI Models ─────────────────────────────────────────────────────────
 

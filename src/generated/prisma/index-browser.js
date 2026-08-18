@@ -125,10 +125,10 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   name: 'name',
   role: 'role',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   emailVerified: 'emailVerified',
-  image: 'image'
+  image: 'image',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SessionScalarFieldEnum = {
@@ -171,9 +171,16 @@ exports.Prisma.ChatSessionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   title: 'title',
-  messages: 'messages',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  role: 'role',
+  content: 'content',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.KnowledgeChunkScalarFieldEnum = {
@@ -212,10 +219,6 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
-};
-
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -224,12 +227,6 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
-};
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
 };
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
@@ -253,6 +250,7 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   ChatSession: 'ChatSession',
+  ChatMessage: 'ChatMessage',
   KnowledgeChunk: 'KnowledgeChunk',
   Shipment: 'Shipment',
   StatusLog: 'StatusLog'
