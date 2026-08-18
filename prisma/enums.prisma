@@ -1,0 +1,15 @@
+enum Role {
+    ADMIN
+    AGENT
+    CUSTOMER
+}
+
+enum ShipmentStatus {
+    PENDING
+    PICKED_UP
+    IN_TRANSIT
+    AT_CUSTOMS
+    OUT_FOR_DELIVERY
+    DELIVERED
+    CANCELLED
+}
