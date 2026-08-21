@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.8.0
- * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+ * Prisma Client JS version: 7.9.1
+ * Query Engine version: e922089b7d7502aff4249d5da3420f6fa55fc6ad
  */
 Prisma.prismaVersion = {
-  client: "7.8.0",
-  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
+  client: "7.9.1",
+  engine: "e922089b7d7502aff4249d5da3420f6fa55fc6ad"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -120,9 +120,140 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  role: 'role',
+  emailVerified: 'emailVerified',
+  image: 'image',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  expiresAt: 'expiresAt',
+  token: 'token',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  userId: 'userId'
+};
+
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  providerId: 'providerId',
+  userId: 'userId',
+  accessToken: 'accessToken',
+  refreshToken: 'refreshToken',
+  idToken: 'idToken',
+  accessTokenExpiresAt: 'accessTokenExpiresAt',
+  refreshTokenExpiresAt: 'refreshTokenExpiresAt',
+  scope: 'scope',
+  password: 'password',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VerificationScalarFieldEnum = {
+  id: 'id',
+  identifier: 'identifier',
+  value: 'value',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  role: 'role',
+  content: 'content',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.KnowledgeChunkScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  source: 'source',
+  category: 'category',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ShipmentScalarFieldEnum = {
+  id: 'id',
+  trackingId: 'trackingId',
+  userId: 'userId',
+  origin: 'origin',
+  destination: 'destination',
+  weight: 'weight',
+  description: 'description',
+  status: 'status',
+  estimatedDate: 'estimatedDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StatusLogScalarFieldEnum = {
+  id: 'id',
+  shipmentId: 'shipmentId',
+  status: 'status',
+  location: 'location',
+  note: 'note',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
+  AGENT: 'AGENT',
+  CUSTOMER: 'CUSTOMER'
+};
+
+exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
+  PENDING: 'PENDING',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  AT_CUSTOMS: 'AT_CUSTOMS',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
 
 exports.Prisma.ModelName = {
-
+  User: 'User',
+  Session: 'Session',
+  Account: 'Account',
+  Verification: 'Verification',
+  ChatSession: 'ChatSession',
+  ChatMessage: 'ChatMessage',
+  KnowledgeChunk: 'KnowledgeChunk',
+  Shipment: 'Shipment',
+  StatusLog: 'StatusLog'
 };
 
 /**

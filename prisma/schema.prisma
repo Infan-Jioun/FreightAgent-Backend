@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  // previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -25,7 +26,7 @@ enum ShipmentStatus {
   CANCELLED
 }
 
-// // ─── Better Auth Models ───────────────────────────────────────────────────────
+// ─── Better Auth Models ───────────────────────────────────────────────────────
 
 // model User {
 //   id            String   @id // Better Auth নিজে set করে

@@ -1,6 +1,133 @@
+model User {
+  id            String   @id // Better Auth নিজে set করে
+  email         String   @unique
+  name          String
+  role          Role     @default(CUSTOMER)
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+
+  // Business relations
+  shipments    Shipment[]
+  chatSessions ChatSession[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages ChatMessage[] // ✅ JSON থেকে proper relation এ নিলাম
+
+  @@index([userId])
+  @@map("chat_sessions")
+}
+
+// ✅ নতুন — JSON এর বদলে proper Message model
+// sort, paginate, delete individual message সব easy হবে
+model ChatMessage {
+  id        String      @id @default(uuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String // "user" | "assistant" | "system"
+  content   String      @db.Text
+  createdAt DateTime    @default(now())
+
+  @@index([sessionId, createdAt]) // ✅ chronological fetch fast হবে
+  @@map("chat_messages")
+}
+
+// ✅ KnowledgeChunk — embedding column add করা (pgvector)
+model KnowledgeChunk {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  source    String
+  category  String?
+  // embedding  Unsupported("vector(1536)")?   // pgvector enable করলে uncomment করো
+  createdAt DateTime @default(now())
+
+  @@index([source])
+  @@index([category])
+  @@map("knowledge_chunks")
+}
+
+// enum Role {
+//     ADMIN
+//     AGENT
+//     CUSTOMER
+// }
+
+// enum ShipmentStatus {
+//     PENDING
+//     PICKED_UP
+//     IN_TRANSIT
+//     AT_CUSTOMS
+//     OUT_FOR_DELIVERY
+//     DELIVERED
+//     CANCELLED
+// }
+
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+  // previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -25,7 +152,7 @@ enum ShipmentStatus {
   CANCELLED
 }
 
-// // ─── Better Auth Models ───────────────────────────────────────────────────────
+// ─── Better Auth Models ───────────────────────────────────────────────────────
 
 // model User {
 //   id            String   @id // Better Auth নিজে set করে
@@ -174,3 +301,38 @@ enum ShipmentStatus {
 //   @@index([shipmentId, createdAt]) // ✅ fix — timeline query fast হবে
 //   @@map("status_logs")
 // }
+
+model Shipment {
+  id            String         @id @default(uuid())
+  trackingId    String         @unique @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  origin        String
+  destination   String
+  weight        Float
+  description   String?
+  status        ShipmentStatus @default(PENDING)
+  estimatedDate DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  statusLogs StatusLog[]
+
+  @@index([userId])
+  @@index([status]) // ✅ status দিয়ে filter fast হবে
+  @@index([trackingId]) // ✅ tracking lookup fast
+  @@map("shipments")
+}
+
+model StatusLog {
+  id         String         @id @default(uuid())
+  shipmentId String
+  shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  status     ShipmentStatus
+  location   String
+  note       String?
+  createdAt  DateTime       @default(now())
+
+  @@index([shipmentId, createdAt]) // ✅ fix — timeline query fast হবে
+  @@map("status_logs")
+}

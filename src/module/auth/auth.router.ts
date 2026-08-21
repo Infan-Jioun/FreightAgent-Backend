@@ -12,4 +12,4 @@ router.post("/login", validateRequest(loginSchema), authController.loginUser)
 router.post("/logout", authenticate)
 
 
-export const authRouter: Router = router;  
+export const authRouter: Router = router;   
