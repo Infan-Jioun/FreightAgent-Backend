@@ -3,8 +3,9 @@ import { catchAsync } from "../../shared/catchAsync";
 import { authService } from "./auth.service";
 import { sendResposne } from "../../shared/sendResonse";
 import status from "http-status";
-import { IRegisterInput } from "./auth.interface";
+import { ILogoutInput, IRegisterInput } from "./auth.interface";
 import { tokenUtils } from "../../utils/token";
+import { cookieUtils } from "../../utils/cookie";
 
 const register = catchAsync(async (req: Request, res: Response) => {
     const payload = req.body;
@@ -34,8 +35,24 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     })
 })
 const logout = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body;
-    const result = authService.logout(payload as string)
+    const betterAuthSession = req.cookies["better-auth.session_token"];
+    const result = await authService.logout(betterAuthSession);
+    cookieUtils.clearCookie(res, "accessToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+    })
+    cookieUtils.clearCookie(res, "refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+    })
+    cookieUtils.clearCookie(res, "accessToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+    })
+
     sendResposne(res, {
         httpStatusCode: status.OK,
         success: true,

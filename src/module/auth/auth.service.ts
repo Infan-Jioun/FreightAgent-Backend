@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { ILoginInput, IRegisterInput } from "./auth.interface";
+import { ILoginInput, ILogoutInput, IRegisterInput } from "./auth.interface";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../app/errorHelper/AppError";
 import status from "http-status";
@@ -78,7 +78,13 @@ const loginUser = async (payload: ILoginInput) => {
         token: result.token,
     };
 };
-const logout = (payload: string) => {
+const logout = async (sessionToken: string) => {
+    const result = await auth.api.signOut({
+        headers: {
+            Authorization: `Bearer ${sessionToken}`
+        }
+    })
+    return result;
 
 }
 export const authService = {
