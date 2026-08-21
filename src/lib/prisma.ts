@@ -3,10 +3,17 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma";
 import { envConfig } from "../_config/env";
 
-
 const connectionString = `${envConfig.DATABASE_URL}`;
 
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+declare global {
+    var __prisma: PrismaClient | undefined;
+}
 
-export { prisma };
+const adapter = new PrismaPg({ connectionString });
+
+export const prisma =
+    globalThis.__prisma ?? new PrismaClient({ adapter });
+
+if (process.env.NODE_ENV !== "production") {
+    globalThis.__prisma = prisma;
+}

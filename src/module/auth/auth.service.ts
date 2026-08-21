@@ -8,6 +8,8 @@ import { email } from "zod";
 import { tokenUtils } from "../../utils/token";
 import { Role } from "../../generated/prisma";
 
+
+
 const register = async (payload: IRegisterInput) => {
     const { name, email, password } = payload;
     const data = await auth.api.signUpEmail({
