@@ -3,12 +3,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { notFound } from './middleware/notFound';
 import { authRouter } from './module/auth/auth.router';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 const app: Application = express();
 app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/v1/auth", authRouter);
+app.use(cookieParser());
+app.use("/api/v1/auth", authRouter);    
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({
         status: "ok",

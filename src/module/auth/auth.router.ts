@@ -8,8 +8,8 @@ const router = Router();
 
 // Public routes
 router.post("/register", authController.register)
-router.post("/login", validateRequest(loginSchema), authController.loginUser)
-router.post("/logout", authenticate)
+router.post("/login",  authController.loginUser)
+router.post("/logout", authController.logout)
 
 
 export const authRouter: Router = router;   
