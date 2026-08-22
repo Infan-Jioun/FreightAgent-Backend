@@ -12,7 +12,7 @@ interface IResponseData<T> {
         totalPage: number
     }
 }
-export const sendResposne = <T>(res: Response, responseData: IResponseData<T>) => {
+export const sendResponse = <T>(res: Response, responseData: IResponseData<T>) => {
     const { httpStatusCode, message, success, data, meta } = responseData;
     res.status(httpStatusCode).json({
         success,

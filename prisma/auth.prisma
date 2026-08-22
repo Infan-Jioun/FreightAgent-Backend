@@ -15,7 +15,7 @@ model User {
     shipments    Shipment[]
     chatSessions ChatSession[]
 
-    @@map("user")
+    @@map("users")
 }
 
 model Session {

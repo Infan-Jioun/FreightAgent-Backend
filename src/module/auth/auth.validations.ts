@@ -11,11 +11,7 @@ export const registerSchema = z.object({
             .email("Invalid email address"),
         password: z
             .string({ error: (issue) => issue.input === undefined ? "Password is required" : "Password must be a string" })
-            .min(8, "Password must be at least 8 characters")
-            .regex(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                "Password must contain uppercase, lowercase and number"
-            ),
+            .min(8, "Password must be at least 8 characters"),
         role: z.enum(["CUSTOMER", "AGENT", "ADMIN"]).optional(),
     }),
 });
@@ -27,10 +23,7 @@ export const loginSchema = z.object({
         password: z
             .string({ error: (issue) => issue.input === undefined ? "Password is required" : "Password must be a string" })
             .min(8, "Password must be at least 8 characters")
-            .regex(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                "Password must contain uppercase, lowercase and number"
-            ),
+            
     }),
 });
 
