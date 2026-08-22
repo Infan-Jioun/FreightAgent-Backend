@@ -7,8 +7,8 @@ import { authenticate, authorize } from "../../middleware/auth";
 const router = Router();
 
 // Public routes
-router.post("/register", authController.register)
-router.post("/login",  authController.loginUser)
+router.post("/register", validateRequest(registerSchema), authController.register)
+router.post("/login", validateRequest(loginSchema), authController.loginUser)
 router.post("/logout", authController.logout)
 
 

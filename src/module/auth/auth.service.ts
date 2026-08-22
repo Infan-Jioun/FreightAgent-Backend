@@ -87,8 +87,12 @@ const logout = async (sessionToken: string) => {
     return result;
 
 }
+const verifyEmail = (otp: string, email: string) => {
+
+}
 export const authService = {
     register,
     loginUser,
-    logout
+    logout,
+    verifyEmail
 }
