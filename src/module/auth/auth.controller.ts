@@ -1,79 +1,77 @@
 import { Request, Response } from "express";
-import { catchAsync } from "../../shared/catchAsync";
 import { authService } from "./auth.service";
-import { sendResposne } from "../../shared/sendResonse";
+
+import { auth } from "../../lib/auth";
+import { catchAsync } from "../../shared/catchAsync";
 import status from "http-status";
-import { ILogoutInput, IRegisterInput } from "./auth.interface";
-import { tokenUtils } from "../../utils/token";
-import { cookieUtils } from "../../utils/cookie";
+import { sendResponse } from "../../shared/sendResonse";
 
 const register = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body;
-    const result = await authService.register(payload);
-    const { accessToken, refreshToken, token, ...rest } = result;
-    tokenUtils.setAccessTokenCookie(res, req, accessToken)
-    tokenUtils.setRefreshTokenCookie(res, refreshToken)
-    tokenUtils.setBetterAuthSessionCookie(res, token as string)
-    sendResposne(res, {
+    const result = await authService.register(req.body);
+    sendResponse(res, {
         httpStatusCode: status.CREATED,
         success: true,
-        message: "User Successfully Register",
-        data: {
-            accessToken,
-            refreshToken,
-            ...rest
-        }
-    })
+        message: "User registered. Please verify your email.",
+        data: result
+    });
 });
+
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await authService.loginUser(req.body);
-    sendResposne(res, {
-        httpStatusCode: status.OK,
+    sendResponse(res, {
+        httpStatusCode: 200,
         success: true,
-        message: "Login Successfully",
+        message: "Login successful",
         data: result
-    })
-})
+    });
+});
+
 const logout = catchAsync(async (req: Request, res: Response) => {
-    const betterAuthSession = req.cookies["better-auth.session_token"];
-    const result = await authService.logout(betterAuthSession);
-    cookieUtils.clearCookie(res, "accessToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
-    })
-    cookieUtils.clearCookie(res, "refreshToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
-    })
-    cookieUtils.clearCookie(res, "accessToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
-    })
-
-    sendResposne(res, {
-        httpStatusCode: status.OK,
+    const sessionToken = req.cookies?.['better-auth.session_token'];
+    const result = await authService.logout(sessionToken);
+    sendResponse(res, {
+        httpStatusCode: 200,
         success: true,
-        message: "Logout Successfully",
-        data: result,
-
-    })
-})
-const verifyEmaiil = catchAsync(async (req: Request, res: Response) => {
-    const { otp, email } = req.body;
-    const result = authService.verifyEmail(otp, email);
-    sendResposne(res, {
-        httpStatusCode: status.OK,
-        success: true,
-        message: "Successfully Otp sent! ",
+        message: "Logout successful",
         data: result
-    })
-})
+    });
+});
+
+// ✅ OTP পাঠানোর function
+const sendOtp = catchAsync(async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    await auth.api.sendVerificationOTP({
+        body: {
+            email,
+            type: "email-verification"
+        }
+    });
+
+    sendResponse(res, {
+        httpStatusCode: 200,
+        success: true,
+        message: "OTP sent to your email",
+        data: null
+    });
+});
+
+// ✅ OTP verify করার function
+const verifyEmail = catchAsync(async (req: Request, res: Response) => {
+    const { email, otp } = req.body;
+    const result = await authService.verifyEmail(otp, email);
+    sendResponse(res, {
+        httpStatusCode: 200,
+        success: true,
+        message: "Email verified successfully",
+        data: result
+    });
+});
+
 export const authController = {
     register,
     loginUser,
     logout,
-    verifyEmaiil
-} 
+    sendOtp,    // ✅
+    verifyEmail // ✅
+};

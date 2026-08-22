@@ -17,6 +17,7 @@ interface EnvConfig {
     EMAIL_SMTP_USER: string;
     EMAIL_SMTP_PASS: string;
     EMAIL_PORT: string;
+    EMAIL_SMTP_FROM: string
 }
 
 const loadVariabales = (): EnvConfig => {
@@ -33,7 +34,8 @@ const loadVariabales = (): EnvConfig => {
         "EMAIL_HOST",
         "EMAIL_SMTP_USER",
         "EMAIL_SMTP_PASS",
-        "EMAIL_PORT"
+        "EMAIL_PORT",
+        "EMAIL_SMTP_FROM"
     ];
 
     requirementVariables.forEach((variable) => {
@@ -55,10 +57,11 @@ const loadVariabales = (): EnvConfig => {
         ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
         REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET as string,
         REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN as string,
-        EMAIL_HOST: process.env.EMAIL_HOST as string,         
+        EMAIL_HOST: process.env.EMAIL_HOST as string,
         EMAIL_SMTP_USER: process.env.EMAIL_SMTP_USER as string,
         EMAIL_SMTP_PASS: process.env.EMAIL_SMTP_PASS as string,
-        EMAIL_PORT: process.env.EMAIL_PORT as string,        
+        EMAIL_PORT: process.env.EMAIL_PORT as string,
+        EMAIL_SMTP_FROM: process.env.EMAIL_SMTP_FROM as string
     };
 };
 

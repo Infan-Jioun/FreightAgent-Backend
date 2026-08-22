@@ -4,13 +4,18 @@ import dotenv from 'dotenv';
 import { notFound } from './middleware/notFound';
 import { authRouter } from './module/auth/auth.router';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import qs from "qs";
 dotenv.config();
 const app: Application = express();
 app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use("/api/v1/auth", authRouter);    
+app.set("view engine", "ejs")
+app.set("views", path.resolve(process.cwd(), `src/app/templates`))
+app.set("query parser", (str: string) => qs.parse(str));
+app.use("/api/v1/auth", authRouter);
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({
         status: "ok",

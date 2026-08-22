@@ -1,5 +1,9 @@
 import nodemailer from "nodemailer"
 import { envConfig } from "../_config/env"
+import AppError from "../app/errorHelper/AppError";
+import status from "http-status";
+import path from "path";
+import ejs from 'ejs';
 const transporter = nodemailer.createTransport({
     host: envConfig.EMAIL_HOST,
     secure: false,
@@ -21,6 +25,24 @@ interface SendEmailOption {
         contentType: string
     }[]
 }
-export const sendEmail = () => {
-
+export const sendEmail = async ({ subject, templateData, templateName, to, attachments }: SendEmailOption) => {
+    try {
+        const templatePath = path.resolve(process.cwd(), `src/app/template/${templateName}.ejs`);
+        const html = await ejs.renderFile(templatePath, templateData);
+        const info = await transporter.sendMail({
+            from: envConfig.EMAIL_SMTP_FROM,
+            subject: subject,
+            to: to,
+            html: html,
+            attachments: attachments?.map((attachment) => ({
+                filename: attachment.fileName,
+                content: attachment.content,
+                contentType: typeof attachment.contentType === 'string' ? attachment.contentType : undefined
+            }))
+        })
+        console.log(`Email send to ${to} : ${info.messageId} `);
+    } catch (error) {
+        console.error("Email Sending failed", error);
+        throw new AppError(status.INTERNAL_SERVER_ERROR, "Failed to send email");
+    }
 }
