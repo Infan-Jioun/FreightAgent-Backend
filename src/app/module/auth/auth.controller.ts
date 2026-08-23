@@ -9,7 +9,23 @@ import { tokenUtils } from "../../../utils/token";
 import AppError from "../../../errorHelper/AppError";
 
 
-// auth.controller.ts
+const refreshToken = catchAsync(
+    async (req: Request, res: Response) => {
+        const token = req.cookies?.refreshToken;
+        if (!token) {
+            throw new AppError(status.UNAUTHORIZED, "Refresh token missing");
+        }
+        const result = await authService.refreshToken(token);
+        tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
+
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Token refreshed successfully",
+            data: null,
+        });
+    }
+);
 const register = catchAsync(async (req: Request, res: Response) => {
     const result = await authService.register(req.body);
     sendResponse(res, {
@@ -34,22 +50,30 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         httpStatusCode: status.OK,
         success: true,
-        message: "Login successful",
-        data: {
-            user: result.user,
-            accessToken: result.accessToken,
-        }
+        message: "Login Successfully",
+        data: result
     });
 });
 
 const logout = catchAsync(async (req: Request, res: Response) => {
-    const sessionToken = req.cookies?.['better-auth.session_token'];
-    const result = await authService.logout(sessionToken);
+    const accessToken = req.cookies?.accessToken;
+    const sessionToken = req.cookies?.["better-auth.session_token"];
+
+    if (accessToken && sessionToken) {
+        await authService.logout(accessToken, sessionToken);
+    }
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.clearCookie("better-auth.session_token");
+
     sendResponse(res, {
-        httpStatusCode: 200,
+        httpStatusCode: status.OK,
         success: true,
-        message: "Logout successful",
-        data: result
+        message: "Logged out successfully",
+        data: {
+            accessToken,
+            sessionToken
+        },
     });
 });
 
@@ -159,6 +183,7 @@ const changePassword = catchAsync(
     }
 );
 export const authController = {
+    refreshToken,
     register,
     loginUser,
     logout,

@@ -74,13 +74,13 @@ model ChatSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  messages ChatMessage[] // ✅ JSON থেকে proper relation এ নিলাম
+  messages ChatMessage[] //  JSON থেকে proper relation এ নিলাম
 
   @@index([userId])
   @@map("chat_sessions")
 }
 
-// ✅ নতুন — JSON এর বদলে proper Message model
+//  নতুন — JSON এর বদলে proper Message model
 // sort, paginate, delete individual message সব easy হবে
 model ChatMessage {
   id        String      @id @default(uuid())
@@ -90,11 +90,11 @@ model ChatMessage {
   content   String      @db.Text
   createdAt DateTime    @default(now())
 
-  @@index([sessionId, createdAt]) // ✅ chronological fetch fast হবে
+  @@index([sessionId, createdAt]) //  chronological fetch fast হবে
   @@map("chat_messages")
 }
 
-// ✅ KnowledgeChunk — embedding column add করা (pgvector)
+//  KnowledgeChunk — embedding column add করা (pgvector)
 model KnowledgeChunk {
   id        String   @id @default(uuid())
   content   String   @db.Text
@@ -151,8 +151,8 @@ model Shipment {
   statusLogs StatusLog[]
 
   @@index([userId])
-  @@index([status]) // ✅ status দিয়ে filter fast হবে
-  @@index([trackingId]) // ✅ tracking lookup fast
+  @@index([status]) //  status দিয়ে filter fast হবে
+  @@index([trackingId]) //  tracking lookup fast
   @@map("shipments")
 }
 
@@ -165,6 +165,6 @@ model StatusLog {
   note       String?
   createdAt  DateTime       @default(now())
 
-  @@index([shipmentId, createdAt]) // ✅ fix — timeline query fast হবে
+  @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে
   @@map("status_logs")
 }

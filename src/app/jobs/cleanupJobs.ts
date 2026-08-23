@@ -20,5 +20,5 @@ export const startCronJobs = () => {
         await deleteUnverifiedUsers();
     });
 
-    console.log("✅ Cron jobs started");
+    console.log(" Cron jobs started");
 };

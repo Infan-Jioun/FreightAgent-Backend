@@ -18,8 +18,8 @@ export const auth = betterAuth({
     plugins: [
         bearer(),
         emailOTP({
-            otpLength: 6,        // ✅ 6 digit OTP
-            expiresIn: 600,      // ✅ 10 minutes
+            otpLength: 6,        //  6 digit OTP
+            expiresIn: 600,      //  10 minutes
             async sendVerificationOTP({ email, otp, type }) {
                 if (type === "email-verification") {
                     const user = await prisma.user.findUnique({ where: { email } });

@@ -9,8 +9,57 @@ import { Role } from "../../../generated/prisma";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { isTempEmail } from "../../../utils/emailValidator";
 import { sendEmail } from "../../../utils/email";
+import { JwtTokenUtils } from "../../../utils/jwt";
+import { blacklistToken } from "../../../utils/tokenBlacklist";
+import { envConfig } from "../../../_config/env";
+const refreshToken = async (token: string) => {
+    if (!token) {
+        throw new AppError(status.UNAUTHORIZED, "Refresh token missing");
+    }
 
-// auth.service.ts
+    //  Refresh token verify করো
+    const result = JwtTokenUtils.verifyToken(
+        token,
+        envConfig.REFRESH_TOKEN_SECRET
+    );
+
+    if (!result.success || !result.data) {
+        throw new AppError(status.UNAUTHORIZED, "Invalid or expired refresh token");
+    }
+
+    const decoded = result.data;
+
+    //  User exists কিনা check করো
+    const userExists = await prisma.user.findUnique({
+        where: { id: decoded.userId as string },
+        select: {
+            id: true,
+            email: true,
+            role: true,
+            image: true,
+            emailVerified: true,
+            createdAt: true,
+        },
+    });
+
+    if (!userExists) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    //  নতুন Access Token generate করো
+    const tokenPayload = {
+        userId: userExists.id,
+        email: userExists.email,
+        role: userExists.role,
+        image: userExists.image,
+        emailVerified: userExists.emailVerified,
+        createdAt: userExists.createdAt,
+    };
+
+    const accessToken = tokenUtils.getAccessToken(tokenPayload);
+
+    return { accessToken };
+};
 const register = async (payload: IRegisterInput) => {
     if (!payload.email || !payload.password || !payload.name) {
         throw new AppError(status.BAD_REQUEST, "Name, Email and Password are required");
@@ -124,13 +173,28 @@ const loginUser = async (payload: ILoginInput) => {
     };
 };
 
-const logout = async (sessionToken: string) => {
-    const result = await auth.api.signOut({
+const logout = async (accessToken: string, sessionToken: string) => {
+    //  Access token decode করো — expire time বের করো
+    const decoded = JwtTokenUtils.decodedToken(accessToken);
+
+    if (decoded && decoded.exp) {
+        const now = Math.floor(Date.now() / 1000);
+        const expiresIn = decoded.exp - now; // বাকি seconds
+
+        if (expiresIn > 0) {
+            await blacklistToken(accessToken, expiresIn); // ← Redis এ রাখো
+        }
+    }
+
+    //  BetterAuth session revoke করো
+    await auth.api.revokeSession({
+        body: {
+            token: sessionToken
+        },
         headers: {
-            Authorization: `Bearer ${sessionToken}`
+            authorization: `Bearer ${sessionToken} `
         }
     });
-    return result;
 };
 const sendOtp = async (email: string) => {
     const user = await prisma.user.findUnique({
@@ -356,6 +420,7 @@ const changePassword = async (payload: IChangePassword, user: IRequestUser) => {
     return { accessToken, refreshToken };
 };
 export const authService = {
+    refreshToken,
     register,
     loginUser,
     logout,

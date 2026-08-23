@@ -6,6 +6,7 @@ import { Role } from "../generated/prisma";
 import { IRequestUser } from "../app/interface/requestUserInterface";
 import { envConfig } from "../_config/env";
 import { JwtTokenUtils } from "../utils/jwt";
+import { isTokenBlacklisted } from "../utils/tokenBlacklist";
 
 export const authenticate = async (
     req: Request,
@@ -20,6 +21,13 @@ export const authenticate = async (
         if (!accessToken) {
             throw new AppError(status.UNAUTHORIZED, "Authentication required");
         }
+
+        //  Blacklist check করো
+        const isBlacklisted = await isTokenBlacklisted(accessToken);
+        if (isBlacklisted) {
+            throw new AppError(status.UNAUTHORIZED, "Token has been revoked");
+        }
+
         const result = JwtTokenUtils.verifyToken(
             accessToken,
             envConfig.ACCESS_TOKEN_SECRET
@@ -29,7 +37,7 @@ export const authenticate = async (
             throw new AppError(status.UNAUTHORIZED, "Invalid or expired token");
         }
 
-        const decoded = result.data; // ← JwtPayload
+        const decoded = result.data;
 
         req.user = {
             userId: decoded.userId as string,
@@ -44,7 +52,7 @@ export const authenticate = async (
     } catch (error) {
         next(error);
     }
-};;
+};
 
 export const authorize = (...roles: Role[]) => {
     return (req: Request, res: Response, next: NextFunction) => {

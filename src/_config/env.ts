@@ -19,8 +19,10 @@ interface EnvConfig {
     EMAIL_SMTP_PASS: string;
     EMAIL_PORT: string;
     EMAIL_SMTP_FROM: string;
-    SWAGGER_USER: string
-    SWAGGER_PASS: string
+    SWAGGER_USER: string;
+    SWAGGER_PASS: string;
+    UPSTASH_REDIS_REST_URL: string;
+    UPSTASH_REDIS_REST_TOKEN: string;
 }
 
 const loadVariabales = (): EnvConfig => {
@@ -41,7 +43,9 @@ const loadVariabales = (): EnvConfig => {
         "EMAIL_PORT",
         "EMAIL_SMTP_FROM",
         "SWAGGER_USER",
-        "SWAGGER_PASS"
+        "SWAGGER_PASS",
+        "UPSTASH_REDIS_REST_URL",
+        "UPSTASH_REDIS_REST_TOKEN"
     ];
 
     requirementVariables.forEach((variable) => {
@@ -70,7 +74,9 @@ const loadVariabales = (): EnvConfig => {
         EMAIL_PORT: process.env.EMAIL_PORT as string,
         EMAIL_SMTP_FROM: process.env.EMAIL_SMTP_FROM as string,
         SWAGGER_USER: process.env.SWAGGER_USER as string,
-        SWAGGER_PASS: process.env.SWAGGER_PASS as string
+        SWAGGER_PASS: process.env.SWAGGER_PASS as string,
+        UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL as string,
+        UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN as string
     };
 };
 
