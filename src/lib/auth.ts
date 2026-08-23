@@ -22,10 +22,7 @@ export const auth = betterAuth({
             expiresIn: 600,      // ✅ 10 minutes
             async sendVerificationOTP({ email, otp, type }) {
                 if (type === "email-verification") {
-                    const user = await prisma.user.findUnique({
-                        where: { email },
-                    });
-
+                    const user = await prisma.user.findUnique({ where: { email } });
                     if (user && !user.emailVerified) {
                         await sendEmail({
                             to: email,
@@ -37,16 +34,13 @@ export const auth = betterAuth({
                             },
                         });
                     }
-
                 }
-                if (type === "forget-password") {
-                    const user = await prisma.user.findUnique({
-                        where: { email },
-                    });
 
+                if (type === "sign-in") {
+                    const user = await prisma.user.findUnique({ where: { email } });
                     await sendEmail({
                         to: email,
-                        subject: "Reset your password - OTP",
+                        subject: "Change Password - OTP", // ← আলাদা subject!
                         templateName: "otp",
                         templateData: {
                             name: user?.name ?? "User",
@@ -55,6 +49,18 @@ export const auth = betterAuth({
                     });
                 }
 
+                if (type === "forget-password") {
+                    const user = await prisma.user.findUnique({ where: { email } });
+                    await sendEmail({
+                        to: email,
+                        subject: "Reset & Change Password - OTP",
+                        templateName: "otp",
+                        templateData: {
+                            name: user?.name ?? "User",
+                            otp: String(otp),
+                        },
+                    });
+                }
             },
         }),
     ],

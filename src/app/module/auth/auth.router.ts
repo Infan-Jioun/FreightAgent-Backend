@@ -15,4 +15,6 @@ router.post("/verify-otp", authController.verifyEmail);
 router.post("/forgot-password", authController.forgotPassword)
 router.post("/reset-password", authController.resetPassword)
 router.get("/me", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), authController.getMe)
+router.post("/change-password/send-otp", authenticate, authController.sendChangePasswordOTP);
+router.post("/change-password", authenticate, authController.changePassword);
 export const authRouter: Router = router;
