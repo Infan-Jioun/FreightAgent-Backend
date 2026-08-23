@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { auth } from "../lib/auth";
-import AppError from "../app/errorHelper/AppError";
 import status from "http-status";
+import AppError from "../errorHelper/AppError";
 
 
 export const authenticate = async (

@@ -1,6 +1,6 @@
 import dotEnv from "dotenv";
-import AppError from "../app/errorHelper/AppError";
 import status from "http-status";
+import AppError from "../errorHelper/AppError";
 dotEnv.config();
 
 interface EnvConfig {

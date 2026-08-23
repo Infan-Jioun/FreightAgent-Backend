@@ -10,5 +10,5 @@ router.post("/login", validateRequest(loginSchema), authController.loginUser);
 router.post("/logout", authController.logout);
 router.post("/send-otp", authController.sendOtp);       
 router.post("/verify-otp", authController.verifyEmail); 
-
+router.get("/me" ,authController.getMe)
 export const authRouter: Router = router;

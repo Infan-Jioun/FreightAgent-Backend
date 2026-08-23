@@ -1,7 +1,7 @@
 import { Role } from "../../generated/prisma";
 
 export interface IRequestUser {
-    name: string;
+    userId: string;
     email: string;
     role: Role
 }

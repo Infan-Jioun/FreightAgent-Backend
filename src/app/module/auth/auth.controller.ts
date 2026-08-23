@@ -4,25 +4,40 @@ import status from "http-status";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/sendResonse";
 import { auth } from "../../../lib/auth";
+import { IRequestUser } from "../../interface/requestUserInterface";
+import { tokenUtils } from "../../../utils/token";
 
 
+// auth.controller.ts
 const register = catchAsync(async (req: Request, res: Response) => {
     const result = await authService.register(req.body);
     sendResponse(res, {
         httpStatusCode: status.CREATED,
         success: true,
         message: "User registered. Please verify your email.",
-        data: result
+        data: {
+            user: result.user,
+            // accessToken: result.accessToken,
+        }
     });
 });
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await authService.loginUser(req.body);
+
+    // Cookie set
+    tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
+    tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
+    tokenUtils.setBetterAuthSessionCookie(res, result.sessionToken);
+
     sendResponse(res, {
-        httpStatusCode: 200,
+        httpStatusCode: status.OK,
         success: true,
         message: "Login successful",
-        data: result
+        data: {
+            user: result.user,
+            accessToken: result.accessToken,
+        }
     });
 });
 
@@ -57,18 +72,34 @@ const sendOtp = catchAsync(async (req: Request, res: Response) => {
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     const result = await authService.verifyEmail(otp, email);
+    tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
+    tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
+    tokenUtils.setBetterAuthSessionCookie(res, result.sessionToken as string);
+
     sendResponse(res, {
         httpStatusCode: 200,
         success: true,
         message: "Email verified successfully",
-        data: result
+        data: { user: result.user }, // token body তে না!
     });
 });
-
+const getMe = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user;
+        const result = await authService.getMe(user as IRequestUser);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "User Successfully Fetched",
+            data: result
+        })
+    }
+)
 export const authController = {
     register,
     loginUser,
     logout,
     sendOtp,
-    verifyEmail
+    verifyEmail,
+    getMe
 };
