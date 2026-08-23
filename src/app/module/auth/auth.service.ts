@@ -181,11 +181,6 @@ const verifyEmail = async (otp: string, email: string) => {
     };
 };
 const getMe = async (user: IRequestUser) => {
-    const accessToken = tokenUtils.getAccessToken(user);
-    const refreshToken = tokenUtils.getRefreshToken(user);
-    if (!accessToken && !refreshToken) {
-        throw new AppError(status.UNAUTHORIZED, "Unauthorized User");
-    }
     if (!user) {
         throw new AppError(status.UNAUTHORIZED, "Unauthorized User");
     }
