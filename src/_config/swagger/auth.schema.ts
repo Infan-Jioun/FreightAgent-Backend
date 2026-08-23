@@ -7,7 +7,7 @@ export const authSwaggerDocs = {
                 required: true,
                 content: {
                     "application/json": {
-                        schema: {
+                    schema: {
                             type: "object",
                             required: ["name", "email", "password"],
                             properties: {

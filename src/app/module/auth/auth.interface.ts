@@ -17,6 +17,8 @@ export interface ILogoutInput {
     password: string;
 }
 export interface IChangePassword {
-    currentPassword: string,
-    newPassword: string
+    currentPassword: string;
+    newPassword: string;
+    sessionToken?: string;
+    otp: string
 }

@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { ILoginInput, IRegisterInput } from "./auth.interface";
+import { IChangePassword, ILoginInput, IRegisterInput } from "./auth.interface";
 import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
 import { prisma } from "../../../lib/prisma";
@@ -247,46 +247,113 @@ const forgotPassword = async (email: string) => {
     })
 }
 const resetPassword = async (email: string, otp: string, newPassword: string) => {
-  const userExits = await prisma.user.findUnique({
-    where: { email }
-  });
+    const userExits = await prisma.user.findUnique({
+        where: { email }
+    });
 
-  if (!userExits) {
-    throw new AppError(status.NOT_FOUND, "User not found");
-  }
-
-  if (!userExits.emailVerified) {
-    throw new AppError(status.BAD_REQUEST, "Email Not Verified");
-  }
-
-  await auth.api.resetPasswordEmailOTP({
-    body: {
-      email,
-      otp,
-      password: newPassword
+    if (!userExits) {
+        throw new AppError(status.NOT_FOUND, "User not found");
     }
-  });
 
-  // ✅ সব session delete করো
-  await prisma.session.deleteMany({
-    where: { userId: userExits.id }
-  });
+    if (!userExits.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Email Not Verified");
+    }
 
-  // ✅ Success email পাঠাও
-  await sendEmail({
-    to: email,
-    subject: "Password Changed Successfully - FreightAgent",
-    templateName: "passwordChanged", // ← নতুন template
-    templateData: {
-      name: userExits.name ?? "User",
-      email: userExits.email,
-      time: new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Dhaka",
-        dateStyle: "medium",
-        timeStyle: "short",
-      }),
-    },
-  });
+    await auth.api.resetPasswordEmailOTP({
+        body: {
+            email,
+            otp,
+            password: newPassword
+        }
+    });
+
+    await prisma.session.deleteMany({
+        where: { userId: userExits.id }
+    });
+    await sendEmail({
+        to: email,
+        subject: "Password Changed Successfully - FreightAgent",
+        templateName: "passwordChanged", // ← নতুন template
+        templateData: {
+            name: userExits.name ?? "User",
+            email: userExits.email,
+            time: new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Dhaka",
+                dateStyle: "medium",
+                timeStyle: "short",
+            }),
+        },
+    });
+};
+// Send OTP
+const sendChangePasswordOTP = async (user: IRequestUser) => {
+    const userExists = await prisma.user.findUnique({
+        where: { id: user.userId }
+    });
+
+    if (!userExists) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    await auth.api.sendVerificationOTP({
+        body: {
+            email: userExists.email,
+            type: "forget-password" // ← এটাই use করো
+        }
+    });
+};
+
+// Verify OTP + Change Password
+const changePassword = async (payload: IChangePassword, user: IRequestUser) => {
+    const userExists = await prisma.user.findUnique({
+        where: { id: user.userId }
+    });
+
+    if (!userExists) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    try {
+        await auth.api.resetPasswordEmailOTP({
+            body: {
+                email: userExists.email,
+                otp: payload.otp,
+                password: payload.newPassword
+            }
+        });
+    } catch (error: any) {
+        throw new AppError(status.BAD_REQUEST, "Invalid or expired OTP");
+    }
+    await prisma.session.deleteMany({
+        where: { userId: user.userId }
+    });
+
+    const tokenPayload = {
+        userId: user.userId,
+        email: user.email,
+        role: user.role,
+        emailVerified: user.emailVerified,
+    };
+
+    const accessToken = tokenUtils.getAccessToken(tokenPayload);
+    const refreshToken = tokenUtils.getRefreshToken(tokenPayload);
+
+    await sendEmail({
+        to: userExists.email,
+        subject: "Password Changed Successfully - FreightAgent",
+        templateName: "passwordChanged",
+        templateData: {
+            name: userExists.name ?? "User",
+            email: userExists.email,
+            time: new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Dhaka",
+                dateStyle: "medium",
+                timeStyle: "short",
+            }),
+        },
+    });
+
+    return { accessToken, refreshToken };
 };
 export const authService = {
     register,
@@ -296,5 +363,7 @@ export const authService = {
     verifyEmail,
     getMe,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    changePassword,
+    sendChangePasswordOTP
 };

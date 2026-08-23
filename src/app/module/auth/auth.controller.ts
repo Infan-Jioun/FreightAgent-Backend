@@ -6,6 +6,7 @@ import { sendResponse } from "../../../shared/sendResonse";
 import { auth } from "../../../lib/auth";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { tokenUtils } from "../../../utils/token";
+import AppError from "../../../errorHelper/AppError";
 
 
 // auth.controller.ts
@@ -110,15 +111,53 @@ const forgotPassword = catchAsync(
 const resetPassword = catchAsync(
     async (req: Request, res: Response) => {
         const { email, otp, newPassword } = req.body;
-        await authService.resetPassword(email as string, otp as string, newPassword as string)
+        const result = await authService.resetPassword(email as string, otp as string, newPassword as string)
         sendResponse(res, {
             httpStatusCode: status.OK,
             success: true,
             message: "Password reset Successfully",
-
+            data: result
         })
     }
 )
+const sendChangePasswordOTP = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user as IRequestUser;
+        const result = await authService.sendChangePasswordOTP(user);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "OTP sent to your email",
+            data: result,
+        });
+    }
+);
+
+const changePassword = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user as IRequestUser;
+        const sessionToken = req.cookies?.["better-auth.session_token"];
+
+        if (!sessionToken) {
+            throw new AppError(status.UNAUTHORIZED, "Session token missing");
+        }
+
+        const result = await authService.changePassword(
+            { ...req.body, sessionToken },
+            user
+        );
+
+        tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
+        tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
+
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Password changed successfully",
+            data: result,
+        });
+    }
+);
 export const authController = {
     register,
     loginUser,
@@ -127,5 +166,7 @@ export const authController = {
     verifyEmail,
     getMe,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    sendChangePasswordOTP,
+    changePassword
 };
