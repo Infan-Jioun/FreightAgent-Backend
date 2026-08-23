@@ -8,6 +8,7 @@ import { tokenUtils } from "../../../utils/token";
 import { Role } from "../../../generated/prisma";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { isTempEmail } from "../../../utils/emailValidator";
+import { sendEmail } from "../../../utils/email";
 
 // auth.service.ts
 const register = async (payload: IRegisterInput) => {
@@ -227,11 +228,73 @@ const getMe = async (user: IRequestUser) => {
 
     return existingUser;
 };
+const forgotPassword = async (email: string) => {
+    const userExits = await prisma.user.findUnique({
+        where: {
+            email
+        }
+    })
+    if (!userExits) {
+        throw new AppError(status.NOT_FOUND, "User not found")
+    }
+    if (!userExits.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Eamil Not Verfied ")
+    }
+    await auth.api.requestPasswordResetEmailOTP({
+        body: {
+            email
+        }
+    })
+}
+const resetPassword = async (email: string, otp: string, newPassword: string) => {
+  const userExits = await prisma.user.findUnique({
+    where: { email }
+  });
+
+  if (!userExits) {
+    throw new AppError(status.NOT_FOUND, "User not found");
+  }
+
+  if (!userExits.emailVerified) {
+    throw new AppError(status.BAD_REQUEST, "Email Not Verified");
+  }
+
+  await auth.api.resetPasswordEmailOTP({
+    body: {
+      email,
+      otp,
+      password: newPassword
+    }
+  });
+
+  // ✅ সব session delete করো
+  await prisma.session.deleteMany({
+    where: { userId: userExits.id }
+  });
+
+  // ✅ Success email পাঠাও
+  await sendEmail({
+    to: email,
+    subject: "Password Changed Successfully - FreightAgent",
+    templateName: "passwordChanged", // ← নতুন template
+    templateData: {
+      name: userExits.name ?? "User",
+      email: userExits.email,
+      time: new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Dhaka",
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    },
+  });
+};
 export const authService = {
     register,
     loginUser,
     logout,
     sendOtp,
     verifyEmail,
-    getMe
+    getMe,
+    forgotPassword,
+    resetPassword
 };

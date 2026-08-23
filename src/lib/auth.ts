@@ -10,7 +10,7 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-    secret: envConfig.BETTER_AUTH_SECRET, 
+    secret: envConfig.BETTER_AUTH_SECRET,
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
@@ -37,7 +37,24 @@ export const auth = betterAuth({
                             },
                         });
                     }
+
                 }
+                if (type === "forget-password") {
+                    const user = await prisma.user.findUnique({
+                        where: { email },
+                    });
+
+                    await sendEmail({
+                        to: email,
+                        subject: "Reset your password - OTP",
+                        templateName: "otp",
+                        templateData: {
+                            name: user?.name ?? "User",
+                            otp: String(otp),
+                        },
+                    });
+                }
+
             },
         }),
     ],

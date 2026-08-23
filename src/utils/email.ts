@@ -28,6 +28,7 @@ interface SendEmailOption {
 export const sendEmail = async ({ subject, templateData, templateName, to, attachments }: SendEmailOption) => {
     try {
         const templatePath = path.resolve(process.cwd(), `src/app/template/${templateName}.ejs`);
+        
         const html = await ejs.renderFile(templatePath, templateData);
         const info = await transporter.sendMail({
             from: envConfig.EMAIL_SMTP_FROM,

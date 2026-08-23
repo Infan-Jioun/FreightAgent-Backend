@@ -12,5 +12,7 @@ router.post("/login", validateRequest(loginSchema), authController.loginUser);
 router.post("/logout", authController.logout);
 router.post("/send-otp", authController.sendOtp);
 router.post("/verify-otp", authController.verifyEmail);
+router.post("/forgot-password", authController.forgotPassword)
+router.post("/reset-password", authController.resetPassword)
 router.get("/me", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), authController.getMe)
 export const authRouter: Router = router;

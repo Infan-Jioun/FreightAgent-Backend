@@ -95,11 +95,37 @@ const getMe = catchAsync(
         })
     }
 )
+const forgotPassword = catchAsync(
+    async (req: Request, res: Response) => {
+        const { email } = req.body;
+        await authService.forgotPassword(email as string)
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Password reset OTP send to email successfully",
+
+        })
+    }
+)
+const resetPassword = catchAsync(
+    async (req: Request, res: Response) => {
+        const { email, otp, newPassword } = req.body;
+        await authService.resetPassword(email as string, otp as string, newPassword as string)
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Password reset Successfully",
+
+        })
+    }
+)
 export const authController = {
     register,
     loginUser,
     logout,
     sendOtp,
     verifyEmail,
-    getMe
+    getMe,
+    forgotPassword,
+    resetPassword
 };
