@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { authService } from "./auth.service";
-
-import { auth } from "../../lib/auth";
-import { catchAsync } from "../../shared/catchAsync";
 import status from "http-status";
-import { sendResponse } from "../../shared/sendResonse";
+import { catchAsync } from "../../../shared/catchAsync";
+import { sendResponse } from "../../../shared/sendResonse";
+import { auth } from "../../../lib/auth";
+
 
 const register = catchAsync(async (req: Request, res: Response) => {
     const result = await authService.register(req.body);
@@ -37,7 +37,6 @@ const logout = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-// ✅ OTP পাঠানোর function
 const sendOtp = catchAsync(async (req: Request, res: Response) => {
     const { email } = req.body;
 
@@ -55,8 +54,6 @@ const sendOtp = catchAsync(async (req: Request, res: Response) => {
         data: null
     });
 });
-
-// ✅ OTP verify করার function
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     const result = await authService.verifyEmail(otp, email);
@@ -72,6 +69,6 @@ export const authController = {
     register,
     loginUser,
     logout,
-    sendOtp,    // ✅
-    verifyEmail // ✅
+    sendOtp,
+    verifyEmail
 };

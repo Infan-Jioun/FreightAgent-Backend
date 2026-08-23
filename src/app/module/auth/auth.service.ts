@@ -1,19 +1,16 @@
 import { Request } from "express";
 import { ILoginInput, IRegisterInput } from "./auth.interface";
-import { prisma } from "../../lib/prisma";
-import AppError from "../../app/errorHelper/AppError";
+import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
-import { auth } from "../../lib/auth";
-import { tokenUtils } from "../../utils/token";
-import { Role } from "../../generated/prisma";
+import { prisma } from "../../../lib/prisma";
+import { auth } from "../../../lib/auth";
+import { tokenUtils } from "../../../utils/token";
+import { Role } from "../../../generated/prisma";
 
 const register = async (payload: IRegisterInput) => {
-    // ✅ আগে validate করো
     if (!payload.email || !payload.password || !payload.name) {
         throw new AppError(status.BAD_REQUEST, "Name, Email and Password are required");
     }
-
-    // ✅ আগে থেকে user আছে কিনা check করো
     const existingUser = await prisma.user.findUnique({
         where: { email: payload.email }
     });
@@ -22,7 +19,7 @@ const register = async (payload: IRegisterInput) => {
         throw new AppError(status.CONFLICT, "User already exists with this email");
     }
 
-// ✅ BetterAuth দিয়ে user create করো
+
     const data = await auth.api.signUpEmail({
         body: {
             name: payload.name,
@@ -34,16 +31,12 @@ const register = async (payload: IRegisterInput) => {
     if (!data.user) {
         throw new AppError(status.BAD_REQUEST, "User not created");
     }
-
-    // ✅ Register এর সাথে সাথে OTP পাঠাও
     await auth.api.sendVerificationOTP({
         body: {
             email: payload.email,
             type: "email-verification"
         }
     });
-
-    // ✅ Token generate করো
     const accessToken = tokenUtils.getAccessToken({
         userId: data.user.id,
         email: data.user.email,
@@ -80,8 +73,6 @@ const loginUser = async (payload: ILoginInput) => {
     if (!result) {
         throw new AppError(status.BAD_REQUEST, "Invalid Email or Password");
     }
-
-    // ✅ email verified না হলে automatically OTP পাঠাও
     if (!result.user.emailVerified) {
         await auth.api.sendVerificationOTP({
             body: {
@@ -125,7 +116,6 @@ const logout = async (sessionToken: string) => {
     return result;
 };
 const sendOtp = async (email: string) => {
-    // user আছে কিনা check করো
     const user = await prisma.user.findUnique({
         where: { email }
     });
@@ -137,8 +127,6 @@ const sendOtp = async (email: string) => {
     if (user.emailVerified) {
         throw new AppError(status.BAD_REQUEST, "Email already verified");
     }
-
-    // BetterAuth দিয়ে OTP পাঠাও
     await auth.api.sendVerificationOTP({
         body: {
             email,
@@ -152,8 +140,6 @@ const verifyEmail = async (otp: string, email: string) => {
     const result = await auth.api.verifyEmailOTP({
         body: { email, otp }
     });
-
-    // ✅ verify successful হলে update করো
     if (result.status) {
         await prisma.user.update({
             where: { id: result.user.id },
