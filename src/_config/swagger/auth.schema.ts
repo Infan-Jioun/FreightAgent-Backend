@@ -85,4 +85,57 @@ export const authSwaggerDocs = {
             },
         },
     },
+    // src/_config/swagger/schemas/auth.schema.ts
+
+    "/auth/forgot-password": {
+        post: {
+            summary: "Forgot password - Send OTP",
+            tags: ["Auth"],
+            requestBody: {
+                required: true,
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            required: ["email"],
+                            properties: {
+                                email: { type: "string", example: "jioun@gmail.com" },
+                            },
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: { description: "OTP sent to email successfully" },
+                404: { description: "User not found" },
+            },
+        },
+    },
+    "/auth/reset-password": {
+        post: {
+            summary: "Reset password with OTP",
+            tags: ["Auth"],
+            requestBody: {
+                required: true,
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            required: ["email", "otp", "newPassword"],
+                            properties: {
+                                email: { type: "string", example: "jioun@gmail.com" },
+                                otp: { type: "string", example: "123456" },
+                                newPassword: { type: "string", example: "NewPass@123" },
+                            },
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: { description: "Password reset successfully" },
+                400: { description: "Invalid OTP" },
+                404: { description: "User not found" },
+            },
+        },
+    },
 };
