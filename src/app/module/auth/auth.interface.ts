@@ -1,4 +1,5 @@
-import { Role } from "../../generated/prisma";
+import { Role } from "../../../generated/prisma";
+
 
 export interface IRegisterInput {
     name: string;
@@ -14,4 +15,8 @@ export interface ILoginInput {
 export interface ILogoutInput {
     email: string;
     password: string;
+}
+export interface IChangePassword {
+    currentPassword: string,
+    newPassword: string
 }

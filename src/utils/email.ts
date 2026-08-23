@@ -1,9 +1,9 @@
 import nodemailer from "nodemailer"
 import { envConfig } from "../_config/env"
-import AppError from "../app/errorHelper/AppError";
 import status from "http-status";
 import path from "path";
 import ejs from 'ejs';
+import AppError from "../errorHelper/AppError";
 const transporter = nodemailer.createTransport({
     host: envConfig.EMAIL_HOST,
     secure: false,
@@ -28,6 +28,7 @@ interface SendEmailOption {
 export const sendEmail = async ({ subject, templateData, templateName, to, attachments }: SendEmailOption) => {
     try {
         const templatePath = path.resolve(process.cwd(), `src/app/template/${templateName}.ejs`);
+        
         const html = await ejs.renderFile(templatePath, templateData);
         const info = await transporter.sendMail({
             from: envConfig.EMAIL_SMTP_FROM,
