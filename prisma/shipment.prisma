@@ -15,8 +15,8 @@ model Shipment {
     statusLogs StatusLog[]
 
     @@index([userId])
-    @@index([status]) // ✅ status দিয়ে filter fast হবে
-    @@index([trackingId]) // ✅ tracking lookup fast
+    @@index([status]) //  status দিয়ে filter fast হবে
+    @@index([trackingId]) //  tracking lookup fast
     @@map("shipments")
 }
 
@@ -29,6 +29,6 @@ model StatusLog {
     note       String?
     createdAt  DateTime       @default(now())
 
-    @@index([shipmentId, createdAt]) // ✅ fix — timeline query fast হবে
+    @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে
     @@map("status_logs")
 }
