@@ -182,6 +182,17 @@ const changePassword = catchAsync(
         });
     }
 );
+const createAdmin = catchAsync(async (req: Request, res: Response) => {
+    const result = authService.createAdmin(req.body);
+    sendResponse(res, {
+        httpStatusCode: status.CREATED,
+        success: true,
+        message: "Successfully Registered Admin! Please verify your email.",
+        data: {
+                user: (await result).adminData      
+        }
+    })
+})
 export const authController = {
     refreshToken,
     register,
@@ -193,5 +204,6 @@ export const authController = {
     forgotPassword,
     resetPassword,
     sendChangePasswordOTP,
-    changePassword
+    changePassword,
+    createAdmin
 };

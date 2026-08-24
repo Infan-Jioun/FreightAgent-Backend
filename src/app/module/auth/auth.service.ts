@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { IChangePassword, ILoginInput, IRegisterInput } from "./auth.interface";
+import { IChangePassword, ICreateAdmin, ILoginInput, IRegisterInput } from "./auth.interface";
 import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
 import { prisma } from "../../../lib/prisma";
@@ -419,6 +419,48 @@ const changePassword = async (payload: IChangePassword, user: IRequestUser) => {
 
     return { accessToken, refreshToken };
 };
+const createAdmin = async (payload: IRegisterInput) => {
+    if (!payload.email || !payload.password || !payload.name) {
+        throw new AppError(status.BAD_REQUEST, "Name, Email and Password are required");
+    }
+    if (await isTempEmail(payload.email)) {
+        throw new AppError(status.BAD_REQUEST, "Temporary emails are not allowed");
+    }
+    const existingUser = await prisma.user.findUnique({
+        where: { email: payload.email }
+    });
+
+    if (existingUser) {
+        throw new AppError(status.CONFLICT, "User already exists with this email");
+    }
+    const adminData = await auth.api.signUpEmail({
+        body: {
+            email: payload.email,
+            name: payload.name,
+            password: payload.password,
+        }
+    });
+
+    await prisma.user.update({
+        where: { email: payload.email },
+        data: { role: Role.ADMIN }
+    });
+    if (!adminData.user) {
+        throw new AppError(status.BAD_REQUEST, "User not created");
+    }
+    await auth.api.sendVerificationOTP({
+        body: {
+            email: payload.email,
+            type: "email-verification"
+        }
+    });
+    console.log(adminData)
+    return {
+        adminData
+    };
+
+}
+
 export const authService = {
     refreshToken,
     register,
@@ -430,5 +472,6 @@ export const authService = {
     forgotPassword,
     resetPassword,
     changePassword,
-    sendChangePasswordOTP
+    sendChangePasswordOTP,
+    createAdmin
 };

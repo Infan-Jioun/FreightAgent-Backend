@@ -4,7 +4,7 @@ import { changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema
 import { validateRequest } from "../../../middleware/validateRequest";
 import { authenticate, authorize } from "../../../middleware/auth";
 import { Role } from "../../../generated/prisma";
-import { loginRateLimit, otpRateLimit, registerRateLimit } from "../../../utils/rateLimit";
+import { adminRegisterRateLimit, loginRateLimit, otpRateLimit, registerRateLimit } from "../../../utils/rateLimit";
 
 const router = Router();
 router.post("/refresh-token", authController.refreshToken);
@@ -17,5 +17,6 @@ router.post("/forgot-password", otpRateLimit, validateRequest(forgotPasswordSche
 router.post("/reset-password", validateRequest(resetPasswordSchema), authController.resetPassword);
 router.get("/me", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), authController.getMe)
 router.post("/change-password/send-otp", otpRateLimit, authenticate, authController.sendChangePasswordOTP);
-router.post("/change-password", authenticate, validateRequest(changePasswordSchema), authController.changePassword);
+router.post("/change-password", authenticate, validateRequest(changePasswordSchema) );
+router.post("/create-admin", adminRegisterRateLimit, authController.createAdmin)
 export const authRouter: Router = router;
