@@ -4,6 +4,7 @@ import { prisma } from "../../../lib/prisma";
 import { IGetUserQuery, IRoleUpdate } from "./admin.interface"
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { Role } from "../../../generated/prisma";
+import { sendEmail } from "../../../utils/email";
 
 
 const getAlluser = async (query: IGetUserQuery) => {
@@ -134,10 +135,51 @@ const updateRole = async (payload: IRoleUpdate, currentUser: IRequestUser) => {
             role: true,
         },
     });
+    await sendEmail({
+        to: user.email,
+        subject: "Your Role Has Been Updated - FreightAgent",
+        templateName: "roleUpdate",
+        templateData: {
+            name: user.name,
+            previousRole: user.role,   
+            newRole: payload.role,     
+            time: new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Dhaka",
+                dateStyle: "medium",
+                timeStyle: "short",
+            }),
+        },
+    });
     return updated;
-}
+};
+const deleteUser = async (id: string, currentUser: IRequestUser) => {
+    if (currentUser.role !== Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Only admin can delete user");
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { id },
+    });
+
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    if (id === currentUser.userId) {
+        throw new AppError(status.BAD_REQUEST, "You cannot delete yourself");
+    }
+
+    if (user.role === Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Cannot delete an admin user");
+    }
+    await prisma.session.deleteMany({ where: { userId: id } });
+    await prisma.account.deleteMany({ where: { userId: id } });
+    await prisma.user.delete({ where: { id } });
+
+    return { message: "User deleted successfully" };
+};
 export const adminService = {
     getAlluser,
     getUserById,
-    updateRole
+    updateRole,
+    deleteUser
 }

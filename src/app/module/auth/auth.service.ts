@@ -12,6 +12,9 @@ import { sendEmail } from "../../../utils/email";
 import { JwtTokenUtils } from "../../../utils/jwt";
 import { blacklistToken } from "../../../utils/tokenBlacklist";
 import { envConfig } from "../../../_config/env";
+import { sendWelcomeEmail } from "../../../utils/sendWelcomeEmail";
+
+
 const refreshToken = async (token: string) => {
     if (!token) {
         throw new AppError(status.UNAUTHORIZED, "Refresh token missing");
@@ -91,7 +94,6 @@ const register = async (payload: IRegisterInput) => {
             type: "email-verification"
         }
     });
-
     // const tokenPayload = {
     //     userId: data.user.id,
     //     email: data.user.email,
@@ -224,7 +226,20 @@ const verifyEmail = async (otp: string, email: string) => {
         throw new AppError(status.BAD_REQUEST, "Invalid or expired OTP");
     }
 
-
+    const user = await prisma.user.findUnique({
+        where: { email },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            emailVerified: true,
+        }
+    });
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    await sendWelcomeEmail(user.name, user.email, user.role);
     const tokenPayload = {
         userId: result.user.id,
         email: result.user.email,

@@ -41,18 +41,19 @@ const updateRole = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-// const deleteUser = catchAsync(async (req: Request, res: Response) => {
-//     const currentUser = req.user as IRequestUser;
-//     const result = await adminService.deleteUser(req.params.id, currentUser);
-//     sendResponse(res, {
-//         httpStatusCode: status.OK,
-//         success: true,
-//         message: "User deleted successfully",
-//         data: result,
-//     });
-// });
+const deleteUser = catchAsync(async (req: Request, res: Response) => {
+    const currentUser = req.user as IRequestUser;
+    const result = await adminService.deleteUser(req.params.id as string, currentUser);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "User deleted successfully",
+        data: result,
+    });
+});
 export const adminController = {
     getAllUsers,
     getUserById,
-    updateRole
+    updateRole,
+    deleteUser
 }

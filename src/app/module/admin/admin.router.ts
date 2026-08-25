@@ -9,5 +9,5 @@ router.use(authenticate, authorize(Role.ADMIN))
 router.get("/users", adminController.getAllUsers)
 router.get("/users/:id", adminController.getUserById)
 router.patch("/users/:id/role", validateRequest(updateRoleSchema), adminController.updateRole);
-router.delete("users/:id", adminController.deleteUser);
+router.delete("/users/:id", adminController.deleteUser);
 export const adminRouter: Router = router
