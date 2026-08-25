@@ -17,6 +17,17 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
         meta: result.meta,
     });
 });
+const getUserById = catchAsync(async (req: Request, res: Response) => {
+    const result = await adminService.getUserById(req.params.id as string);
+
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "User fetched successfully",
+        data: result,
+    });
+});
 export const adminController = {
-    getAllUsers
+    getAllUsers,
+    getUserById
 }

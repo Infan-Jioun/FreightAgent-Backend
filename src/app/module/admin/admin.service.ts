@@ -1,3 +1,5 @@
+import status from "http-status";
+import AppError from "../../../errorHelper/AppError";
 import { prisma } from "../../../lib/prisma";
 import { IGetUserQuery } from "./admin.interface"
 
@@ -59,6 +61,48 @@ const getAlluser = async (query: IGetUserQuery) => {
     };
 
 }
+const getUserById = async (id: string) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            image: true,
+            emailVerified: true,
+            createdAt: true,
+            shipments: {
+                select: {
+                    id: true,
+                    user: true,
+                    userId: true,
+                    trackingId: true,
+                    status: true,
+                    description: true,
+                    destination: true,
+                    _count: true,
+                    estimatedDate: true,
+                    origin: true,
+                    statusLogs: true,
+                    weight: true,
+                    createdAt: true,
+                    updatedAt: true
+
+                }
+            }
+        }
+    })
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    return {
+        user
+    }
+}
 export const adminService = {
-    getAlluser
+    getAlluser,
+    getUserById
 }

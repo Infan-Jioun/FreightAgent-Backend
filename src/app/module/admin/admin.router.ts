@@ -5,4 +5,5 @@ import { adminController } from "./admin.controller";
 const router = Router();
 router.use(authenticate, authorize(Role.ADMIN))
 router.get("/users", adminController.getAllUsers)
+router.get("/users/:id", adminController.getUserById)
 export const adminRouter: Router = router
