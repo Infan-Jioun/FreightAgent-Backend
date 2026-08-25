@@ -1,7 +1,9 @@
 import status from "http-status";
 import AppError from "../../../errorHelper/AppError";
 import { prisma } from "../../../lib/prisma";
-import { IGetUserQuery } from "./admin.interface"
+import { IGetUserQuery, IRoleUpdate } from "./admin.interface"
+import { IRequestUser } from "../../interface/requestUserInterface";
+import { Role } from "../../../generated/prisma";
 
 
 const getAlluser = async (query: IGetUserQuery) => {
@@ -61,7 +63,11 @@ const getAlluser = async (query: IGetUserQuery) => {
     };
 
 }
-const getUserById = async (id: string) => {
+const getUserById = async (id: string, currentUser: IRequestUser) => {
+    if (currentUser.role !== Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Only admin can access this");
+    }
+
     const user = await prisma.user.findUnique({
         where: {
             id
@@ -102,7 +108,36 @@ const getUserById = async (id: string) => {
         user
     }
 }
+const updateRole = async (payload: IRoleUpdate, currentUser: IRequestUser) => {
+    if (currentUser.role !== Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Only admin can update role");
+    }
+    const user = await prisma.user.findUnique({
+        where: { id: payload.id },
+    });
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    if (user.role === payload.role) {
+        throw new AppError(status.BAD_REQUEST, `User is already ${payload.role}`);
+    }
+    if (payload.id === currentUser.userId) {
+        throw new AppError(status.BAD_REQUEST, "You cannot change your own role");
+    }
+    const updated = await prisma.user.update({
+        where: { id: payload.id },
+        data: { role: payload.role },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+        },
+    });
+    return updated;
+}
 export const adminService = {
     getAlluser,
-    getUserById
+    getUserById,
+    updateRole
 }

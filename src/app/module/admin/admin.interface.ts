@@ -6,3 +6,7 @@ export interface IGetUserQuery {
     role?: Role,
     search?: string
 }
+export interface IRoleUpdate {
+    id : string,
+    role : Role
+}
