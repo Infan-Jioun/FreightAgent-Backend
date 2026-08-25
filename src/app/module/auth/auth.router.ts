@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { authController } from "./auth.controller";
-import { changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyOtpSchema } from "./auth.validations";
+import { adminRegisterSchema, changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyOtpSchema } from "./auth.validations";
 import { validateRequest } from "../../../middleware/validateRequest";
 import { authenticate, authorize } from "../../../middleware/auth";
 import { Role } from "../../../generated/prisma";
-import { loginRateLimit, otpRateLimit, registerRateLimit } from "../../../utils/rateLimit";
+import { adminRegisterRateLimit, loginRateLimit, otpRateLimit, registerRateLimit } from "../../../utils/rateLimit";
 
 const router = Router();
 router.post("/refresh-token", authController.refreshToken);
@@ -17,5 +17,7 @@ router.post("/forgot-password", otpRateLimit, validateRequest(forgotPasswordSche
 router.post("/reset-password", validateRequest(resetPasswordSchema), authController.resetPassword);
 router.get("/me", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), authController.getMe)
 router.post("/change-password/send-otp", otpRateLimit, authenticate, authController.sendChangePasswordOTP);
-router.post("/change-password", authenticate, validateRequest(changePasswordSchema), authController.changePassword);
+router.post("/change-password", authenticate, validateRequest(changePasswordSchema));
+router.post("/create-admin", adminRegisterRateLimit, validateRequest(adminRegisterSchema), authController.createAdmin)
+router.post("/create-agent", registerRateLimit, validateRequest(registerSchema), authController.createAgent)
 export const authRouter: Router = router;

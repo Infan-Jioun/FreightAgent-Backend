@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { IChangePassword, ILoginInput, IRegisterInput } from "./auth.interface";
+import { IChangePassword, ICreateAdmin, ILoginInput, IRegisterInput } from "./auth.interface";
 import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
 import { prisma } from "../../../lib/prisma";
@@ -12,6 +12,9 @@ import { sendEmail } from "../../../utils/email";
 import { JwtTokenUtils } from "../../../utils/jwt";
 import { blacklistToken } from "../../../utils/tokenBlacklist";
 import { envConfig } from "../../../_config/env";
+import { sendWelcomeEmail } from "../../../utils/sendWelcomeEmail";
+
+
 const refreshToken = async (token: string) => {
     if (!token) {
         throw new AppError(status.UNAUTHORIZED, "Refresh token missing");
@@ -28,8 +31,6 @@ const refreshToken = async (token: string) => {
     }
 
     const decoded = result.data;
-
-    //  User exists কিনা check করো
     const userExists = await prisma.user.findUnique({
         where: { id: decoded.userId as string },
         select: {
@@ -93,7 +94,6 @@ const register = async (payload: IRegisterInput) => {
             type: "email-verification"
         }
     });
-
     // const tokenPayload = {
     //     userId: data.user.id,
     //     email: data.user.email,
@@ -226,7 +226,20 @@ const verifyEmail = async (otp: string, email: string) => {
         throw new AppError(status.BAD_REQUEST, "Invalid or expired OTP");
     }
 
-
+    const user = await prisma.user.findUnique({
+        where: { email },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            emailVerified: true,
+        }
+    });
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    await sendWelcomeEmail(user.name, user.email, user.role);
     const tokenPayload = {
         userId: result.user.id,
         email: result.user.email,
@@ -419,6 +432,87 @@ const changePassword = async (payload: IChangePassword, user: IRequestUser) => {
 
     return { accessToken, refreshToken };
 };
+const createAdmin = async (payload: IRegisterInput) => {
+    if (!payload.email || !payload.password || !payload.name) {
+        throw new AppError(status.BAD_REQUEST, "Name, Email and Password are required");
+    }
+    if (await isTempEmail(payload.email)) {
+        throw new AppError(status.BAD_REQUEST, "Temporary emails are not allowed");
+    }
+    const existingUser = await prisma.user.findUnique({
+        where: { email: payload.email }
+    });
+
+    if (existingUser) {
+        throw new AppError(status.CONFLICT, "User already exists with this email");
+    }
+    const adminData = await auth.api.signUpEmail({
+        body: {
+            email: payload.email,
+            name: payload.name,
+            password: payload.password,
+        }
+    });
+
+    await prisma.user.update({
+        where: { email: payload.email },
+        data: { role: Role.ADMIN }
+    });
+    if (!adminData.user) {
+        throw new AppError(status.BAD_REQUEST, "User not created");
+    }
+    await auth.api.sendVerificationOTP({
+        body: {
+            email: payload.email,
+            type: "email-verification"
+        }
+    });
+    console.log(adminData)
+    return {
+        adminData
+    };
+
+}
+const createAgent = async (payload: IRegisterInput) => {
+    if (await isTempEmail(payload.email)) {
+        throw new AppError(status.BAD_REQUEST, "Temporary emails are not allowed");
+    };
+    const existingUser = await prisma.user.findUnique({
+        where: { email: payload.email }
+    });
+    if (existingUser) {
+        throw new AppError(status.CONFLICT, "User already exists with this email");
+    };
+    const data = await auth.api.signUpEmail({
+        body: {
+            name: payload.name,
+            email: payload.email,
+            password: payload.password,
+        }
+    });
+    if (!data.user) {
+        throw new AppError(status.BAD_REQUEST, "Agent not created");
+    }
+    await prisma.user.update({
+        where: { id: data.user.id },
+        data: { role: Role.AGENT }
+    });
+    await auth.api.sendVerificationOTP({
+        body: {
+            email: payload.email,
+            type: "email-verification"
+        }
+    });
+    return {
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        role: Role.AGENT,
+        emailVerified: false,
+    };
+
+}
+
 export const authService = {
     refreshToken,
     register,
@@ -430,5 +524,7 @@ export const authService = {
     forgotPassword,
     resetPassword,
     changePassword,
-    sendChangePasswordOTP
+    sendChangePasswordOTP,
+    createAdmin,
+    createAgent
 };

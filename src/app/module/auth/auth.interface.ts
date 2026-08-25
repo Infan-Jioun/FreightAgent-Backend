@@ -22,3 +22,12 @@ export interface IChangePassword {
     sessionToken?: string;
     otp: string
 }
+export interface ICreateAdmin {
+ 
+    admin: {
+        name: string;
+        email: string;
+        profilePhoto?: string;
+        contactNumber?: string;
+    };
+}

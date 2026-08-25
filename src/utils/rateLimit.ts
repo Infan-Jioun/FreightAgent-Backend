@@ -62,7 +62,7 @@ export const loginRateLimit = createRateLimit(
 export const otpRateLimit = createRateLimit(
     "otp",
     10 * 60 * 1000,
-    3,
+    5,
     "Too many OTP requests. Try again after 10 minutes."
 );
 
@@ -70,6 +70,12 @@ export const otpRateLimit = createRateLimit(
 export const registerRateLimit = createRateLimit(
     "register",
     60 * 60 * 1000,
-    3,
+    5,
     "Too many register attempts. Try again after 1 hour."
+);
+export const adminRegisterRateLimit = createRateLimit(
+    "register",
+    60 * 60 * 1000,
+    5,
+    "Too many admin register attempts. Try again after 1 hour."
 );

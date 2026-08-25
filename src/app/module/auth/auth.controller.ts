@@ -182,6 +182,28 @@ const changePassword = catchAsync(
         });
     }
 );
+const createAdmin = catchAsync(async (req: Request, res: Response) => {
+    const result = authService.createAdmin(req.body);
+    sendResponse(res, {
+        httpStatusCode: status.CREATED,
+        success: true,
+        message: "Successfully Registered Admin! Please verify your email.",
+        data: {
+            user: (await result).adminData
+        }
+    })
+})
+const createAgent = catchAsync(
+    async (req: Request, res: Response) => {
+        const result = await authService.createAgent(req.body);
+        sendResponse(res, {
+            httpStatusCode: status.CREATED,
+            success: true,
+            message: "Agent registered. Please verify your email.",
+            data: { user: result },
+        });
+    }
+);
 export const authController = {
     refreshToken,
     register,
@@ -193,5 +215,7 @@ export const authController = {
     forgotPassword,
     resetPassword,
     sendChangePasswordOTP,
-    changePassword
+    changePassword,
+    createAdmin,
+    createAgent
 };
