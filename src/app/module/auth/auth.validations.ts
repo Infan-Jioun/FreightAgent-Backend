@@ -21,6 +21,19 @@ export const registerSchema = z.object({
         role: z.enum(["CUSTOMER", "AGENT", "ADMIN"]).optional(),
     }),
 });
+export const adminRegisterSchema = z.object({
+    body: z.object({
+        name: requiredString("Name")
+            .min(2, "Name must be at least 2 characters")
+            .max(50, "Name too long"),
+        email: requiredString("Email")
+            .email("Invalid email address"),
+        password: requiredString("Password")
+            .min(8, "Password must be at least 8 characters"),
+         
+        role: z.enum(["CUSTOMER", "AGENT", "ADMIN"]).optional(),
+    }),
+});
 
 export const loginSchema = z.object({
     body: z.object({

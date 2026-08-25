@@ -28,8 +28,6 @@ const refreshToken = async (token: string) => {
     }
 
     const decoded = result.data;
-
-    //  User exists কিনা check করো
     const userExists = await prisma.user.findUnique({
         where: { id: decoded.userId as string },
         select: {
@@ -460,6 +458,45 @@ const createAdmin = async (payload: IRegisterInput) => {
     };
 
 }
+const createAgent = async (payload: IRegisterInput) => {
+    if (await isTempEmail(payload.email)) {
+        throw new AppError(status.BAD_REQUEST, "Temporary emails are not allowed");
+    };
+    const existingUser = await prisma.user.findUnique({
+        where: { email: payload.email }
+    });
+    if (existingUser) {
+        throw new AppError(status.CONFLICT, "User already exists with this email");
+    };
+    const data = await auth.api.signUpEmail({
+        body: {
+            name: payload.name,
+            email: payload.email,
+            password: payload.password,
+        }
+    });
+    if (!data.user) {
+        throw new AppError(status.BAD_REQUEST, "Agent not created");
+    }
+    await prisma.user.update({
+        where: { id: data.user.id },
+        data: { role: Role.AGENT }
+    });
+    await auth.api.sendVerificationOTP({
+        body: {
+            email: payload.email,
+            type: "email-verification"
+        }
+    });
+    return {
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        role: Role.AGENT,
+        emailVerified: false,
+    };
+
+}
 
 export const authService = {
     refreshToken,
@@ -473,5 +510,6 @@ export const authService = {
     resetPassword,
     changePassword,
     sendChangePasswordOTP,
-    createAdmin
+    createAdmin,
+    createAgent
 };
