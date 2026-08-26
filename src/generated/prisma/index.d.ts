@@ -9444,6 +9444,7 @@ export namespace Prisma {
     estimatedDate: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    updateBy: string | null
   }
 
   export type ShipmentMaxAggregateOutputType = {
@@ -9458,6 +9459,7 @@ export namespace Prisma {
     estimatedDate: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    updateBy: string | null
   }
 
   export type ShipmentCountAggregateOutputType = {
@@ -9472,6 +9474,7 @@ export namespace Prisma {
     estimatedDate: number
     createdAt: number
     updatedAt: number
+    updateBy: number
     _all: number
   }
 
@@ -9496,6 +9499,7 @@ export namespace Prisma {
     estimatedDate?: true
     createdAt?: true
     updatedAt?: true
+    updateBy?: true
   }
 
   export type ShipmentMaxAggregateInputType = {
@@ -9510,6 +9514,7 @@ export namespace Prisma {
     estimatedDate?: true
     createdAt?: true
     updatedAt?: true
+    updateBy?: true
   }
 
   export type ShipmentCountAggregateInputType = {
@@ -9524,6 +9529,7 @@ export namespace Prisma {
     estimatedDate?: true
     createdAt?: true
     updatedAt?: true
+    updateBy?: true
     _all?: true
   }
 
@@ -9625,6 +9631,7 @@ export namespace Prisma {
     estimatedDate: Date | null
     createdAt: Date
     updatedAt: Date
+    updateBy: string | null
     _count: ShipmentCountAggregateOutputType | null
     _avg: ShipmentAvgAggregateOutputType | null
     _sum: ShipmentSumAggregateOutputType | null
@@ -9658,6 +9665,7 @@ export namespace Prisma {
     estimatedDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    updateBy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     statusLogs?: boolean | Shipment$statusLogsArgs<ExtArgs>
     _count?: boolean | ShipmentCountOutputTypeDefaultArgs<ExtArgs>
@@ -9675,6 +9683,7 @@ export namespace Prisma {
     estimatedDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    updateBy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shipment"]>
 
@@ -9690,6 +9699,7 @@ export namespace Prisma {
     estimatedDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    updateBy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shipment"]>
 
@@ -9705,9 +9715,10 @@ export namespace Prisma {
     estimatedDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    updateBy?: boolean
   }
 
-  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trackingId" | "userId" | "origin" | "destination" | "weight" | "description" | "status" | "estimatedDate" | "createdAt" | "updatedAt", ExtArgs["result"]["shipment"]>
+  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trackingId" | "userId" | "origin" | "destination" | "weight" | "description" | "status" | "estimatedDate" | "createdAt" | "updatedAt" | "updateBy", ExtArgs["result"]["shipment"]>
   export type ShipmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     statusLogs?: boolean | Shipment$statusLogsArgs<ExtArgs>
@@ -9738,6 +9749,7 @@ export namespace Prisma {
       estimatedDate: Date | null
       createdAt: Date
       updatedAt: Date
+      updateBy: string | null
     }, ExtArgs["result"]["shipment"]>
     composites: {}
   }
@@ -10174,6 +10186,7 @@ export namespace Prisma {
     readonly estimatedDate: FieldRef<"Shipment", 'DateTime'>
     readonly createdAt: FieldRef<"Shipment", 'DateTime'>
     readonly updatedAt: FieldRef<"Shipment", 'DateTime'>
+    readonly updateBy: FieldRef<"Shipment", 'String'>
   }
     
 
@@ -10633,6 +10646,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus | null
     location: string | null
     note: string | null
+    updateBy: string | null
     createdAt: Date | null
   }
 
@@ -10642,6 +10656,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus | null
     location: string | null
     note: string | null
+    updateBy: string | null
     createdAt: Date | null
   }
 
@@ -10651,6 +10666,7 @@ export namespace Prisma {
     status: number
     location: number
     note: number
+    updateBy: number
     createdAt: number
     _all: number
   }
@@ -10662,6 +10678,7 @@ export namespace Prisma {
     status?: true
     location?: true
     note?: true
+    updateBy?: true
     createdAt?: true
   }
 
@@ -10671,6 +10688,7 @@ export namespace Prisma {
     status?: true
     location?: true
     note?: true
+    updateBy?: true
     createdAt?: true
   }
 
@@ -10680,6 +10698,7 @@ export namespace Prisma {
     status?: true
     location?: true
     note?: true
+    updateBy?: true
     createdAt?: true
     _all?: true
   }
@@ -10762,6 +10781,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note: string | null
+    updateBy: string | null
     createdAt: Date
     _count: StatusLogCountAggregateOutputType | null
     _min: StatusLogMinAggregateOutputType | null
@@ -10788,6 +10808,7 @@ export namespace Prisma {
     status?: boolean
     location?: boolean
     note?: boolean
+    updateBy?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["statusLog"]>
@@ -10798,6 +10819,7 @@ export namespace Prisma {
     status?: boolean
     location?: boolean
     note?: boolean
+    updateBy?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["statusLog"]>
@@ -10808,6 +10830,7 @@ export namespace Prisma {
     status?: boolean
     location?: boolean
     note?: boolean
+    updateBy?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["statusLog"]>
@@ -10818,10 +10841,11 @@ export namespace Prisma {
     status?: boolean
     location?: boolean
     note?: boolean
+    updateBy?: boolean
     createdAt?: boolean
   }
 
-  export type StatusLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "status" | "location" | "note" | "createdAt", ExtArgs["result"]["statusLog"]>
+  export type StatusLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "status" | "location" | "note" | "updateBy" | "createdAt", ExtArgs["result"]["statusLog"]>
   export type StatusLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
   }
@@ -10843,6 +10867,7 @@ export namespace Prisma {
       status: $Enums.ShipmentStatus
       location: string
       note: string | null
+      updateBy: string | null
       createdAt: Date
     }, ExtArgs["result"]["statusLog"]>
     composites: {}
@@ -11273,6 +11298,7 @@ export namespace Prisma {
     readonly status: FieldRef<"StatusLog", 'ShipmentStatus'>
     readonly location: FieldRef<"StatusLog", 'String'>
     readonly note: FieldRef<"StatusLog", 'String'>
+    readonly updateBy: FieldRef<"StatusLog", 'String'>
     readonly createdAt: FieldRef<"StatusLog", 'DateTime'>
   }
     
@@ -11810,7 +11836,8 @@ export namespace Prisma {
     status: 'status',
     estimatedDate: 'estimatedDate',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    updateBy: 'updateBy'
   };
 
   export type ShipmentScalarFieldEnum = (typeof ShipmentScalarFieldEnum)[keyof typeof ShipmentScalarFieldEnum]
@@ -11822,6 +11849,7 @@ export namespace Prisma {
     status: 'status',
     location: 'location',
     note: 'note',
+    updateBy: 'updateBy',
     createdAt: 'createdAt'
   };
 
@@ -12432,6 +12460,7 @@ export namespace Prisma {
     estimatedDate?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     updatedAt?: DateTimeFilter<"Shipment"> | Date | string
+    updateBy?: StringNullableFilter<"Shipment"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     statusLogs?: StatusLogListRelationFilter
   }
@@ -12448,6 +12477,7 @@ export namespace Prisma {
     estimatedDate?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    updateBy?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
     statusLogs?: StatusLogOrderByRelationAggregateInput
   }
@@ -12467,6 +12497,7 @@ export namespace Prisma {
     estimatedDate?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     updatedAt?: DateTimeFilter<"Shipment"> | Date | string
+    updateBy?: StringNullableFilter<"Shipment"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     statusLogs?: StatusLogListRelationFilter
   }, "id" | "trackingId">
@@ -12483,6 +12514,7 @@ export namespace Prisma {
     estimatedDate?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    updateBy?: SortOrderInput | SortOrder
     _count?: ShipmentCountOrderByAggregateInput
     _avg?: ShipmentAvgOrderByAggregateInput
     _max?: ShipmentMaxOrderByAggregateInput
@@ -12505,6 +12537,7 @@ export namespace Prisma {
     estimatedDate?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
+    updateBy?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
   }
 
   export type StatusLogWhereInput = {
@@ -12516,6 +12549,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFilter<"StatusLog"> | $Enums.ShipmentStatus
     location?: StringFilter<"StatusLog"> | string
     note?: StringNullableFilter<"StatusLog"> | string | null
+    updateBy?: StringNullableFilter<"StatusLog"> | string | null
     createdAt?: DateTimeFilter<"StatusLog"> | Date | string
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
   }
@@ -12526,6 +12560,7 @@ export namespace Prisma {
     status?: SortOrder
     location?: SortOrder
     note?: SortOrderInput | SortOrder
+    updateBy?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     shipment?: ShipmentOrderByWithRelationInput
   }
@@ -12539,6 +12574,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFilter<"StatusLog"> | $Enums.ShipmentStatus
     location?: StringFilter<"StatusLog"> | string
     note?: StringNullableFilter<"StatusLog"> | string | null
+    updateBy?: StringNullableFilter<"StatusLog"> | string | null
     createdAt?: DateTimeFilter<"StatusLog"> | Date | string
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
   }, "id">
@@ -12549,6 +12585,7 @@ export namespace Prisma {
     status?: SortOrder
     location?: SortOrder
     note?: SortOrderInput | SortOrder
+    updateBy?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: StatusLogCountOrderByAggregateInput
     _max?: StatusLogMaxOrderByAggregateInput
@@ -12564,6 +12601,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusWithAggregatesFilter<"StatusLog"> | $Enums.ShipmentStatus
     location?: StringWithAggregatesFilter<"StatusLog"> | string
     note?: StringNullableWithAggregatesFilter<"StatusLog"> | string | null
+    updateBy?: StringNullableWithAggregatesFilter<"StatusLog"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"StatusLog"> | Date | string
   }
 
@@ -13091,6 +13129,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
     user: UserCreateNestedOneWithoutShipmentsInput
     statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
   }
@@ -13107,6 +13146,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
     statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
   }
 
@@ -13121,6 +13161,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutShipmentsNestedInput
     statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
   }
@@ -13137,6 +13178,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
@@ -13152,6 +13194,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
   }
 
   export type ShipmentUpdateManyMutationInput = {
@@ -13165,6 +13208,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShipmentUncheckedUpdateManyInput = {
@@ -13179,6 +13223,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StatusLogCreateInput = {
@@ -13186,6 +13231,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
+    updateBy?: string | null
     createdAt?: Date | string
     shipment: ShipmentCreateNestedOneWithoutStatusLogsInput
   }
@@ -13196,6 +13242,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
+    updateBy?: string | null
     createdAt?: Date | string
   }
 
@@ -13204,6 +13251,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipment?: ShipmentUpdateOneRequiredWithoutStatusLogsNestedInput
   }
@@ -13214,6 +13262,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13223,6 +13272,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
+    updateBy?: string | null
     createdAt?: Date | string
   }
 
@@ -13231,6 +13281,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13240,6 +13291,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13707,6 +13759,7 @@ export namespace Prisma {
     estimatedDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    updateBy?: SortOrder
   }
 
   export type ShipmentAvgOrderByAggregateInput = {
@@ -13725,6 +13778,7 @@ export namespace Prisma {
     estimatedDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    updateBy?: SortOrder
   }
 
   export type ShipmentMinOrderByAggregateInput = {
@@ -13739,6 +13793,7 @@ export namespace Prisma {
     estimatedDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    updateBy?: SortOrder
   }
 
   export type ShipmentSumOrderByAggregateInput = {
@@ -13782,6 +13837,7 @@ export namespace Prisma {
     status?: SortOrder
     location?: SortOrder
     note?: SortOrder
+    updateBy?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -13791,6 +13847,7 @@ export namespace Prisma {
     status?: SortOrder
     location?: SortOrder
     note?: SortOrder
+    updateBy?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -13800,6 +13857,7 @@ export namespace Prisma {
     status?: SortOrder
     location?: SortOrder
     note?: SortOrder
+    updateBy?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -14464,6 +14522,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
     statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
   }
 
@@ -14478,6 +14537,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
     statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
   }
 
@@ -14613,6 +14673,7 @@ export namespace Prisma {
     estimatedDate?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     updatedAt?: DateTimeFilter<"Shipment"> | Date | string
+    updateBy?: StringNullableFilter<"Shipment"> | string | null
   }
 
   export type ChatSessionUpsertWithWhereUniqueWithoutUserInput = {
@@ -14995,6 +15056,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
+    updateBy?: string | null
     createdAt?: Date | string
   }
 
@@ -15003,6 +15065,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
+    updateBy?: string | null
     createdAt?: Date | string
   }
 
@@ -15080,6 +15143,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFilter<"StatusLog"> | $Enums.ShipmentStatus
     location?: StringFilter<"StatusLog"> | string
     note?: StringNullableFilter<"StatusLog"> | string | null
+    updateBy?: StringNullableFilter<"StatusLog"> | string | null
     createdAt?: DateTimeFilter<"StatusLog"> | Date | string
   }
 
@@ -15094,6 +15158,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
     user: UserCreateNestedOneWithoutShipmentsInput
   }
 
@@ -15109,6 +15174,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
   }
 
   export type ShipmentCreateOrConnectWithoutStatusLogsInput = {
@@ -15138,6 +15204,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutShipmentsNestedInput
   }
 
@@ -15153,6 +15220,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SessionCreateManyUserInput = {
@@ -15191,6 +15259,7 @@ export namespace Prisma {
     estimatedDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    updateBy?: string | null
   }
 
   export type ChatSessionCreateManyUserInput = {
@@ -15286,6 +15355,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
   }
 
@@ -15300,6 +15370,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
@@ -15314,6 +15385,7 @@ export namespace Prisma {
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChatSessionUpdateWithoutUserInput = {
@@ -15372,6 +15444,7 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
+    updateBy?: string | null
     createdAt?: Date | string
   }
 
@@ -15380,6 +15453,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15388,6 +15462,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15396,6 +15471,7 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

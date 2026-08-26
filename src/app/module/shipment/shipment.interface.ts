@@ -13,3 +13,8 @@ export interface IQueryShipment {
     status?: ShipmentStatus;
     search?: string;
 }
+export interface IUpdateShipmentStatus {
+    status: ShipmentStatus,
+    location: string,
+    note?: string
+}

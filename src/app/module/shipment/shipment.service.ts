@@ -4,7 +4,7 @@ import { Role, ShipmentStatus } from "../../../generated/prisma";
 import { prisma } from "../../../lib/prisma";
 import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
-import { ICreateShipment, IQueryShipment } from "./shipment.interface";
+import { ICreateShipment, IQueryShipment, IUpdateShipmentStatus } from "./shipment.interface";
 
 const CACHE_TTL = 60;
 const invalidateShipmentCache = async (userId?: string) => {
@@ -235,10 +235,62 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
 
     return shipment;
 }
+const updateShipmentStatus = async (id: string, payload: IUpdateShipmentStatus, user: IRequestUser) => {
+    const shipment = await prisma.shipment.findUnique({
+        where: { id }
+    });
+    if (!shipment) {
+        throw new AppError(status.NOT_FOUND, "Shipment not found");
+    };
+    if (shipment.status === payload.status) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            `Shipment is already ${payload.status}`
+        );
+    }
+    const [updated] = await prisma.$transaction([
+        prisma.shipment.update({
+            where: { id },
+            data: { status: payload.status },
+            select: {
+                id: true,
+                trackingId: true,
+                status: true,
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        role: true,
+                        email: true,
+                        image: true,
+                        emailVerified: true,
+                        name: true
+                    }
+                }
+            },
+
+
+        }),
+        prisma.statusLog.create({
+            data: {
+                shipmentId: id,
+                status: payload.status,
+                location: payload.location,
+                note: payload.note,
+                updateBy: user.email,
+
+            },
+        }),
+    ]);
+    await invalidateShipmentCache();
+
+    return updated;
+}
 export const shipmentService = {
     createShipment,
     getAllShipments,
     getMyShipments,
     getShipmentById,
+    updateShipmentStatus
 
 }

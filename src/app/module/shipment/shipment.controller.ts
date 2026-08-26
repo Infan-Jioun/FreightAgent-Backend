@@ -4,7 +4,7 @@ import { sendResponse } from "../../../shared/sendResonse";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { shipmentService } from "./shipment.service";
 import { Request, Response } from "express";
-import { IQueryShipment } from "./shipment.interface";
+import { IQueryShipment, IUpdateShipmentStatus } from "./shipment.interface";
 
 const createShipment = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as IRequestUser;
@@ -50,9 +50,22 @@ const getShipmentById = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+const updateShipmentStatus = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user;
+    const payload = req.body;
+    const { id } = req.params;
+    const result = await shipmentService.updateShipmentStatus(id as string, payload as IUpdateShipmentStatus, user as IRequestUser);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Shipment status updated successfully",
+        data: result,
+    });
+});
 export const shipmentController = {
     createShipment,
     getAllShipments,
     getMyShipments,
     getShipmentById,
+    updateShipmentStatus
 }
