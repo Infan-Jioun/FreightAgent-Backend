@@ -7,7 +7,7 @@ const router = Router()
 router.use(authenticate);
 
 router.post("/", authorize(Role.ADMIN, Role.CUSTOMER, Role.CUSTOMER), shipmentController.createShipment)
-router.get("/", authorize(Role.ADMIN, Role.AGENT), getShipmentRateLimit,
-    shipmentController.getAllShipments);
+router.get("/", authorize(Role.ADMIN, Role.AGENT), getShipmentRateLimit, shipmentController.getAllShipments);
+router.get("/my", authorize(Role.CUSTOMER, Role.AGENT, Role.ADMIN),getShipmentRateLimit, shipmentController.getMyShipments);
 router.get("/:id", getShipmentRateLimit, shipmentController.getShipmentById);
 export const shipmentRouter: Router = router;

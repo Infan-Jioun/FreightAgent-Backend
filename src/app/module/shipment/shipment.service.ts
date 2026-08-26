@@ -119,11 +119,72 @@ const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
 
     return result;
 }
+const getMyShipments = async (query: IQueryShipment, user: IRequestUser) => {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit
+    const cacheKey = `shipment:my:${user.userId}:${page}:${limit}:${query.status || "all"}`;
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+        try {
+            return JSON.parse(cached as string);
+        } catch (e) {
+            await redis.del(cacheKey);  // corrupt cache delete করো
+        }
+    }
+    const where: any = { userId: user.userId };
+    if (query.status) {
+        where.status = query.status;
+    }
+    const [shipments, total] = await Promise.all([
+        prisma.shipment.findMany({
+            where,
+            select: {
+                id: true,
+                trackingId: true,
+                origin: true,
+                destination: true,
+                weight: true,
+                status: true,
+                estimatedDate: true,
+                createdAt: true,
+                statusLogs: {
+                    select: {
+                        status: true,
+                        location: true,
+                        note: true,
+                        createdAt: true,
+                    },
+                    orderBy: { createdAt: "desc" },
+                },
+            },
+            orderBy: { createdAt: "desc" },
+            skip,
+            take: limit,
+        }),
+        prisma.shipment.count({ where }),
+    ]);
+    const result = {
+        shipments,
+        meta: {
+            page,
+            limit,
+            total,
+            totalPage: Math.ceil(total / limit),
+        },
+    };
+    await redis.set(cacheKey, JSON.stringify(result), { ex: CACHE_TTL });
+    return result;
+}
 const getShipmentById = async (id: string, user: IRequestUser) => {
     const cacheKey = `shipment:${id}`;
     const cached = await redis.get(cacheKey);
     if (cached) {
-        return JSON.parse(cached as string)
+        try {
+            return JSON.parse(cached as string);
+        } catch (e) {
+            await redis.del(cacheKey);  // corrupt cache delete করো
+        }
     };
     const shipment = await prisma.shipment.findUnique({
         where: { id },
@@ -177,5 +238,7 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
 export const shipmentService = {
     createShipment,
     getAllShipments,
-    getShipmentById
+    getMyShipments,
+    getShipmentById,
+
 }
