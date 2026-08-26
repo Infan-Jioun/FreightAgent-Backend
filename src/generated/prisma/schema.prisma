@@ -147,8 +147,8 @@ model Shipment {
   estimatedDate DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-
-  statusLogs StatusLog[]
+  updateBy      String?
+  statusLogs    StatusLog[]
 
   @@index([userId])
   @@index([status]) //  status দিয়ে filter fast হবে
@@ -163,6 +163,7 @@ model StatusLog {
   status     ShipmentStatus
   location   String
   note       String?
+  updateBy   String?
   createdAt  DateTime       @default(now())
 
   @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে

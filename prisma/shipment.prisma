@@ -11,7 +11,7 @@ model Shipment {
     estimatedDate DateTime?
     createdAt     DateTime       @default(now())
     updatedAt     DateTime       @updatedAt
-
+    updateBy  String?
     statusLogs StatusLog[]
 
     @@index([userId])
@@ -27,6 +27,7 @@ model StatusLog {
     status     ShipmentStatus
     location   String
     note       String?
+    updateBy  String?
     createdAt  DateTime       @default(now())
 
     @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে

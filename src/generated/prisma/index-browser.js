@@ -202,7 +202,8 @@ exports.Prisma.ShipmentScalarFieldEnum = {
   status: 'status',
   estimatedDate: 'estimatedDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  updateBy: 'updateBy'
 };
 
 exports.Prisma.StatusLogScalarFieldEnum = {
@@ -211,6 +212,7 @@ exports.Prisma.StatusLogScalarFieldEnum = {
   status: 'status',
   location: 'location',
   note: 'note',
+  updateBy: 'updateBy',
   createdAt: 'createdAt'
 };
 

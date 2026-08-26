@@ -79,3 +79,32 @@ export const adminRegisterRateLimit = createRateLimit(
     5,
     "Too many admin register attempts. Try again after 1 hour."
 );
+
+// Shipment rate limits
+export const createShipmentRateLimit = createRateLimit(
+    "create-shipment",
+    60 * 60 * 1000, // 1 hour
+    20,
+    "Too many shipment requests. Try again after 1 hour."
+);
+
+export const getShipmentRateLimit = createRateLimit(
+    "get-shipment",
+    60 * 1000, // 1 minute
+    30,
+    "Too many requests. Try again after 1 minute."
+);
+
+export const updateShipmentRateLimit = createRateLimit(
+    "update-shipment",
+    60 * 1000, // 1 minute
+    20,
+    "Too many update requests. Try again after 1 minute."
+);
+
+export const deleteShipmentRateLimit = createRateLimit(
+    "delete-shipment",
+    60 * 60 * 1000, // 1 hour
+    5,
+    "Too many delete requests. Try again after 1 hour."
+);
