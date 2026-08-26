@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import { authenticate, authorize } from "../../../middleware/auth";
 import { shipmentController } from "./shipment.controller";
 import { Role } from "../../../generated/prisma";
-import { getShipmentRateLimit, updateShipmentRateLimit } from "../../../utils/rateLimit";
+import { deleteShipmentRateLimit, getShipmentRateLimit, updateShipmentRateLimit } from "../../../utils/rateLimit";
 import { validateRequest } from "../../../middleware/validateRequest";
 import { updateShipmentStatusSchema } from "./shipment.validation";
 const router = Router()
@@ -13,6 +13,6 @@ router.get("/", authorize(Role.ADMIN, Role.AGENT), getShipmentRateLimit, shipmen
 router.get("/my", authorize(Role.CUSTOMER, Role.AGENT, Role.ADMIN), getShipmentRateLimit, shipmentController.getMyShipments);
 router.get("/:id", getShipmentRateLimit, shipmentController.getShipmentById);
 router.patch("/:id/status", authorize(Role.ADMIN, Role.AGENT), updateShipmentRateLimit,
-validateRequest(updateShipmentStatusSchema), shipmentController.updateShipmentStatus);
-
+    validateRequest(updateShipmentStatusSchema), shipmentController.updateShipmentStatus);
+router.delete("/:id", authorize(Role.ADMIN), deleteShipmentRateLimit, shipmentController.deleteShipment);
 export const shipmentRouter: Router = router;

@@ -286,11 +286,32 @@ const updateShipmentStatus = async (id: string, payload: IUpdateShipmentStatus, 
 
     return updated;
 }
+const deleteShipment = async (id: string) => {
+    const shipment = await prisma.shipment.findUnique({
+        where: { id }
+    })
+    if (!shipment) {
+        throw new AppError(status.NOT_FOUND, "Shipment not found");
+    }
+    if (shipment.status === ShipmentStatus.DELIVERED) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot delete a delivered shipment"
+        );
+    }
+    await prisma.statusLog.deleteMany({ where: { shipmentId: id } });
+    await prisma.shipment.delete({ where: { id } });
+    await invalidateShipmentCache();
+
+    return { message: "Shipment deleted successfully" };
+}
+
 export const shipmentService = {
     createShipment,
     getAllShipments,
     getMyShipments,
     getShipmentById,
-    updateShipmentStatus
+    updateShipmentStatus,
+    deleteShipment
 
 }

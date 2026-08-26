@@ -62,10 +62,20 @@ const updateShipmentStatus = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+const deleteShipment = catchAsync(async (req: Request, res: Response) => {
+    const result = await shipmentService.deleteShipment(req.params.id as string);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Shipment deleted successfully",
+        data: result,
+    });
+});
 export const shipmentController = {
     createShipment,
     getAllShipments,
     getMyShipments,
     getShipmentById,
-    updateShipmentStatus
+    updateShipmentStatus,
+    deleteShipment
 }
