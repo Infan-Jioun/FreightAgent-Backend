@@ -13,6 +13,7 @@ import basicAuth from "express-basic-auth";
 import { envConfig } from './_config/env';
 import { userRouter } from './app/module/user/user.router';
 import { adminRouter } from './app/module/admin/admin.router';
+import { shipmentRouter } from './app/module/shipment/shipment.router';
 dotenv.config();
 const app: Application = express();
 app.use(cors());
@@ -33,6 +34,7 @@ app.use("/api/v1/api-docs", basicAuth({
 );
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/shipment", shipmentRouter);
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({
         status: "ok",
