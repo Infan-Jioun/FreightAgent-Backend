@@ -28,7 +28,18 @@ const getAllShipments = catchAsync(async (req: Request, res: Response) => {
         meta: result.meta,
     });
 });
+const getShipmentById = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user;
+    const result = await shipmentService.getShipmentById(req.params.id as string, user as IRequestUser);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Shipment fetched successfully",
+        data: result,
+    });
+});
 export const shipmentController = {
     createShipment,
-    getAllShipments
+    getAllShipments,
+    getShipmentById
 }

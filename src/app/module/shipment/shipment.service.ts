@@ -1,4 +1,6 @@
-import { ShipmentStatus } from "../../../generated/prisma";
+import status from "http-status";
+import AppError from "../../../errorHelper/AppError";
+import { Role, ShipmentStatus } from "../../../generated/prisma";
 import { prisma } from "../../../lib/prisma";
 import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
@@ -85,7 +87,7 @@ const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
                     },
                     orderBy: { createdAt: "desc" },
                 },
-                user: {   
+                user: {
                     select: {
                         id: true,
                         name: true,
@@ -117,7 +119,63 @@ const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
 
     return result;
 }
+const getShipmentById = async (id: string, user: IRequestUser) => {
+    const cacheKey = `shipment:${id}`;
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+        return JSON.parse(cached as string)
+    };
+    const shipment = await prisma.shipment.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            trackingId: true,
+            origin: true,
+            destination: true,
+            weight: true,
+            description: true,
+            status: true,
+            estimatedDate: true,
+            createdAt: true,
+            updatedAt: true,
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                    role: true,
+                    emailVerified: true
+
+                },
+            },
+            statusLogs: {
+                select: {
+                    id: true,
+                    status: true,
+                    location: true,
+                    note: true,
+                    createdAt: true,
+                },
+                orderBy: { createdAt: "desc" },
+            }
+        }
+    });
+    if (!shipment) {
+        throw new AppError(status.NOT_FOUND, "Shipment not found");
+    }
+    if (
+        user.role === Role.CUSTOMER &&
+        shipment.user.id !== user.userId
+    ) {
+        throw new AppError(status.FORBIDDEN, "Access denied");
+    }
+    await redis.set(cacheKey, JSON.stringify(shipment), { ex: CACHE_TTL });
+
+    return shipment;
+}
 export const shipmentService = {
     createShipment,
-    getAllShipments
+    getAllShipments,
+    getShipmentById
 }

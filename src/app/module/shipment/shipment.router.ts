@@ -8,5 +8,6 @@ router.use(authenticate);
 
 router.post("/", authorize(Role.ADMIN, Role.CUSTOMER, Role.CUSTOMER), shipmentController.createShipment)
 router.get("/", authorize(Role.ADMIN, Role.AGENT), getShipmentRateLimit,
-shipmentController.getAllShipments);
+    shipmentController.getAllShipments);
+router.get("/:id", getShipmentRateLimit, shipmentController.getShipmentById);
 export const shipmentRouter: Router = router;
