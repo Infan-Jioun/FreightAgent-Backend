@@ -2,7 +2,7 @@ import { ShipmentStatus } from "../../../generated/prisma";
 import { prisma } from "../../../lib/prisma";
 import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
-import { ICreateShipment } from "./shipment.interface";
+import { ICreateShipment, IQueryShipment } from "./shipment.interface";
 
 const CACHE_TTL = 60;
 const invalidateShipmentCache = async (userId?: string) => {
@@ -42,7 +42,82 @@ const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
     return shipment
 
 }
+const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const cacheKey = `shipment:all:${page}:${limit}:${query.status || "all"}:${query.search || "none"}`;
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+        if (cached) {
+            return JSON.parse(cached as string)
+        }
+    }
+    const where: any = {};
+    if (query.status) {
+        where.status = query.status
+    }
+    if (query.search) {
+        where.OR = [
+            { trackingId: { contains: query.search, mode: "insensitive" } },
+            { origin: { contains: query.search, mode: "insensitive" } },
+            { destination: { contains: query.search, mode: "insensitive" } },
+        ];
+    }
+    const [shipment, total] = await Promise.all([
+        prisma.shipment.findMany({
+            where,
+            select: {
+                id: true,
+                trackingId: true,
+                origin: true,
+                destination: true,
+                weight: true,
+                status: true,
+                estimatedDate: true,
+                createdAt: true,
+                statusLogs: {
+                    select: {
+                        status: true,
+                        location: true,
+                        note: true,
+                        createdAt: true,
+                    },
+                    orderBy: { createdAt: "desc" },
+                },
+                user: {   
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                        emailVerified: true,
+                        role: true,
+                    }
+                },
+            },
 
+            orderBy: { createdAt: "desc" },
+            skip,
+            take: limit
+        }),
+        prisma.shipment.count({ where })
+
+    ]);
+    const result = {
+        shipment,
+        meta: {
+            page,
+            limit,
+            total,
+            totalPage: Math.ceil(total / limit),
+        },
+    };
+    await redis.set(cacheKey, JSON.stringify(result), { ex: CACHE_TTL });
+
+    return result;
+}
 export const shipmentService = {
-    createShipment
+    createShipment,
+    getAllShipments
 }

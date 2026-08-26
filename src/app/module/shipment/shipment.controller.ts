@@ -4,6 +4,7 @@ import { sendResponse } from "../../../shared/sendResonse";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { shipmentService } from "./shipment.service";
 import { Request, Response } from "express";
+import { IQueryShipment } from "./shipment.interface";
 
 const createShipment = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as IRequestUser;
@@ -15,6 +16,19 @@ const createShipment = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+const getAllShipments = catchAsync(async (req: Request, res: Response) => {
+    const query = req.query
+    const user = req.user
+    const result = await shipmentService.getAllShipments(query as IQueryShipment, user as IRequestUser);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Shipments fetched successfully",
+        data: result.shipment,
+        meta: result.meta,
+    });
+});
 export const shipmentController = {
-    createShipment
+    createShipment,
+    getAllShipments
 }
