@@ -19,7 +19,7 @@ const createShipment = catchAsync(async (req: Request, res: Response) => {
 const getAllShipments = catchAsync(async (req: Request, res: Response) => {
     const query = req.query
     const user = req.user
-    const result = await shipmentService.getAllShipments(query as IQueryShipment, user as IRequestUser);
+    const result = await shipmentService.getAllShipments(query as IQueryShipment);
     sendResponse(res, {
         httpStatusCode: status.OK,
         success: true,
@@ -71,11 +71,22 @@ const deleteShipment = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+const trackShipment = catchAsync(async (req: Request, res: Response) => {
+    const result = await shipmentService.trackShipment(
+        req.params.trackingId as string );
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Shipment tracked successfully",
+        data: result,
+    });
+});
 export const shipmentController = {
     createShipment,
     getAllShipments,
     getMyShipments,
     getShipmentById,
     updateShipmentStatus,
-    deleteShipment
+    deleteShipment,
+    trackShipment
 }

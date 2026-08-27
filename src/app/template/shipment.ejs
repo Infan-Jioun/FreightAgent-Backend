@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shipment Created - FreightAgent</title>
+</head>
+
+<body style="margin:0; padding:0; font-family: 'Segoe UI', Arial, sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0f0f; padding: 40px 0;">
+        <tr>
+            <td align="center">
+                <table width="520" cellpadding="0" cellspacing="0" style="
+                    background: linear-gradient(145deg, #0d1f1f, #112a2a);
+                    border-radius: 16px;
+                    border: 1px solid #1a4a4a;
+                    overflow: hidden;
+                    box-shadow: 0 0 40px rgba(0,200,180,0.08);
+                ">
+                    <!-- Top accent bar -->
+                    <tr>
+                        <td style="height: 4px; background: linear-gradient(90deg, #00c9a7, #00e5c0, #00b4d8);"></td>
+                    </tr>
+
+                    <!-- Logo -->
+                    <tr>
+                        <td align="center" style="padding: 36px 40px 0;">
+                            <div style="
+                                display: inline-block;
+                                background: linear-gradient(135deg, #00c9a7, #00b4d8);
+                                border-radius: 12px;
+                                padding: 10px 20px;
+                            ">
+                                <span style="color: #0a0f0f; font-size: 18px; font-weight: 800; letter-spacing: 1px;">
+                                    ⚓ FreightAgent
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Icon -->
+                    <tr>
+                        <td align="center" style="padding: 28px 40px 0;">
+                            <div style="font-size: 48px;">📦</div>
+                        </td>
+                    </tr>
+
+                    <!-- Title -->
+                    <tr>
+                        <td align="center" style="padding: 16px 40px 0;">
+                            <h1 style="
+                                margin: 0;
+                                color: #e0faf5;
+                                font-size: 24px;
+                                font-weight: 700;
+                                letter-spacing: 0.5px;
+                            ">Shipment Created Successfully!</h1>
+                            <p style="margin: 10px 0 0; color: #7ecfc4; font-size: 14px;">
+                                Hello, <strong style="color:#00e5c0;">
+                                    <%= name %>
+                                </strong>!
+                                Your shipment has been created and is being processed.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Tracking ID Badge -->
+                    <tr>
+                        <td align="center" style="padding: 20px 40px 0;">
+                            <div style="
+                                background: rgba(0,229,192,0.1);
+                                border: 1px solid #00e5c0;
+                                border-radius: 12px;
+                                padding: 12px 24px;
+                            ">
+                                <p style="
+                                    margin: 0 0 4px;
+                                    color: #7ecfc4;
+                                    font-size: 11px;
+                                    letter-spacing: 2px;
+                                    text-transform: uppercase;
+                                ">Tracking ID</p>
+                                <p style="
+                                    margin: 0;
+                                    color: #00e5c0;
+                                    font-size: 20px;
+                                    font-weight: 800;
+                                    letter-spacing: 3px;
+                                ">
+                                    <%= trackingId %>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Shipment Details -->
+                    <tr>
+                        <td align="center" style="padding: 24px 40px;">
+                            <div style="
+                                background: #0a1a1a;
+                                border: 1px solid #1a4a4a;
+                                border-radius: 12px;
+                                padding: 24px 32px;
+                                text-align: left;
+                            ">
+                                <p style="
+                                    margin: 0 0 16px;
+                                    color: #7ecfc4;
+                                    font-size: 12px;
+                                    letter-spacing: 2px;
+                                    text-transform: uppercase;
+                                ">Shipment Details</p>
+
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td style="padding: 8px 0;">
+                                            <span style="color:#3a6b66; font-size:13px;">📍 Origin</span>
+                                        </td>
+                                        <td align="right">
+                                            <span style="color:#00e5c0; font-size:13px; font-weight:600;">
+                                                <%= origin %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#3a6b66; font-size:13px;">🎯 Destination</span>
+                                        </td>
+                                        <td align="right" style="border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#00e5c0; font-size:13px; font-weight:600;">
+                                                <%= destination %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#3a6b66; font-size:13px;">⚖️ Weight</span>
+                                        </td>
+                                        <td align="right" style="border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#00e5c0; font-size:13px; font-weight:600;">
+                                                <%= weight %> kg
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#3a6b66; font-size:13px;">📋 Description</span>
+                                        </td>
+                                        <td align="right" style="border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#00e5c0; font-size:13px; font-weight:600;">
+                                                <%= description || "N/A" %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#3a6b66; font-size:13px;">📅 Estimated Date</span>
+                                        </td>
+                                        <td align="right" style="border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#00e5c0; font-size:13px; font-weight:600;">
+                                                <%= estimatedDate || "TBD" %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#3a6b66; font-size:13px;">🚦 Status</span>
+                                        </td>
+                                        <td align="right" style="border-top: 1px solid #1a4a4a;">
+                                            <span style="
+                                                color: #00e5c0;
+                                                font-size: 13px;
+                                                font-weight: 700;
+                                                background: rgba(0,229,192,0.1);
+                                                padding: 2px 10px;
+                                                border-radius: 10px;
+                                            ">PENDING</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#3a6b66; font-size:13px;">🕒 Created At</span>
+                                        </td>
+                                        <td align="right" style="border-top: 1px solid #1a4a4a;">
+                                            <span style="color:#00e5c0; font-size:13px; font-weight:600;">
+                                                <%= createdAt %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Track Your Shipment Button -->
+                    <tr>
+                        <td align="center" style="padding: 0 40px 28px;">
+                            <div style="
+                                background: #0a1a1a;
+                                border: 1px solid #1a4a4a;
+                                border-radius: 12px;
+                                padding: 24px 32px;
+                                text-align: center;
+                            ">
+                                <p style="
+                                    margin: 0 0 6px;
+                                    color: #7ecfc4;
+                                    font-size: 12px;
+                                    letter-spacing: 2px;
+                                    text-transform: uppercase;
+                                ">Real-time Tracking</p>
+                                <p style="
+                                    margin: 0 0 18px;
+                                    color: #3a6b66;
+                                    font-size: 13px;
+                                ">
+                                    Follow your shipment's journey from origin to destination.
+                                </p>
+                                <a href="<%= trackUrl %>" target="_blank" style="
+                                    display: inline-block;
+                                    background: linear-gradient(135deg, #00c9a7, #00b4d8);
+                                    color: #0a0f0f;
+                                    text-decoration: none;
+                                    font-size: 14px;
+                                    font-weight: 800;
+                                    letter-spacing: 1px;
+                                    padding: 13px 36px;
+                                    border-radius: 10px;
+                                ">
+                                    🚢 Track Your Shipment
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Info -->
+                    <tr>
+                        <td align="center" style="padding: 0 40px 24px;">
+                            <div style="
+                                background: rgba(0,180,216,0.08);
+                                border-left: 3px solid #00b4d8;
+                                border-radius: 6px;
+                                padding: 12px 16px;
+                                text-align: left;
+                            ">
+                                <p style="margin:0; color:#7ecfc4; font-size:13px;">
+                                    📬 You will receive email updates when your
+                                    shipment status changes. Keep your
+                                    <strong style="color:#00e5c0;">Tracking ID</strong> safe.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Divider -->
+                    <tr>
+                        <td style="padding: 0 40px;">
+                            <hr style="border:none; border-top:1px solid #1a4a4a;" />
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="padding: 20px 40px 32px;">
+                            <p style="margin:0; color:#3a6b66; font-size:12px;">
+                                Thank you for choosing FreightAgent.<br />
+                                &copy; 2026 FreightAgent. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

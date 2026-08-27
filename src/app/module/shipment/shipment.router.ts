@@ -15,4 +15,5 @@ router.get("/:id", getShipmentRateLimit, shipmentController.getShipmentById);
 router.patch("/:id/status", authorize(Role.ADMIN, Role.AGENT), updateShipmentRateLimit,
     validateRequest(updateShipmentStatusSchema), shipmentController.updateShipmentStatus);
 router.delete("/:id", authorize(Role.ADMIN), deleteShipmentRateLimit, shipmentController.deleteShipment);
+router.get("/track/:trackingId", getShipmentRateLimit, shipmentController.trackShipment);
 export const shipmentRouter: Router = router;
