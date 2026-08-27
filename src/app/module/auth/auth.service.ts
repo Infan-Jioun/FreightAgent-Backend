@@ -159,6 +159,7 @@ const loginUser = async (payload: ILoginInput) => {
         userId: customer.id,
         email: customer.email,
         role: customer.role,
+        name: customer.name,
     };
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);
@@ -294,7 +295,8 @@ const getMe = async (user: IRequestUser) => {
                         orderBy: { createdAt: "desc" }, // latest log আগে
                     },
                 },
-                orderBy: { createdAt: "desc" }, // latest shipment আগে
+                orderBy: { createdAt: "desc" },
+                take: 10
             },
         },
     });
@@ -315,13 +317,14 @@ const forgotPassword = async (email: string) => {
         throw new AppError(status.NOT_FOUND, "User not found")
     }
     if (!userExits.emailVerified) {
-        throw new AppError(status.BAD_REQUEST, "Eamil Not Verfied ")
+        throw new AppError(status.BAD_REQUEST, "Eamil Not Verfied")
     }
     await auth.api.requestPasswordResetEmailOTP({
         body: {
             email
         }
     })
+    return { message: "OTP sent to your email" };
 }
 const resetPassword = async (email: string, otp: string, newPassword: string) => {
     const userExits = await prisma.user.findUnique({
@@ -347,20 +350,24 @@ const resetPassword = async (email: string, otp: string, newPassword: string) =>
     await prisma.session.deleteMany({
         where: { userId: userExits.id }
     });
-    await sendEmail({
-        to: email,
-        subject: "Password Changed Successfully - FreightAgent",
-        templateName: "passwordChanged", // ← নতুন template
-        templateData: {
-            name: userExits.name ?? "User",
-            email: userExits.email,
-            time: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Dhaka",
-                dateStyle: "medium",
-                timeStyle: "short",
-            }),
-        },
-    });
+    try {
+        await sendEmail({
+            to: email,
+            subject: "Password Changed Successfully - FreightAgent",
+            templateName: "passwordChanged", // ← নতুন template
+            templateData: {
+                name: userExits.name ?? "User",
+                email: userExits.email,
+                time: new Date().toLocaleString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                }),
+            },
+        });
+    } catch (error) {
+        console.error("Email failed:", error);
+    }
 };
 // Send OTP
 const sendChangePasswordOTP = async (user: IRequestUser) => {
@@ -410,6 +417,7 @@ const changePassword = async (payload: IChangePassword, user: IRequestUser) => {
         email: user.email,
         role: user.role,
         emailVerified: user.emailVerified,
+
     };
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);
