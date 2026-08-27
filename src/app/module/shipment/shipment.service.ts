@@ -265,19 +265,34 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
 
     return shipment;
 }
-const updateShipmentStatus = async (id: string, payload: IUpdateShipmentStatus, user: IRequestUser) => {
+const updateShipmentStatus = async (
+    id: string,
+    payload: IUpdateShipmentStatus,
+    user: IRequestUser
+) => {
     const shipment = await prisma.shipment.findUnique({
-        where: { id }
+        where: { id },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    email: true,
+                },
+            },
+        },
     });
+
     if (!shipment) {
         throw new AppError(status.NOT_FOUND, "Shipment not found");
-    };
+    }
+
     if (shipment.status === payload.status) {
         throw new AppError(
             status.BAD_REQUEST,
             `Shipment is already ${payload.status}`
         );
     }
+
     const [updated] = await prisma.$transaction([
         prisma.shipment.update({
             where: { id },
@@ -294,12 +309,10 @@ const updateShipmentStatus = async (id: string, payload: IUpdateShipmentStatus, 
                         email: true,
                         image: true,
                         emailVerified: true,
-                        name: true
-                    }
-                }
+                        name: true,
+                    },
+                },
             },
-
-
         }),
         prisma.statusLog.create({
             data: {
@@ -307,15 +320,34 @@ const updateShipmentStatus = async (id: string, payload: IUpdateShipmentStatus, 
                 status: payload.status,
                 location: payload.location,
                 note: payload.note,
-                updateBy: user.email,
-
+                updateBy: user.name,
             },
         }),
     ]);
+
     await invalidateShipmentCache();
+    await sendEmail({
+        to: shipment.user.email,
+        subject: `Shipment Status Updated: ${payload.status} - FreightAgent`,
+        templateName: "shipmentStatus",
+        templateData: {
+            name: shipment.user.name,
+            trackingId: shipment.trackingId,
+            previousStatus: shipment.status,  
+            newStatus: payload.status,     
+            location: payload.location,
+            note: payload.note || "N/A",
+            updatedBy: user.email,
+            updatedAt: new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Dhaka",
+                dateStyle: "medium",
+                timeStyle: "short",
+            }),
+        },
+    });
 
     return updated;
-}
+};
 const deleteShipment = async (id: string) => {
     const shipment = await prisma.shipment.findUnique({
         where: { id }
