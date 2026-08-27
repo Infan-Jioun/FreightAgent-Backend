@@ -5,6 +5,7 @@ import { prisma } from "../../../lib/prisma";
 import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { ICreateShipment, IQueryShipment, IUpdateShipmentStatus } from "./shipment.interface";
+import { sendEmail } from "../../../utils/email";
 
 const CACHE_TTL = 60;
 const invalidateShipmentCache = async (userId?: string) => {
@@ -26,7 +27,6 @@ const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
                 : null,
             userId: user.userId,
             status: ShipmentStatus.PENDING,
-
         },
         select: {
             id: true,
@@ -38,12 +38,42 @@ const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
             status: true,
             estimatedDate: true,
             createdAt: true,
-        }
+        },
     });
-    await invalidateShipmentCache();
-    return shipment
 
-}
+    await invalidateShipmentCache();
+    const dbUser = await prisma.user.findUnique({
+        where: { id: user.userId },
+        select: { name: true, email: true },
+    });
+
+    await sendEmail({
+        to: dbUser?.email!,
+        subject: "Shipment Created Successfully - FreightAgent 📦",
+        templateName: "shipment",
+        templateData: {
+            name: dbUser?.name ?? "User",
+            trackingId: shipment.trackingId,
+            origin: shipment.origin,
+            destination: shipment.destination,
+            weight: shipment.weight,
+            description: shipment.description,
+            estimatedDate: shipment.estimatedDate
+                ? new Date(shipment.estimatedDate).toLocaleDateString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    dateStyle: "medium",
+                })
+                : null,
+            createdAt: new Date(shipment.createdAt).toLocaleString("en-US", {
+                timeZone: "Asia/Dhaka",
+                dateStyle: "medium",
+                timeStyle: "short",
+            }),
+        },
+    });
+
+    return shipment;
+};
 const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
