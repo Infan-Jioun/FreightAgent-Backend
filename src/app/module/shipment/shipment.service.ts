@@ -401,7 +401,13 @@ const deleteShipment = async (id: string) => {
 const trackShipment = async (trackingId: string) => {
     const cacheKey = `shipment:track:${trackingId}`;
     const cached = await redis.get(cacheKey);
-    if (cached) return JSON.parse(cached as string);
+    if (cached) {
+        try {
+            return JSON.parse(cached as string);
+        } catch (e) {
+            await redis.del(cacheKey);  
+        }
+    }
 
     const shipment = await prisma.shipment.findUnique({
         where: { trackingId },
