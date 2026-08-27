@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shipment Status Updated - FreightAgent</title>
 </head>
+
 <body style="margin:0; padding:0; font-family: 'Segoe UI', Arial, sans-serif;">
 
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0f0f; padding: 40px 0;">
@@ -48,14 +50,13 @@
                     <!-- Title -->
                     <tr>
                         <td align="center" style="padding: 16px 40px 0;">
-                            <h1 style="
-                                margin: 0;
-                                color: #e0faf5;
-                                font-size: 24px;
-                                font-weight: 700;
-                            ">Shipment Status Updated!</h1>
+                            <h1 style="margin: 0; color: #e0faf5; font-size: 24px; font-weight: 700;">
+                                Shipment Status Updated!
+                            </h1>
                             <p style="margin: 10px 0 0; color: #7ecfc4; font-size: 14px;">
-                                Hello, <strong style="color:#00e5c0;"><%= name %></strong>!
+                                Hello, <strong style="color:#00e5c0;">
+                                    <%= name %>
+                                </strong>!
                                 Your shipment status has been updated.
                             </p>
                         </td>
@@ -70,20 +71,14 @@
                                 border-radius: 12px;
                                 padding: 12px 24px;
                             ">
-                                <p style="
-                                    margin: 0 0 4px;
-                                    color: #7ecfc4;
-                                    font-size: 11px;
-                                    letter-spacing: 2px;
-                                    text-transform: uppercase;
-                                ">Tracking ID</p>
-                                <p style="
-                                    margin: 0;
-                                    color: #00e5c0;
-                                    font-size: 20px;
-                                    font-weight: 800;
-                                    letter-spacing: 3px;
-                                "><%= trackingId %></p>
+                                <p
+                                    style="margin: 0 0 4px; color: #7ecfc4; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;">
+                                    Tracking ID
+                                </p>
+                                <p
+                                    style="margin: 0; color: #00e5c0; font-size: 18px; font-weight: 800; letter-spacing: 3px;">
+                                    <%= trackingId %>
+                                </p>
                             </div>
                         </td>
                     </tr>
@@ -93,33 +88,33 @@
                         <td align="center" style="padding: 24px 40px 0;">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <!-- Previous Status -->
                                     <td align="center" width="40%" style="
                                         background: rgba(255,107,107,0.1);
                                         border: 1px solid #ff6b6b;
                                         border-radius: 10px;
                                         padding: 12px;
                                     ">
-                                        <p style="margin:0 0 4px; color:#3a6b66; font-size:11px; text-transform:uppercase; letter-spacing:1px;">Previous</p>
-                                        <p style="margin:0; color:#ff6b6b; font-size:13px; font-weight:700; text-decoration: line-through;">
+                                        <p
+                                            style="margin:0 0 4px; color:#3a6b66; font-size:11px; text-transform:uppercase; letter-spacing:1px;">
+                                            Previous</p>
+                                        <p
+                                            style="margin:0; color:#ff6b6b; font-size:12px; font-weight:700; text-decoration:line-through;">
                                             <%= previousStatus %>
                                         </p>
                                     </td>
-
-                                    <!-- Arrow -->
                                     <td align="center" width="20%">
                                         <span style="color:#00e5c0; font-size:24px;">→</span>
                                     </td>
-
-                                    <!-- New Status -->
                                     <td align="center" width="40%" style="
                                         background: rgba(0,229,192,0.1);
                                         border: 1px solid #00e5c0;
                                         border-radius: 10px;
                                         padding: 12px;
                                     ">
-                                        <p style="margin:0 0 4px; color:#3a6b66; font-size:11px; text-transform:uppercase; letter-spacing:1px;">New</p>
-                                        <p style="margin:0; color:#00e5c0; font-size:13px; font-weight:700;">
+                                        <p
+                                            style="margin:0 0 4px; color:#3a6b66; font-size:11px; text-transform:uppercase; letter-spacing:1px;">
+                                            New</p>
+                                        <p style="margin:0; color:#00e5c0; font-size:12px; font-weight:700;">
                                             <%= newStatus %>
                                         </p>
                                     </td>
@@ -138,14 +133,10 @@
                                 padding: 24px 32px;
                                 text-align: left;
                             ">
-                                <p style="
-                                    margin: 0 0 16px;
-                                    color: #7ecfc4;
-                                    font-size: 12px;
-                                    letter-spacing: 2px;
-                                    text-transform: uppercase;
-                                ">Update Details</p>
-
+                                <p
+                                    style="margin: 0 0 16px; color: #7ecfc4; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">
+                                    Update Details
+                                </p>
                                 <table width="100%" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td style="padding: 8px 0;">
@@ -167,13 +158,19 @@
                                             </span>
                                         </td>
                                     </tr>
+
+                                    <!-- ✅ Updated By Name + Email -->
                                     <tr>
                                         <td style="padding: 8px 0; border-top: 1px solid #1a4a4a;">
                                             <span style="color:#3a6b66; font-size:13px;">👤 Updated By</span>
                                         </td>
                                         <td align="right" style="border-top: 1px solid #1a4a4a;">
                                             <span style="color:#00e5c0; font-size:13px; font-weight:600;">
-                                                <%= updatedBy %>
+                                                <%= updatedByName %>
+                                            </span>
+                                            <br />
+                                            <span style="color:#3a6b66; font-size:11px;">
+                                                <%= updatedByEmail %>
                                             </span>
                                         </td>
                                     </tr>
@@ -192,6 +189,23 @@
                         </td>
                     </tr>
 
+                    <!-- ✅ Track Button -->
+                    <tr>
+                        <td align="center" style="padding: 0 40px 24px;">
+                            <a href="<%= trackUrl %>/track/<%= trackingId %>" style="
+                                display: inline-block;
+                                background: linear-gradient(135deg, #00c9a7, #00b4d8);
+                                color: #0a0f0f;
+                                font-size: 14px;
+                                font-weight: 800;
+                                text-decoration: none;
+                                padding: 12px 32px;
+                                border-radius: 8px;
+                                letter-spacing: 1px;
+                            ">🔍 Track Your Shipment</a>
+                        </td>
+                    </tr>
+
                     <!-- Info -->
                     <tr>
                         <td align="center" style="padding: 0 40px 24px;">
@@ -203,9 +217,8 @@
                                 text-align: left;
                             ">
                                 <p style="margin:0; color:#7ecfc4; font-size:13px;">
-                                    📬 You will continue to receive updates as your
-                                    shipment progresses. Track using your
-                                    <strong style="color:#00e5c0;">Tracking ID</strong>.
+                                    📬 You will continue to receive updates as your shipment progresses.
+                                    Track using your <strong style="color:#00e5c0;">Tracking ID</strong>.
                                 </p>
                             </div>
                         </td>
@@ -234,4 +247,5 @@
     </table>
 
 </body>
+
 </html>

@@ -71,11 +71,22 @@ const deleteShipment = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+const trackShipment = catchAsync(async (req: Request, res: Response) => {
+    const result = await shipmentService.trackShipment(
+        req.params.trackingId as string );
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Shipment tracked successfully",
+        data: result,
+    });
+});
 export const shipmentController = {
     createShipment,
     getAllShipments,
     getMyShipments,
     getShipmentById,
     updateShipmentStatus,
-    deleteShipment
+    deleteShipment,
+    trackShipment
 }

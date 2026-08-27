@@ -43,6 +43,7 @@ export const authenticate = async (
             userId: decoded.userId as string,
             email: decoded.email as string,
             role: decoded.role as Role,
+            name: decoded.name as string,
             image: decoded.image as string | null,
             emailVerified: decoded.emailVerified as boolean,
             createdAt: decoded.createdAt as Date,

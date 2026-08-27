@@ -6,6 +6,8 @@ import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { ICreateShipment, IQueryShipment, IUpdateShipmentStatus } from "./shipment.interface";
 import { sendEmail } from "../../../utils/email";
+import { envConfig } from "../../../_config/env";
+import { STATUS_ORDER } from "../../../utils/statusOrder";
 
 const CACHE_TTL = 60;
 const invalidateShipmentCache = async (userId?: string) => {
@@ -265,6 +267,8 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
 
     return shipment;
 }
+
+
 const updateShipmentStatus = async (
     id: string,
     payload: IUpdateShipmentStatus,
@@ -290,6 +294,30 @@ const updateShipmentStatus = async (
         throw new AppError(
             status.BAD_REQUEST,
             `Shipment is already ${payload.status}`
+        );
+    }
+
+    if (shipment.status === "DELIVERED") {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot update a delivered shipment"
+        );
+    }
+
+    if (shipment.status === "CANCELLED") {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot update a cancelled shipment"
+        );
+    }
+
+    const currentIndex = STATUS_ORDER.indexOf(shipment.status);
+    const newIndex = STATUS_ORDER.indexOf(payload.status);
+
+    if (newIndex < currentIndex && payload.status !== "CANCELLED") {
+        throw new AppError(
+            status.BAD_REQUEST,
+            `Cannot change status from ${shipment.status} back to ${payload.status}`
         );
     }
 
@@ -326,6 +354,7 @@ const updateShipmentStatus = async (
     ]);
 
     await invalidateShipmentCache();
+
     await sendEmail({
         to: shipment.user.email,
         subject: `Shipment Status Updated: ${payload.status} - FreightAgent`,
@@ -333,18 +362,20 @@ const updateShipmentStatus = async (
         templateData: {
             name: shipment.user.name,
             trackingId: shipment.trackingId,
-            previousStatus: shipment.status,  
-            newStatus: payload.status,     
+            previousStatus: shipment.status,
+            newStatus: payload.status,
             location: payload.location,
             note: payload.note || "N/A",
-            updatedBy: user.email,
+            updatedByName: user.name,
+            updatedByEmail: user.email,
+            trackUrl: `${envConfig.FRONTEND_URL}/dashboard/tracking`,
             updatedAt: new Date().toLocaleString("en-US", {
                 timeZone: "Asia/Dhaka",
                 dateStyle: "medium",
                 timeStyle: "short",
             }),
         },
-    });
+    });;
 
     return updated;
 };
@@ -367,13 +398,50 @@ const deleteShipment = async (id: string) => {
 
     return { message: "Shipment deleted successfully" };
 }
+const trackShipment = async (trackingId: string) => {
+    const cacheKey = `shipment:track:${trackingId}`;
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached as string);
 
+    const shipment = await prisma.shipment.findUnique({
+        where: { trackingId },
+        select: {
+            id: true,
+            trackingId: true,
+            origin: true,
+            destination: true,
+            weight: true,
+            status: true,
+            estimatedDate: true,
+            createdAt: true,
+            statusLogs: {
+                select: {
+                    id: true,
+                    status: true,
+                    location: true,
+                    note: true,
+                    updateBy: true,
+                    createdAt: true,
+                },
+                orderBy: { createdAt: "desc" },
+            },
+        },
+    });
+
+    if (!shipment) {
+        throw new AppError(status.NOT_FOUND, "Shipment not found");
+    }
+
+    await redis.set(cacheKey, JSON.stringify(shipment), { ex: 30 });
+
+    return shipment;
+};
 export const shipmentService = {
     createShipment,
     getAllShipments,
     getMyShipments,
     getShipmentById,
     updateShipmentStatus,
-    deleteShipment
-
+    deleteShipment,
+    trackShipment
 }
