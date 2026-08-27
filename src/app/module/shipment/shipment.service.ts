@@ -1,6 +1,6 @@
 import status from "http-status";
 import AppError from "../../../errorHelper/AppError";
-import { Role, ShipmentStatus } from "../../../generated/prisma";
+import { Prisma, Role, ShipmentStatus } from "../../../generated/prisma";
 import { prisma } from "../../../lib/prisma";
 import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
@@ -8,14 +8,9 @@ import { ICreateShipment, IQueryShipment, IUpdateShipmentStatus } from "./shipme
 import { sendEmail } from "../../../utils/email";
 import { envConfig } from "../../../_config/env";
 import { STATUS_ORDER } from "../../../utils/statusOrder";
+import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
 
 const CACHE_TTL = 60;
-const invalidateShipmentCache = async (userId?: string) => {
-    const keys = await redis.keys("shipment");
-    if (keys.length > 0) {
-        await Promise.all(keys.map((key) => redis.del(key)))
-    }
-}
 
 const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
     const shipment = await prisma.shipment.create({
@@ -44,52 +39,61 @@ const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
     });
 
     await invalidateShipmentCache();
-    const dbUser = await prisma.user.findUnique({
-        where: { id: user.userId },
-        select: { name: true, email: true },
-    });
+    if (!user.email) {
+        console.warn("User email not found, skipping email.");
+        return shipment;
+    }
 
-    await sendEmail({
-        to: dbUser?.email!,
-        subject: "Shipment Created Successfully - FreightAgent 📦",
-        templateName: "shipment",
-        templateData: {
-            name: dbUser?.name ?? "User",
-            trackingId: shipment.trackingId,
-            origin: shipment.origin,
-            destination: shipment.destination,
-            weight: shipment.weight,
-            description: shipment.description,
-            estimatedDate: shipment.estimatedDate
-                ? new Date(shipment.estimatedDate).toLocaleDateString("en-US", {
+    try {
+        await sendEmail({
+            to: user.email,
+            subject: "Shipment Created Successfully - FreightAgent 📦",
+            templateName: "shipment",
+            templateData: {
+                name: user.name ?? "User",
+                trackingId: shipment.trackingId,
+                origin: shipment.origin,
+                destination: shipment.destination,
+                weight: shipment.weight,
+                description: shipment.description,
+                trackUrl: `${envConfig.FRONTEND_URL}/dashboard/tracking`,
+                estimatedDate: shipment.estimatedDate
+                    ? new Date(shipment.estimatedDate).toLocaleDateString("en-US", {
+                        timeZone: "Asia/Dhaka",
+                        dateStyle: "medium",
+                    })
+                    : null,
+                createdAt: new Date(shipment.createdAt).toLocaleString("en-US", {
                     timeZone: "Asia/Dhaka",
                     dateStyle: "medium",
-                })
-                : null,
-            createdAt: new Date(shipment.createdAt).toLocaleString("en-US", {
-                timeZone: "Asia/Dhaka",
-                dateStyle: "medium",
-                timeStyle: "short",
-            }),
-        },
-    });
+                    timeStyle: "short",
+                }),
+            },
+        });
+    } catch (err) {
+        console.error("Shipment creation email failed:", err);
+    }
 
     return shipment;
 };
-const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
+
+const getAllShipments = async (query: IQueryShipment) => {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const skip = (page - 1) * limit;
     const cacheKey = `shipment:all:${page}:${limit}:${query.status || "all"}:${query.search || "none"}`;
+
     const cached = await redis.get(cacheKey);
     if (cached) {
-        if (cached) {
-            return JSON.parse(cached as string)
+        try {
+            return JSON.parse(cached as string);
+        } catch (e) {
+            await redis.del(cacheKey);
         }
     }
-    const where: any = {};
+    const where: Prisma.ShipmentWhereInput = {};
     if (query.status) {
-        where.status = query.status
+        where.status = query.status;
     }
     if (query.search) {
         where.OR = [
@@ -98,6 +102,7 @@ const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
             { destination: { contains: query.search, mode: "insensitive" } },
         ];
     }
+
     const [shipment, total] = await Promise.all([
         prisma.shipment.findMany({
             where,
@@ -127,17 +132,16 @@ const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
                         image: true,
                         emailVerified: true,
                         role: true,
-                    }
+                    },
                 },
             },
-
             orderBy: { createdAt: "desc" },
             skip,
-            take: limit
+            take: limit,
         }),
-        prisma.shipment.count({ where })
-
+        prisma.shipment.count({ where }),
     ]);
+
     const result = {
         shipment,
         meta: {
@@ -147,27 +151,32 @@ const getAllShipments = async (query: IQueryShipment, user: IRequestUser) => {
             totalPage: Math.ceil(total / limit),
         },
     };
+
     await redis.set(cacheKey, JSON.stringify(result), { ex: CACHE_TTL });
 
     return result;
-}
+};
+
 const getMyShipments = async (query: IQueryShipment, user: IRequestUser) => {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
     const cacheKey = `shipment:my:${user.userId}:${page}:${limit}:${query.status || "all"}`;
+
     const cached = await redis.get(cacheKey);
     if (cached) {
         try {
             return JSON.parse(cached as string);
         } catch (e) {
-            await redis.del(cacheKey);  // corrupt cache delete করো
+            await redis.del(cacheKey);
         }
     }
-    const where: any = { userId: user.userId };
+
+    const where: Prisma.ShipmentWhereInput = { userId: user.userId };
     if (query.status) {
         where.status = query.status;
     }
+
     const [shipments, total] = await Promise.all([
         prisma.shipment.findMany({
             where,
@@ -196,6 +205,7 @@ const getMyShipments = async (query: IQueryShipment, user: IRequestUser) => {
         }),
         prisma.shipment.count({ where }),
     ]);
+
     const result = {
         shipments,
         meta: {
@@ -205,19 +215,32 @@ const getMyShipments = async (query: IQueryShipment, user: IRequestUser) => {
             totalPage: Math.ceil(total / limit),
         },
     };
+
     await redis.set(cacheKey, JSON.stringify(result), { ex: CACHE_TTL });
+
     return result;
-}
+};
+
 const getShipmentById = async (id: string, user: IRequestUser) => {
     const cacheKey = `shipment:${id}`;
+
     const cached = await redis.get(cacheKey);
     if (cached) {
         try {
-            return JSON.parse(cached as string);
+            const cachedShipment = JSON.parse(cached as string);
+            if (
+                user.role === Role.CUSTOMER &&
+                cachedShipment.user.id !== user.userId
+            ) {
+                throw new AppError(status.FORBIDDEN, "Access denied");
+            }
+
+            return cachedShipment;
         } catch (e) {
-            await redis.del(cacheKey);  // corrupt cache delete করো
+            if (e instanceof AppError) throw e; // AppError re-throw করো
+            await redis.del(cacheKey);
         }
-    };
+    }
     const shipment = await prisma.shipment.findUnique({
         where: { id },
         select: {
@@ -238,8 +261,7 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
                     email: true,
                     image: true,
                     role: true,
-                    emailVerified: true
-
+                    emailVerified: true,
                 },
             },
             statusLogs: {
@@ -251,23 +273,22 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
                     createdAt: true,
                 },
                 orderBy: { createdAt: "desc" },
-            }
-        }
+            },
+        },
     });
+
     if (!shipment) {
         throw new AppError(status.NOT_FOUND, "Shipment not found");
     }
-    if (
-        user.role === Role.CUSTOMER &&
-        shipment.user.id !== user.userId
-    ) {
+
+    if (user.role === Role.CUSTOMER && shipment.user.id !== user.userId) {
         throw new AppError(status.FORBIDDEN, "Access denied");
     }
+
     await redis.set(cacheKey, JSON.stringify(shipment), { ex: CACHE_TTL });
 
     return shipment;
-}
-
+};
 
 const updateShipmentStatus = async (
     id: string,
@@ -291,30 +312,21 @@ const updateShipmentStatus = async (
     }
 
     if (shipment.status === payload.status) {
-        throw new AppError(
-            status.BAD_REQUEST,
-            `Shipment is already ${payload.status}`
-        );
+        throw new AppError(status.BAD_REQUEST, `Shipment is already ${payload.status}`);
     }
 
-    if (shipment.status === "DELIVERED") {
-        throw new AppError(
-            status.BAD_REQUEST,
-            "Cannot update a delivered shipment"
-        );
+    if (shipment.status === ShipmentStatus.DELIVERED) {
+        throw new AppError(status.BAD_REQUEST, "Cannot update a delivered shipment");
     }
 
-    if (shipment.status === "CANCELLED") {
-        throw new AppError(
-            status.BAD_REQUEST,
-            "Cannot update a cancelled shipment"
-        );
+    if (shipment.status === ShipmentStatus.CANCELLED) {
+        throw new AppError(status.BAD_REQUEST, "Cannot update a cancelled shipment");
     }
 
     const currentIndex = STATUS_ORDER.indexOf(shipment.status);
     const newIndex = STATUS_ORDER.indexOf(payload.status);
 
-    if (newIndex < currentIndex && payload.status !== "CANCELLED") {
+    if (newIndex < currentIndex && payload.status !== ShipmentStatus.CANCELLED) {
         throw new AppError(
             status.BAD_REQUEST,
             `Cannot change status from ${shipment.status} back to ${payload.status}`
@@ -354,58 +366,66 @@ const updateShipmentStatus = async (
     ]);
 
     await invalidateShipmentCache();
-
-    await sendEmail({
-        to: shipment.user.email,
-        subject: `Shipment Status Updated: ${payload.status} - FreightAgent`,
-        templateName: "shipmentStatus",
-        templateData: {
-            name: shipment.user.name,
-            trackingId: shipment.trackingId,
-            previousStatus: shipment.status,
-            newStatus: payload.status,
-            location: payload.location,
-            note: payload.note || "N/A",
-            updatedByName: user.name,
-            updatedByEmail: user.email,
-            trackUrl: `${envConfig.FRONTEND_URL}/dashboard/tracking`,
-            updatedAt: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Dhaka",
-                dateStyle: "medium",
-                timeStyle: "short",
-            }),
-        },
-    });;
+    try {
+        await sendEmail({
+            to: shipment.user.email,
+            subject: `Shipment Status Updated: ${payload.status} - FreightAgent`,
+            templateName: "shipmentStatus",
+            templateData: {
+                name: shipment.user.name,
+                trackingId: shipment.trackingId,
+                previousStatus: shipment.status,
+                newStatus: payload.status,
+                location: payload.location,
+                note: payload.note || "N/A",
+                updatedByName: user.name,
+                updatedByEmail: user.email,
+                trackUrl: `${envConfig.FRONTEND_URL}/dashboard/tracking`,
+                updatedAt: new Date().toLocaleString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                }),
+            },
+        });
+    } catch (err) {
+        console.error("Status update email failed:", err);
+    }
 
     return updated;
 };
+
 const deleteShipment = async (id: string) => {
-    const shipment = await prisma.shipment.findUnique({
-        where: { id }
-    })
+    const shipment = await prisma.shipment.findUnique({ where: { id } });
+
     if (!shipment) {
         throw new AppError(status.NOT_FOUND, "Shipment not found");
     }
+
     if (shipment.status === ShipmentStatus.DELIVERED) {
-        throw new AppError(
-            status.BAD_REQUEST,
-            "Cannot delete a delivered shipment"
-        );
+        throw new AppError(status.BAD_REQUEST, "Cannot delete a delivered shipment");
     }
-    await prisma.statusLog.deleteMany({ where: { shipmentId: id } });
-    await prisma.shipment.delete({ where: { id } });
+
+
+    await prisma.$transaction([
+        prisma.statusLog.deleteMany({ where: { shipmentId: id } }),
+        prisma.shipment.delete({ where: { id } }),
+    ]);
+
     await invalidateShipmentCache();
 
     return { message: "Shipment deleted successfully" };
-}
+};
+
 const trackShipment = async (trackingId: string) => {
     const cacheKey = `shipment:track:${trackingId}`;
+
     const cached = await redis.get(cacheKey);
     if (cached) {
         try {
             return JSON.parse(cached as string);
         } catch (e) {
-            await redis.del(cacheKey);  
+            await redis.del(cacheKey);
         }
     }
 
@@ -442,6 +462,7 @@ const trackShipment = async (trackingId: string) => {
 
     return shipment;
 };
+
 export const shipmentService = {
     createShipment,
     getAllShipments,
@@ -449,5 +470,5 @@ export const shipmentService = {
     getShipmentById,
     updateShipmentStatus,
     deleteShipment,
-    trackShipment
-}
+    trackShipment,
+};
