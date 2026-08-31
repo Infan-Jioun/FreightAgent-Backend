@@ -115,6 +115,7 @@ const register = async (payload: IRegisterInput) => {
     };
 };
 
+
 const loginUser = async (payload: ILoginInput) => {
     const result = await auth.api.signInEmail({
         body: {
@@ -129,15 +130,17 @@ const loginUser = async (payload: ILoginInput) => {
     }
 
     if (!result.user.emailVerified) {
+
         await auth.api.sendVerificationOTP({
             body: {
                 email: payload.email as string,
-                type: "email-verification"
-            }
+                type: "email-verification",
+            },
         });
+
         throw new AppError(
             status.FORBIDDEN,
-            "Email not verified. OTP sent to your email. Please verify first."
+            "Email not verified. OTP sent to your email."
         );
     }
 
@@ -164,7 +167,7 @@ const loginUser = async (payload: ILoginInput) => {
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);
     const refreshToken = tokenUtils.getRefreshToken(tokenPayload);
-    const sessionToken = result.token; // ← BetterAuth session token
+    const sessionToken = result.token;
 
     return {
         user: customer,
@@ -305,6 +308,9 @@ const getMe = async (user: IRequestUser) => {
         throw new AppError(status.NOT_FOUND, "User not found!");
     }
 
+    if (!existingUser.emailVerified) {
+        throw new AppError(status.FORBIDDEN, "Email not verified");
+    }
     return existingUser;
 };
 const forgotPassword = async (email: string) => {
@@ -520,6 +526,72 @@ const createAgent = async (payload: IRegisterInput) => {
     };
 
 }
+// auth.service.ts
+const googleCallback = async (betterAuthUser: any) => {
+    let user = await prisma.user.findUnique({
+        where: { email: betterAuthUser.email },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            emailVerified: true,
+            image: true,
+        },
+    });
+
+    const isNewUser = !user;
+
+    if (isNewUser) {
+        await prisma.user.update({
+            where: { email: betterAuthUser.email },
+            data: {
+                role: Role.CUSTOMER,
+                emailVerified: true,
+            },
+        });
+
+        user = await prisma.user.findUnique({
+            where: { email: betterAuthUser.email },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                emailVerified: true,
+                image: true,
+            },
+        });
+
+        if (!user) {
+            throw new AppError(status.NOT_FOUND, "User not found after Google signup");
+        }
+
+        try {
+            await sendWelcomeEmail(user.name, user.email, user.role);
+        } catch (err) {
+            console.error("Welcome email failed:", err);
+        }
+    }
+
+    if (!user) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    const tokenPayload = {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        emailVerified: user.emailVerified,
+        image: user.image,
+    };
+
+    const accessToken = tokenUtils.getAccessToken(tokenPayload);
+    const refreshToken = tokenUtils.getRefreshToken(tokenPayload);
+
+    return { user, accessToken, refreshToken, isNewUser };
+};
 
 export const authService = {
     refreshToken,
@@ -534,5 +606,6 @@ export const authService = {
     changePassword,
     sendChangePasswordOTP,
     createAdmin,
-    createAgent
+    createAgent,
+    googleCallback
 };

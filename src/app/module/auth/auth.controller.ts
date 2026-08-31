@@ -7,6 +7,7 @@ import { auth } from "../../../lib/auth";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { tokenUtils } from "../../../utils/token";
 import AppError from "../../../errorHelper/AppError";
+import { envConfig } from "../../../_config/env";
 
 
 const refreshToken = catchAsync(
@@ -204,6 +205,100 @@ const createAgent = catchAsync(
         });
     }
 );
+
+const googleLogin = async (req: Request, res: Response) => {
+    try {
+
+        const response = await auth.api.signInSocial({
+            body: {
+                provider: "google",
+                callbackURL: `${envConfig.BETTER_AUTH_URL}/api/auth/callback/google`,
+            },
+            headers: req.headers as any,
+            asResponse: true,
+        });
+
+        const location = response.headers.get("location");
+        if (location) return res.redirect(location);
+
+        res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_init_failed`);
+    } catch (err) {
+        console.error("Google login error:", err);
+        res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_init_failed`);
+    }
+};
+// const googleSuccess = catchAsync(async (req: Request, res: Response) => {
+//     try {
+//         const session = await auth.api.getSession({
+//             headers: req.headers as any,
+//         });
+//         console.log("Headers:", req.headers);
+//         console.log("Cookies:", req.cookies);
+//         if (!session?.user) {
+//             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_failed`);
+//         }
+
+//         const { accessToken, refreshToken, isNewUser } =
+//             await authService.googleCallback(session.user);
+
+//         tokenUtils.setAccessTokenCookie(res, req, accessToken);
+//         tokenUtils.setRefreshTokenCookie(res, refreshToken);
+
+//         res.redirect(
+//             isNewUser
+//                 ? `${envConfig.FRONTEND_URL}/dashboard?welcome=true`
+//                 : `${envConfig.FRONTEND_URL}/dashboard`
+//         );
+//     } catch (err) {
+//         console.error("Google success error:", err);
+//         res.redirect(`${envConfig.FRONTEND_URL}/login?error=server_error`);
+//     }
+// });
+const googleCallback = catchAsync(async (req: Request, res: Response) => {
+    // ✅ Better Auth নিজেই /api/auth/callback/google handle করে
+    // এই route শুধু session থেকে user নিয়ে JWT দেবে
+    const session = await auth.api.getSession({
+        headers: req.headers as any,
+    });
+
+    if (!session?.user) {
+        return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_failed`);
+    }
+
+    const { accessToken, refreshToken, isNewUser } =
+        await authService.googleCallback(session.user);
+
+    tokenUtils.setAccessTokenCookie(res, req, accessToken);
+    tokenUtils.setRefreshTokenCookie(res, refreshToken);
+
+    res.redirect(
+        isNewUser
+            ? `${envConfig.FRONTEND_URL}/dashboard?welcome=true`
+            : `${envConfig.FRONTEND_URL}/dashboard`
+    );
+});
+const googleJWT = catchAsync(async (req: Request, res: Response) => {
+    // Better Auth callback এর পরে frontend এই route call করবে
+    const session = await auth.api.getSession({
+        headers: req.headers as any,
+    });
+
+    if (!session?.user) {
+        return res.status(401).json({ error: "No session found" });
+    }
+
+    const { user, accessToken, refreshToken, isNewUser } =
+        await authService.googleCallback(session.user);
+
+    tokenUtils.setAccessTokenCookie(res, req, accessToken);
+    tokenUtils.setRefreshTokenCookie(res, refreshToken);
+
+    res.status(200).json({
+        success: true,
+        user,
+        isNewUser,
+    });
+});
 export const authController = {
     refreshToken,
     register,
@@ -217,5 +312,9 @@ export const authController = {
     sendChangePasswordOTP,
     changePassword,
     createAdmin,
-    createAgent
+    createAgent,
+    googleLogin,
+    // googleSuccess,
+    googleCallback,
+    googleJWT
 };

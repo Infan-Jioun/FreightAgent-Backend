@@ -25,6 +25,8 @@ interface EnvConfig {
     SWAGGER_PASS: string;
     UPSTASH_REDIS_REST_URL: string;
     UPSTASH_REDIS_REST_TOKEN: string;
+    GOOGLE_CLIENT_ID: string;
+    GOOGLE_CLIENT_SECRET: string;
 }
 
 const loadVariabales = (): EnvConfig => {
@@ -49,7 +51,9 @@ const loadVariabales = (): EnvConfig => {
         "SWAGGER_USER",
         "SWAGGER_PASS",
         "UPSTASH_REDIS_REST_URL",
-        "UPSTASH_REDIS_REST_TOKEN"
+        "UPSTASH_REDIS_REST_TOKEN",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET"
     ];
 
     requirementVariables.forEach((variable) => {
@@ -82,7 +86,9 @@ const loadVariabales = (): EnvConfig => {
         SWAGGER_USER: process.env.SWAGGER_USER as string,
         SWAGGER_PASS: process.env.SWAGGER_PASS as string,
         UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL as string,
-        UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN as string
+        UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN as string,
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
+        GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string
     };
 };
 

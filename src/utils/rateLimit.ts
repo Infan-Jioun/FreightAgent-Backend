@@ -13,10 +13,23 @@ const createUpstashStore = (prefix: string, ttlSeconds: number) => ({
     async increment(key: string) {
         const redisKey = `${prefix}:${key}`;
         const count = await redis.incr(redisKey);
+
+        // ttl = seconds until THIS client's window actually resets.
+        // On the first hit we just set it. On later hits we have to read
+        // back the *remaining* ttl — otherwise resetTime drifts to "now"
+        // on every single request, which is the bug this replaces.
+        let ttl = ttlSeconds;
         if (count === 1) {
             await redis.expire(redisKey, ttlSeconds);
+        } else {
+            const remaining = await redis.ttl(redisKey);
+            if (remaining && remaining > 0) ttl = remaining;
         }
-        return { totalHits: count, resetTime: new Date() };
+
+        return {
+            totalHits: count,
+            resetTime: new Date(Date.now() + ttl * 1000),
+        };
     },
     async decrement(key: string) {
         await redis.decr(`${prefix}:${key}`);
@@ -39,11 +52,25 @@ const createRateLimit = (
         store: createUpstashStore(prefix, windowMs / 1000) as any,
         keyGenerator,
         handler: (req: Request, res: Response) => {
+            // express-rate-limit attaches this itself: { limit, used, remaining, resetTime }
+            const info = (req as any).rateLimit as
+                | { limit: number; used: number; remaining: number; resetTime?: Date }
+                | undefined;
+
+            const retryAfter = info?.resetTime
+                ? Math.max(1, Math.ceil((info.resetTime.getTime() - Date.now()) / 1000))
+                : Math.ceil(windowMs / 1000);
+
+            res.setHeader("Retry-After", retryAfter);
+
             sendResponse(res, {
                 httpStatusCode: status.TOO_MANY_REQUESTS,
                 success: false,
                 message,
-                data: null,
+                data: {
+                    retryAfter,                 // seconds left before they can retry
+                    limit: info?.limit ?? max,  // how many attempts the window allows
+                },
             });
         },
         standardHeaders: true,
