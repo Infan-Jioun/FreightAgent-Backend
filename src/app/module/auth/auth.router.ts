@@ -5,8 +5,10 @@ import { validateRequest } from "../../../middleware/validateRequest";
 import { authenticate, authorize } from "../../../middleware/auth";
 import { Role } from "../../../generated/prisma";
 import { adminRegisterRateLimit, loginRateLimit, otpRateLimit, registerRateLimit } from "../../../utils/rateLimit";
-
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "../../../lib/auth";
 const router = Router();
+// router.all("/better-auth/*splat", toNodeHandler(auth));
 router.post("/refresh-token", authController.refreshToken);
 router.post("/register", registerRateLimit, validateRequest(registerSchema), authController.register);
 router.post("/login", loginRateLimit, validateRequest(loginSchema), authController.loginUser);
@@ -20,4 +22,7 @@ router.post("/change-password/send-otp", otpRateLimit, authenticate, authControl
 router.post("/change-password", authenticate, validateRequest(changePasswordSchema));
 router.post("/create-admin", adminRegisterRateLimit, validateRequest(adminRegisterSchema), authController.createAdmin)
 router.post("/create-agent", registerRateLimit, validateRequest(registerSchema), authController.createAgent)
+router.get("/google", authController.googleLogin);
+// router.get("/google/success", authController.googleSuccess);
+router.get("/google/callback", authController.googleCallback);
 export const authRouter: Router = router;

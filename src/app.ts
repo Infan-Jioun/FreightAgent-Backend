@@ -14,9 +14,33 @@ import { envConfig } from './_config/env';
 import { userRouter } from './app/module/user/user.router';
 import { adminRouter } from './app/module/admin/admin.router';
 import { shipmentRouter } from './app/module/shipment/shipment.router';
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from './lib/auth';
 dotenv.config();
 const app: Application = express();
-app.use(cors());
+app.set("trust proxy", 1);
+app.use((req, res, next) => {
+    if (req.path.includes('/api/auth')) {
+        console.log('=== AUTH REQUEST ===');
+        console.log('Path:', req.path);
+        console.log('Cookies:', req.headers.cookie);
+        console.log('Set-Cookie response:', res.getHeaders()['set-cookie']);
+    }
+    next();
+});
+app.use(
+    cors({
+        origin: [
+            "http://localhost:3000",
+            envConfig.FRONTEND_URL || "http://localhost:3000",
+        ],
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    })
+);
+
+app.all("/api/auth/{*path}", toNodeHandler(auth));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

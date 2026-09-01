@@ -3,7 +3,7 @@ import AppError from "../../../errorHelper/AppError";
 import { prisma } from "../../../lib/prisma";
 import { IGetUserQuery, IRoleUpdate } from "./admin.interface"
 import { IRequestUser } from "../../interface/requestUserInterface";
-import { Role } from "../../../generated/prisma";
+import { Prisma, Role } from "../../../generated/prisma";
 import { sendEmail } from "../../../utils/email";
 
 
@@ -11,7 +11,7 @@ const getAlluser = async (query: IGetUserQuery) => {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const skip = (page - 1) * limit;
-    const where: any = {}
+    const where: Prisma.UserWhereInput = {};
 
     if (query.role) {
         where.role = query.role
@@ -25,7 +25,7 @@ const getAlluser = async (query: IGetUserQuery) => {
             },
             {
                 email: {
-                    constains: query.search, mode: "insensitive"
+                    contains: query.search, mode: "insensitive"
                 }
             }
         ]
@@ -84,21 +84,23 @@ const getUserById = async (id: string, currentUser: IRequestUser) => {
             shipments: {
                 select: {
                     id: true,
-                    user: true,
+                    // user: true,
                     userId: true,
                     trackingId: true,
                     status: true,
                     description: true,
                     destination: true,
-                    _count: true,
+                    // _count: true,
                     estimatedDate: true,
                     origin: true,
-                    statusLogs: true,
+                    // statusLogs: true,
                     weight: true,
                     createdAt: true,
                     updatedAt: true
 
-                }
+                },
+                orderBy: { createdAt: "desc" },
+                take: 10
             }
         }
     })
@@ -135,21 +137,25 @@ const updateRole = async (payload: IRoleUpdate, currentUser: IRequestUser) => {
             role: true,
         },
     });
-    await sendEmail({
-        to: user.email,
-        subject: "Your Role Has Been Updated - FreightAgent",
-        templateName: "roleUpdate",
-        templateData: {
-            name: user.name,
-            previousRole: user.role,   
-            newRole: payload.role,     
-            time: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Dhaka",
-                dateStyle: "medium",
-                timeStyle: "short",
-            }),
-        },
-    });
+    try {
+        await sendEmail({
+            to: user.email,
+            subject: "Your Role Has Been Updated - FreightAgent",
+            templateName: "roleUpdate",
+            templateData: {
+                name: user.name,
+                previousRole: user.role,
+                newRole: payload.role,
+                time: new Date().toLocaleString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                }),
+            },
+        });
+    } catch (error) {
+        console.error("Role update email failed:", error);
+    }
     return updated;
 };
 const deleteUser = async (id: string, currentUser: IRequestUser) => {
@@ -171,9 +177,15 @@ const deleteUser = async (id: string, currentUser: IRequestUser) => {
     if (user.role === Role.ADMIN) {
         throw new AppError(status.FORBIDDEN, "Cannot delete an admin user");
     }
-    await prisma.session.deleteMany({ where: { userId: id } });
-    await prisma.account.deleteMany({ where: { userId: id } });
-    await prisma.user.delete({ where: { id } });
+    await prisma.$transaction([
+        prisma.statusLog.deleteMany({
+            where: { shipment: { userId: id } }
+        }),
+        prisma.shipment.deleteMany({ where: { userId: id } }),
+        prisma.session.deleteMany({ where: { userId: id } }),
+        prisma.account.deleteMany({ where: { userId: id } }),
+        prisma.user.delete({ where: { id } }),
+    ]);
 
     return { message: "User deleted successfully" };
 };
