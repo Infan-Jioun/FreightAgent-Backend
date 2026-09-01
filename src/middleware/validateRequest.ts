@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, ZodObject } from "zod";
-import { sendResposne } from "../shared/sendResonse";
+import { sendResponse } from "../shared/sendResonse";
 import status from "http-status";
 
 type AnyZodObject = ZodObject<any, any>;
@@ -12,7 +12,7 @@ export const validateRequest = (schema: AnyZodObject) => {
             next();
         } catch (error) {
             if (error instanceof ZodError) {
-                return sendResposne(res, {
+                return sendResponse(res, {
                     httpStatusCode: status.NOT_FOUND,
                     success: false,
                     message: error.message,

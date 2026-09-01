@@ -1,0 +1,41 @@
+model ChatSession {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title     String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    messages ChatMessage[] //  JSON থেকে proper relation এ নিলাম
+
+    @@index([userId])
+    @@map("chat_sessions")
+}
+
+//  নতুন — JSON এর বদলে proper Message model
+// sort, paginate, delete individual message সব easy হবে
+model ChatMessage {
+    id        String      @id @default(uuid())
+    sessionId String
+    session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    role      String // "user" | "assistant" | "system"
+    content   String      @db.Text
+    createdAt DateTime    @default(now())
+
+    @@index([sessionId, createdAt]) //  chronological fetch fast হবে
+    @@map("chat_messages")
+}
+
+//  KnowledgeChunk — embedding column add করা (pgvector)
+model KnowledgeChunk {
+    id        String   @id @default(uuid())
+    content   String   @db.Text
+    source    String
+    category  String?
+    // embedding  Unsupported("vector(1536)")?   // pgvector enable করলে uncomment করো
+    createdAt DateTime @default(now())
+
+    @@index([source])
+    @@index([category])
+    @@map("knowledge_chunks")
+}

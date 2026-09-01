@@ -1,18 +1,19 @@
 model User {
-    id        String   @id
-    email     String   @unique
-    name      String
-    role      Role     @default(CUSTOMER)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id            String   @id // Better Auth নিজে set করে
+    email         String   @unique
+    name          String
+    role          Role     @default(CUSTOMER)
+    emailVerified Boolean  @default(false)
+    image         String?
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 
+    sessions Session[]
+    accounts Account[]
+
+    // Business relations
     shipments    Shipment[]
     chatSessions ChatSession[]
-
-    emailVerified Boolean   @default(false)
-    image         String?
-    sessions      Session[]
-    accounts      Account[]
 
     @@map("users")
 }

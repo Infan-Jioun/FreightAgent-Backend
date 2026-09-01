@@ -1,43 +1,19 @@
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
-}
-
-datasource db {
-  provider = "postgresql"
-}
-
-enum Role {
-  ADMIN
-  AGENT
-  CUSTOMER
-}
-
-enum ShipmentStatus {
-  PENDING
-  PICKED_UP
-  IN_TRANSIT
-  AT_CUSTOMS
-  OUT_FOR_DELIVERY
-  DELIVERED
-  CANCELLED
-}
-
 model User {
-  id        String   @id
-  email     String   @unique
-  name      String
-  role      Role     @default(CUSTOMER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id // Better Auth নিজে set করে
+  email         String   @unique
+  name          String
+  role          Role     @default(CUSTOMER)
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
+  sessions Session[]
+  accounts Account[]
+
+  // Business relations
   shipments    Shipment[]
   chatSessions ChatSession[]
-
-  emailVerified Boolean   @default(false)
-  image         String?
-  sessions      Session[]
-  accounts      Account[]
 
   @@map("users")
 }
@@ -95,21 +71,67 @@ model ChatSession {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String?
-  messages  Json     @default("[]")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  messages ChatMessage[] //  JSON থেকে proper relation এ নিলাম
+
+  @@index([userId])
   @@map("chat_sessions")
 }
 
+//  নতুন — JSON এর বদলে proper Message model
+// sort, paginate, delete individual message সব easy হবে
+model ChatMessage {
+  id        String      @id @default(uuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String // "user" | "assistant" | "system"
+  content   String      @db.Text
+  createdAt DateTime    @default(now())
+
+  @@index([sessionId, createdAt]) //  chronological fetch fast হবে
+  @@map("chat_messages")
+}
+
+//  KnowledgeChunk — embedding column add করা (pgvector)
 model KnowledgeChunk {
   id        String   @id @default(uuid())
-  content   String
+  content   String   @db.Text
   source    String
   category  String?
+  // embedding  Unsupported("vector(1536)")?   // pgvector enable করলে uncomment করো
   createdAt DateTime @default(now())
 
+  @@index([source])
+  @@index([category])
   @@map("knowledge_chunks")
+}
+
+enum Role {
+  ADMIN
+  AGENT
+  CUSTOMER
+}
+
+enum ShipmentStatus {
+  PENDING
+  PICKED_UP
+  IN_TRANSIT
+  AT_CUSTOMS
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+  // previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"
 }
 
 model Shipment {
@@ -125,9 +147,12 @@ model Shipment {
   estimatedDate DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  updateBy      String?
+  statusLogs    StatusLog[]
 
-  statusLogs StatusLog[]
-
+  @@index([userId])
+  @@index([status]) //  status দিয়ে filter fast হবে
+  @@index([trackingId]) //  tracking lookup fast
   @@map("shipments")
 }
 
@@ -138,7 +163,9 @@ model StatusLog {
   status     ShipmentStatus
   location   String
   note       String?
+  updateBy   String?
   createdAt  DateTime       @default(now())
 
+  @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে
   @@map("status_logs")
 }

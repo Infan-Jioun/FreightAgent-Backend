@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.8.0
- * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+ * Prisma Client JS version: 7.9.1
+ * Query Engine version: e922089b7d7502aff4249d5da3420f6fa55fc6ad
  */
 Prisma.prismaVersion = {
-  client: "7.8.0",
-  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
+  client: "7.9.1",
+  engine: "e922089b7d7502aff4249d5da3420f6fa55fc6ad"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -125,10 +125,10 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   name: 'name',
   role: 'role',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   emailVerified: 'emailVerified',
-  image: 'image'
+  image: 'image',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SessionScalarFieldEnum = {
@@ -171,9 +171,16 @@ exports.Prisma.ChatSessionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   title: 'title',
-  messages: 'messages',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  role: 'role',
+  content: 'content',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.KnowledgeChunkScalarFieldEnum = {
@@ -195,7 +202,8 @@ exports.Prisma.ShipmentScalarFieldEnum = {
   status: 'status',
   estimatedDate: 'estimatedDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  updateBy: 'updateBy'
 };
 
 exports.Prisma.StatusLogScalarFieldEnum = {
@@ -204,16 +212,13 @@ exports.Prisma.StatusLogScalarFieldEnum = {
   status: 'status',
   location: 'location',
   note: 'note',
+  updateBy: 'updateBy',
   createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
-};
-
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -224,12 +229,6 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
-};
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
 };
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
@@ -253,6 +252,7 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   ChatSession: 'ChatSession',
+  ChatMessage: 'ChatMessage',
   KnowledgeChunk: 'KnowledgeChunk',
   Shipment: 'Shipment',
   StatusLog: 'StatusLog'

@@ -11,8 +11,25 @@ model Shipment {
     estimatedDate DateTime?
     createdAt     DateTime       @default(now())
     updatedAt     DateTime       @updatedAt
-
+    updateBy  String?
     statusLogs StatusLog[]
 
+    @@index([userId])
+    @@index([status]) //  status দিয়ে filter fast হবে
+    @@index([trackingId]) //  tracking lookup fast
     @@map("shipments")
+}
+
+model StatusLog {
+    id         String         @id @default(uuid())
+    shipmentId String
+    shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+    status     ShipmentStatus
+    location   String
+    note       String?
+    updateBy  String?
+    createdAt  DateTime       @default(now())
+
+    @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে
+    @@map("status_logs")
 }
