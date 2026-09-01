@@ -8,6 +8,7 @@ import { IRequestUser } from "../../interface/requestUserInterface";
 import { tokenUtils } from "../../../utils/token";
 import AppError from "../../../errorHelper/AppError";
 import { envConfig } from "../../../_config/env";
+import crypto from "crypto";
 
 
 const refreshToken = catchAsync(
@@ -206,98 +207,109 @@ const createAgent = catchAsync(
     }
 );
 
+
+// ✅ State store — simple in-memory (production এ Redis use করো)
+const stateStore = new Map<string, { createdAt: number }>();
+
 const googleLogin = async (req: Request, res: Response) => {
     try {
+        const state = crypto.randomBytes(16).toString("hex");
 
-        const response = await auth.api.signInSocial({
-            body: {
-                provider: "google",
-                callbackURL: `${envConfig.BETTER_AUTH_URL}/api/auth/callback/google`,
-            },
-            headers: req.headers as any,
-            asResponse: true,
+        // State store করো
+        stateStore.set(state, { createdAt: Date.now() });
+
+        // 10 মিনিট পরে clean করো
+        setTimeout(() => stateStore.delete(state), 10 * 60 * 1000);
+
+        const params = new URLSearchParams({
+            client_id: envConfig.GOOGLE_CLIENT_ID,
+            redirect_uri: `${envConfig.BETTER_AUTH_URL}/api/v1/auth/google/callback`,
+            response_type: "code",
+            scope: "openid email profile",
+            state,
+            access_type: "offline",
+            prompt: "select_account",
         });
 
-        const location = response.headers.get("location");
-        if (location) return res.redirect(location);
+        const googleUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 
-        res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_init_failed`);
+        console.log("Redirecting to Google:", googleUrl);
+        res.redirect(googleUrl);
     } catch (err) {
         console.error("Google login error:", err);
         res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_init_failed`);
     }
 };
-// const googleSuccess = catchAsync(async (req: Request, res: Response) => {
-//     try {
-//         const session = await auth.api.getSession({
-//             headers: req.headers as any,
-//         });
-//         console.log("Headers:", req.headers);
-//         console.log("Cookies:", req.cookies);
-//         if (!session?.user) {
-//             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_failed`);
-//         }
 
-//         const { accessToken, refreshToken, isNewUser } =
-//             await authService.googleCallback(session.user);
-
-//         tokenUtils.setAccessTokenCookie(res, req, accessToken);
-//         tokenUtils.setRefreshTokenCookie(res, refreshToken);
-
-//         res.redirect(
-//             isNewUser
-//                 ? `${envConfig.FRONTEND_URL}/dashboard?welcome=true`
-//                 : `${envConfig.FRONTEND_URL}/dashboard`
-//         );
-//     } catch (err) {
-//         console.error("Google success error:", err);
-//         res.redirect(`${envConfig.FRONTEND_URL}/login?error=server_error`);
-//     }
-// });
 const googleCallback = catchAsync(async (req: Request, res: Response) => {
-    // ✅ Better Auth নিজেই /api/auth/callback/google handle করে
-    // এই route শুধু session থেকে user নিয়ে JWT দেবে
-    const session = await auth.api.getSession({
-        headers: req.headers as any,
-    });
+    try {
+        const { code, state, error } = req.query;
 
-    if (!session?.user) {
-        return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_failed`);
+        console.log("Google callback received:", { code: !!code, state, error });
+
+        if (error) {
+            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_denied`);
+        }
+
+        if (!code || !state) {
+            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_callback`);
+        }
+
+        // ✅ State verify করো
+        if (!stateStore.has(state as string)) {
+            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_state`);
+        }
+        stateStore.delete(state as string);
+
+        // ✅ Google token exchange
+        const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                code: code as string,
+                client_id: envConfig.GOOGLE_CLIENT_ID,
+                client_secret: envConfig.GOOGLE_CLIENT_SECRET,
+                redirect_uri: `${envConfig.BETTER_AUTH_URL}/api/v1/auth/google/callback`,
+                grant_type: "authorization_code",
+            }),
+        });
+
+        const tokenData = await tokenRes.json();
+        console.log("Token exchange:", tokenRes.status);
+
+        if (!tokenData.access_token) {
+            console.error("Token error:", tokenData);
+            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=token_failed`);
+        }
+
+        // ✅ Google user info নাও
+        const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` },
+        });
+
+        const googleUser = await userRes.json();
+        console.log("Google user:", googleUser);
+
+        if (!googleUser.email) {
+            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=no_email`);
+        }
+
+        // ✅ JWT token generate করো
+        const { accessToken, refreshToken, isNewUser } =
+            await authService.googleCallback(googleUser);
+
+        tokenUtils.setAccessTokenCookie(res, req, accessToken);
+        tokenUtils.setRefreshTokenCookie(res, refreshToken);
+
+        res.redirect(
+            isNewUser
+                ? `${envConfig.FRONTEND_URL}/dashboard?welcome=true`
+                : `${envConfig.FRONTEND_URL}/dashboard`
+        );
+    } catch (err: any) {
+        console.error("Google callback error:", err);
+        res.redirect(`${envConfig.FRONTEND_URL}/login?error=server_error`);
     }
-
-    const { accessToken, refreshToken, isNewUser } =
-        await authService.googleCallback(session.user);
-
-    tokenUtils.setAccessTokenCookie(res, req, accessToken);
-    tokenUtils.setRefreshTokenCookie(res, refreshToken);
-
-    res.redirect(
-        isNewUser
-            ? `${envConfig.FRONTEND_URL}/dashboard?welcome=true`
-            : `${envConfig.FRONTEND_URL}/dashboard`
-    );
-});
-const googleJWT = catchAsync(async (req: Request, res: Response) => {
-    // Better Auth callback এর পরে frontend এই route call করবে
-    const session = await auth.api.getSession({
-        headers: req.headers as any,
-    });
-
-    if (!session?.user) {
-        return res.status(401).json({ error: "No session found" });
-    }
-
-    const { user, accessToken, refreshToken, isNewUser } =
-        await authService.googleCallback(session.user);
-
-    tokenUtils.setAccessTokenCookie(res, req, accessToken);
-    tokenUtils.setRefreshTokenCookie(res, refreshToken);
-
-    res.status(200).json({
-        success: true,
-        user,
-        isNewUser,
-    });
 });
 export const authController = {
     refreshToken,
@@ -316,5 +328,4 @@ export const authController = {
     googleLogin,
     // googleSuccess,
     googleCallback,
-    googleJWT
 };

@@ -526,10 +526,13 @@ const createAgent = async (payload: IRegisterInput) => {
     };
 
 }
-// auth.service.ts
-const googleCallback = async (betterAuthUser: any) => {
+const googleCallback = async (googleUser: any) => {
+    const email = googleUser.email;
+    const name = googleUser.name;
+    const image = googleUser.picture;
+
     let user = await prisma.user.findUnique({
-        where: { email: betterAuthUser.email },
+        where: { email },
         select: {
             id: true,
             name: true,
@@ -543,30 +546,30 @@ const googleCallback = async (betterAuthUser: any) => {
     const isNewUser = !user;
 
     if (isNewUser) {
-        await prisma.user.update({
-            where: { email: betterAuthUser.email },
+        // ✅ নতুন user create করো
+        const newUser = await prisma.user.create({
             data: {
+                id: crypto.randomUUID(),
+                email,
+                name: name || email.split("@")[0],
+                image: image || null,
                 role: Role.CUSTOMER,
                 emailVerified: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             },
         });
 
-        user = await prisma.user.findUnique({
-            where: { email: betterAuthUser.email },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                emailVerified: true,
-                image: true,
-            },
-        });
+        user = {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+            emailVerified: newUser.emailVerified,
+            image: newUser.image,
+        };
 
-        if (!user) {
-            throw new AppError(status.NOT_FOUND, "User not found after Google signup");
-        }
-
+        // ✅ Welcome email
         try {
             await sendWelcomeEmail(user.name, user.email, user.role);
         } catch (err) {

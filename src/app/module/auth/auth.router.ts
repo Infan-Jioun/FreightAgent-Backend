@@ -25,5 +25,4 @@ router.post("/create-agent", registerRateLimit, validateRequest(registerSchema),
 router.get("/google", authController.googleLogin);
 // router.get("/google/success", authController.googleSuccess);
 router.get("/google/callback", authController.googleCallback);
-router.get("/google/jwt", authController.googleJWT);
 export const authRouter: Router = router;

@@ -40,6 +40,7 @@
     "better-auth": "^1.6.23",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "crypto": "^1.0.1",
     "disposable-email-domains": "^1.0.62",
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
