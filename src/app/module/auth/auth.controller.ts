@@ -9,6 +9,7 @@ import { tokenUtils } from "../../../utils/token";
 import AppError from "../../../errorHelper/AppError";
 import { envConfig } from "../../../_config/env";
 import crypto from "crypto";
+import { Role } from "../../../generated/prisma";
 
 
 const refreshToken = catchAsync(
@@ -209,16 +210,15 @@ const createAgent = catchAsync(
 
 
 // ✅ State store — simple in-memory (production এ Redis use করো)
-const stateStore = new Map<string, { createdAt: number }>();
+const stateStore = new Map<string, { createdAt: number; role: Role }>();
 
 const googleLogin = async (req: Request, res: Response) => {
     try {
+        const isAgent = req.path.includes("/agent");
+        const role = isAgent ? Role.AGENT : Role.CUSTOMER;
+
         const state = crypto.randomBytes(16).toString("hex");
-
-        // State store করো
-        stateStore.set(state, { createdAt: Date.now() });
-
-        // 10 মিনিট পরে clean করো
+        stateStore.set(state, { createdAt: Date.now(), role });
         setTimeout(() => stateStore.delete(state), 10 * 60 * 1000);
 
         const params = new URLSearchParams({
@@ -231,10 +231,7 @@ const googleLogin = async (req: Request, res: Response) => {
             prompt: "select_account",
         });
 
-        const googleUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-
-        console.log("Redirecting to Google:", googleUrl);
-        res.redirect(googleUrl);
+        res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
     } catch (err) {
         console.error("Google login error:", err);
         res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_init_failed`);
@@ -245,23 +242,16 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
     try {
         const { code, state, error } = req.query;
 
-        console.log("Google callback received:", { code: !!code, state, error });
+        if (error) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_denied`);
+        if (!code || !state) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_callback`);
 
-        if (error) {
-            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_denied`);
-        }
-
-        if (!code || !state) {
-            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_callback`);
-        }
-
-        // ✅ State verify করো
-        if (!stateStore.has(state as string)) {
+        const stateEntry = stateStore.get(state as string);
+        if (!stateEntry) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_state`);
         }
         stateStore.delete(state as string);
+        const requestedRole = stateEntry.role; // ✅ CUSTOMER বা AGENT
 
-        // ✅ Google token exchange
         const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -274,29 +264,21 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
             }),
         });
 
-        const tokenData = await tokenRes.json();
-        console.log("Token exchange:", tokenRes.status);
-
+        const tokenData = (await tokenRes.json()) as any;
         if (!tokenData.access_token) {
-            console.error("Token error:", tokenData);
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=token_failed`);
         }
 
-        // ✅ Google user info নাও
         const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
             headers: { Authorization: `Bearer ${tokenData.access_token}` },
         });
-
-        const googleUser = await userRes.json();
-        console.log("Google user:", googleUser);
-
+        const googleUser = (await userRes.json()) as any;
         if (!googleUser.email) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=no_email`);
         }
 
-        // ✅ JWT token generate করো
         const { accessToken, refreshToken, isNewUser } =
-            await authService.googleCallback(googleUser);
+            await authService.googleCallback(googleUser, requestedRole); // ✅ role pass
 
         tokenUtils.setAccessTokenCookie(res, req, accessToken);
         tokenUtils.setRefreshTokenCookie(res, refreshToken);

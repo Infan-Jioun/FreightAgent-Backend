@@ -526,7 +526,7 @@ const createAgent = async (payload: IRegisterInput) => {
     };
 
 }
-const googleCallback = async (googleUser: any) => {
+const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOMER) => {
     const email = googleUser.email;
     const name = googleUser.name;
     const image = googleUser.picture;
@@ -534,26 +534,21 @@ const googleCallback = async (googleUser: any) => {
     let user = await prisma.user.findUnique({
         where: { email },
         select: {
-            id: true,
-            name: true,
-            email: true,
-            role: true,
-            emailVerified: true,
-            image: true,
+            id: true, name: true, email: true, role: true,
+            emailVerified: true, image: true,
         },
     });
 
     const isNewUser = !user;
 
     if (isNewUser) {
-        // ✅ নতুন user create করো
         const newUser = await prisma.user.create({
             data: {
                 id: crypto.randomUUID(),
                 email,
                 name: name || email.split("@")[0],
                 image: image || null,
-                role: Role.CUSTOMER,
+                role: requestedRole, // ✅ এখানে CUSTOMER বা AGENT বসবে
                 emailVerified: true,
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -561,33 +556,25 @@ const googleCallback = async (googleUser: any) => {
         });
 
         user = {
-            id: newUser.id,
-            name: newUser.name,
-            email: newUser.email,
-            role: newUser.role,
-            emailVerified: newUser.emailVerified,
-            image: newUser.image,
+            id: newUser.id, name: newUser.name, email: newUser.email,
+            role: newUser.role, emailVerified: newUser.emailVerified, image: newUser.image,
         };
 
-        // ✅ Welcome email
         try {
             await sendWelcomeEmail(user.name, user.email, user.role);
         } catch (err) {
             console.error("Welcome email failed:", err);
         }
     }
+    // ⚠️ existing user হলে role change করা হচ্ছে না ইচ্ছাকৃতভাবে —
+    // security ঝুঁকি: কেউ existing customer একাউন্টে "agent google" লিংক দিয়ে
+    // ঢুকে নিজেকে agent বানিয়ে ফেলতে পারবে না।
 
-    if (!user) {
-        throw new AppError(status.NOT_FOUND, "User not found");
-    }
+    if (!user) throw new AppError(status.NOT_FOUND, "User not found");
 
     const tokenPayload = {
-        userId: user.id,
-        email: user.email,
-        role: user.role,
-        name: user.name,
-        emailVerified: user.emailVerified,
-        image: user.image,
+        userId: user.id, email: user.email, role: user.role,
+        name: user.name, emailVerified: user.emailVerified, image: user.image,
     };
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);

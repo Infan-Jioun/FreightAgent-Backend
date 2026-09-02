@@ -2,12 +2,12 @@
   "name": "freightagent-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
-    "postinstall": "prisma generate",
-    "start": "node dist/server.js"
+    "dev": "npx tsx watch src/server.ts",
+    "build": "tsup && shx cp -r src/app/template dist/app/template",
+    "start": "node dist/server.js",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +26,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "prisma": "^7.9.1",
+    "shx": "^0.4.0",
     "tsx": "^4.23.0",
     "typescript": "^6.0.3"
   },
@@ -59,6 +60,7 @@
     "rate-limit-redis": "^6.0.1",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
+    "tsup": "^8.5.1",
     "zod": "^4.4.3"
   }
 }

@@ -12,38 +12,26 @@ export const auth = betterAuth({
     }),
     secret: envConfig.BETTER_AUTH_SECRET,
 
-
     advanced: {
-        // cookiePrefix: "freightagent",
-        useSecureCookies: false,
-        crossSubDomainCookies: {
-            enabled: false,
-        },
-        // defaultCookieAttributes: {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === "production",
-        //     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        //     path: "/",
-        // },
         defaultCookieAttributes: {
             httpOnly: true,
-            secure: false, // ✅ localhost এ false রাখো
-            sameSite: "none", // ✅ OAuth redirect এ "lax" দরকার
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             path: "/",
         },
     },
+
     socialProviders: {
         google: {
             clientId: envConfig.GOOGLE_CLIENT_ID,
             clientSecret: envConfig.GOOGLE_CLIENT_SECRET,
-            // ✅ Better Auth এর default callback path
-            redirectURI: `http://localhost:5000/api/auth/callback/google`,
+            redirectURI: `${envConfig.BETTER_AUTH_URL}/api/auth/callback/google`,
         },
     },
+
     trustedOrigins: [
-        "http://localhost:3000",
-        "http://localhost:5000",
         envConfig.FRONTEND_URL || "http://localhost:3000",
+        "http://localhost:3000",
     ],
 
     emailAndPassword: {

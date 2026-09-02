@@ -18,7 +18,7 @@ const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
             origin: payload.origin,
             destination: payload.destination,
             weight: payload.weight,
-            description: payload.description,
+            description: payload.description ?? null,
             estimatedDate: payload.estimatedDate
                 ? new Date(payload.estimatedDate)
                 : null,
@@ -359,7 +359,7 @@ const updateShipmentStatus = async (
                 shipmentId: id,
                 status: payload.status,
                 location: payload.location,
-                note: payload.note,
+                note: payload.note ?? null,
                 updateBy: user.name,
             },
         }),

@@ -23,6 +23,7 @@ router.post("/change-password", authenticate, validateRequest(changePasswordSche
 router.post("/create-admin", adminRegisterRateLimit, validateRequest(adminRegisterSchema), authController.createAdmin)
 router.post("/create-agent", registerRateLimit, validateRequest(registerSchema), authController.createAgent)
 router.get("/google", authController.googleLogin);
-// router.get("/google/success", authController.googleSuccess);
+router.get("/google/agent", authController.googleLogin);
 router.get("/google/callback", authController.googleCallback);
+
 export const authRouter: Router = router;
