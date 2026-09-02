@@ -1,4 +1,3 @@
-// tsup.config.ts
 import { defineConfig } from "tsup";
 
 export default defineConfig({
@@ -8,11 +7,13 @@ export default defineConfig({
     clean: true,
     sourcemap: false,
     minify: false,
-    // ✅ EJS template files copy করো
+    // ✅ এই banner যোগ করো
+    banner: {
+        js: `import { createRequire } from 'module'; const require = createRequire(import.meta.url);`,
+    },
     loader: {
         ".ejs": "copy",
     },
-    // ✅ External packages — bundle করবে না
     external: [
         "prisma",
         "@prisma/client",
