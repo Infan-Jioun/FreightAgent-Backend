@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
-    "build": "tsup && shx cp -r src/app/template dist/app/template",
+    "build": "tsup && cp -r src/app/template dist/app/template",
     "start": "node dist/server.js",
     "postinstall": "prisma generate"
   },
