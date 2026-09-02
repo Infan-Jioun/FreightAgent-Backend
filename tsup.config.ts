@@ -9,7 +9,7 @@ export default defineConfig({
     minify: false,
     // ✅ এই banner যোগ করো
     banner: {
-        js: `import { createRequire } from 'module'; const require = createRequire(import.meta.url);`,
+        js: `import { createRequire as _createRequire } from 'module'; const require = _createRequire(import.meta.url);`,
     },
     loader: {
         ".ejs": "copy",
