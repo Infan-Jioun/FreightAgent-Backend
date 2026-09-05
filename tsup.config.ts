@@ -7,7 +7,8 @@ export default defineConfig({
     clean: true,
     sourcemap: false,
     minify: false,
-    // ✅ এই banner যোগ করো
+    bundle: true, // ✅ সব src ফাইল একসাথে bundle করবে
+    splitting: false, // ✅ একটাই ফাইল বানাবে
     banner: {
         js: `import { createRequire as _createRequire } from 'module'; const require = _createRequire(import.meta.url);`,
     },
@@ -15,11 +16,16 @@ export default defineConfig({
         ".ejs": "copy",
     },
     external: [
-        "prisma",
+        // ✅ শুধু node_modules গুলো external রাখো
+        // নিজের src ফাইল external করবে না
         "@prisma/client",
         "better-auth",
         "nodemailer",
         "node-cron",
         "ejs",
+        "prisma",
+    ],
+    noExternal: [
+        // ✅ এগুলো force bundle করো
     ],
 });

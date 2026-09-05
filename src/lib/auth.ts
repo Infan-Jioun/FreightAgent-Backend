@@ -2,8 +2,10 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { envConfig } from "../_config/env";
-import { bearer, emailOTP } from 'better-auth/plugins';
+import { bearer, emailOTP } from "better-auth/plugins";
 import { sendEmail } from "../utils/email";
+
+const isProd = envConfig.NODE_ENV === "production";
 
 export const auth = betterAuth({
     baseURL: envConfig.BETTER_AUTH_URL,
@@ -12,15 +14,36 @@ export const auth = betterAuth({
     }),
     secret: envConfig.BETTER_AUTH_SECRET,
 
+    session: {
+        expiresIn: 60 * 60 * 24 * 7,
+        updateAge: 60 * 60 * 24,
+        cookieCache: {
+            enabled: true,
+            maxAge: 60 * 60 * 24,
+        }
+    },
     advanced: {
-        defaultCookieAttributes: {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-            path: "/",
+        cookies: {
+            session_token: {
+                name: "better-auth.session_token", // Force this exact name
+                attributes: {
+                    httpOnly: true,
+                    secure: isProd,
+                    sameSite: isProd ? "none" : "lax",
+                    partitioned: isProd,
+                },
+            },
+            state: {
+                name: "session_token_better", // Force this exact name
+                attributes: {
+                    httpOnly: true,
+                    secure: isProd,
+                    sameSite: isProd ? "none" : "lax",
+                    partitioned: isProd,
+                },
+            },
         },
     },
-
     socialProviders: {
         google: {
             clientId: envConfig.GOOGLE_CLIENT_ID,
@@ -30,8 +53,9 @@ export const auth = betterAuth({
     },
 
     trustedOrigins: [
-        envConfig.FRONTEND_URL || "http://localhost:3000",
-        "http://localhost:3000",
+        envConfig.FRONTEND_URL,                    // ✅ production URL
+        "http://localhost:3000",                   // ✅ local dev
+        "http://localhost:5000",
     ],
 
     emailAndPassword: {
@@ -45,8 +69,12 @@ export const auth = betterAuth({
             otpLength: 6,
             expiresIn: 600,
             async sendVerificationOTP({ email, otp, type }) {
+
+                // ✅ একবার user fetch করো, বারবার না
+                const user = await prisma.user.findUnique({ where: { email } });
+
                 if (type === "email-verification") {
-                    const user = await prisma.user.findUnique({ where: { email } });
+                    // ✅ emailVerified check ঠিক আছে
                     if (user && !user.emailVerified) {
                         await sendEmail({
                             to: email,
@@ -56,17 +84,17 @@ export const auth = betterAuth({
                         });
                     }
                 }
+
                 if (type === "sign-in") {
-                    const user = await prisma.user.findUnique({ where: { email } });
                     await sendEmail({
                         to: email,
-                        subject: "Change Password - OTP",
+                        subject: "Sign In - OTP",
                         templateName: "otp",
                         templateData: { name: user?.name ?? "User", otp: String(otp) },
                     });
                 }
+
                 if (type === "forget-password") {
-                    const user = await prisma.user.findUnique({ where: { email } });
                     await sendEmail({
                         to: email,
                         subject: "Reset & Change Password - OTP",

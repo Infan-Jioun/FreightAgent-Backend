@@ -47,8 +47,8 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 
     // Cookie set
     tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
-    tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
-    tokenUtils.setBetterAuthSessionCookie(res, result.sessionToken);
+    tokenUtils.setRefreshTokenCookie(res, req, result.refreshToken);
+    tokenUtils.setBetterAuthSessionCookie(res, req, result.sessionToken);
 
     sendResponse(res, {
         httpStatusCode: status.OK,
@@ -65,9 +65,7 @@ const logout = catchAsync(async (req: Request, res: Response) => {
     if (accessToken && sessionToken) {
         await authService.logout(accessToken, sessionToken);
     }
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-    res.clearCookie("better-auth.session_token");
+    tokenUtils.clearAuthCookies(res, req);
 
     sendResponse(res, {
         httpStatusCode: status.OK,
@@ -101,8 +99,8 @@ const verifyEmail = catchAsync(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     const result = await authService.verifyEmail(otp, email);
     tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
-    tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
-    tokenUtils.setBetterAuthSessionCookie(res, result.sessionToken as string);
+    tokenUtils.setRefreshTokenCookie(res, req, result.refreshToken);
+    tokenUtils.setBetterAuthSessionCookie(res, req, result.sessionToken as string);
 
     sendResponse(res, {
         httpStatusCode: 200,
@@ -175,7 +173,7 @@ const changePassword = catchAsync(
         );
 
         tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
-        tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
+        tokenUtils.setRefreshTokenCookie(res, req, result.refreshToken);
 
         sendResponse(res, {
             httpStatusCode: status.OK,
@@ -281,7 +279,7 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
             await authService.googleCallback(googleUser, requestedRole); // ✅ role pass
 
         tokenUtils.setAccessTokenCookie(res, req, accessToken);
-        tokenUtils.setRefreshTokenCookie(res, refreshToken);
+        tokenUtils.setRefreshTokenCookie(res, req, refreshToken);
 
         res.redirect(
             isNewUser
