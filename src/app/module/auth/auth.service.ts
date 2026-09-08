@@ -1,4 +1,5 @@
 import { Request } from "express";
+import crypto from "crypto";
 import { IChangePassword, ICreateAdmin, ILoginInput, IRegisterInput } from "./auth.interface";
 import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
@@ -572,6 +573,45 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
 
     if (!user) throw new AppError(status.NOT_FOUND, "User not found");
 
+    // ✅ Better-Auth Account link (যদি না থাকে)
+    const googleId = googleUser.id || googleUser.sub;
+    if (googleId) {
+        try {
+            const existingAccount = await prisma.account.findFirst({
+                where: { providerId: "google", userId: user.id }
+            });
+            if (!existingAccount) {
+                await prisma.account.create({
+                    data: {
+                        id: crypto.randomUUID(),
+                        accountId: String(googleId),
+                        providerId: "google",
+                        userId: user.id,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    }
+                });
+            }
+        } catch (accErr) {
+            console.error("Account linking error:", accErr);
+        }
+    }
+
+    // ✅ Better-Auth Session তৈরি করো (যাতে Better-Auth getSession() সফল হয়)
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+    const sessionExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    await prisma.session.create({
+        data: {
+            id: crypto.randomUUID(),
+            userId: user.id,
+            token: sessionToken,
+            expiresAt: sessionExpiresAt,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+    });
+
     const tokenPayload = {
         userId: user.id, email: user.email, role: user.role,
         name: user.name, emailVerified: user.emailVerified, image: user.image,
@@ -580,7 +620,7 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
     const accessToken = tokenUtils.getAccessToken(tokenPayload);
     const refreshToken = tokenUtils.getRefreshToken(tokenPayload);
 
-    return { user, accessToken, refreshToken, isNewUser };
+    return { user, accessToken, refreshToken, sessionToken, isNewUser };
 };
 
 export const authService = {

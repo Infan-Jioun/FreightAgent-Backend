@@ -21,6 +21,8 @@ const getRefreshToken = (payload: JwtPayload) => {
     return refreshToken;
 }
 const getBaseCookieOptions = (req?: Request): CookieOptions => {
+    const isProduction = envConfig.NODE_ENV === "production";
+
     const origin = (req?.headers?.origin || req?.headers?.referer || "") as string;
     const forwardedHost = (req?.headers?.["x-forwarded-host"] || "") as string;
     const host = (req?.headers?.host || "") as string;
@@ -36,7 +38,7 @@ const getBaseCookieOptions = (req?: Request): CookieOptions => {
     const isHttp = origin.startsWith("http://");
 
     // Localhost / HTTP development: Chrome rejects SameSite=None and Secure over insecure HTTP
-    if (isLocalhost || isHttp) {
+    if (!isProduction && (isLocalhost || isHttp)) {
         return {
             httpOnly: true,
             secure: false,
@@ -56,7 +58,9 @@ const getBaseCookieOptions = (req?: Request): CookieOptions => {
     };
 };
 
-const setAccessTokenCookie = (res: Response, req: Request | undefined, token: string) => {
+const setAccessTokenCookie = (res: Response, reqOrToken: Request | string, maybeToken?: string) => {
+    const req = typeof reqOrToken === "object" ? reqOrToken : undefined;
+    const token = typeof reqOrToken === "string" ? reqOrToken : (maybeToken || "");
     const baseOptions = getBaseCookieOptions(req);
     cookieUtils.setCookie(res, "accessToken", token, {
         ...baseOptions,

@@ -10,6 +10,8 @@ import AppError from "../../../errorHelper/AppError";
 import { envConfig } from "../../../_config/env";
 import crypto from "crypto";
 import { Role } from "../../../generated/prisma";
+import { JwtTokenUtils } from "../../../utils/jwt";
+import { prisma } from "../../../lib/prisma";
 
 
 const refreshToken = catchAsync(
@@ -215,13 +217,14 @@ const googleLogin = async (req: Request, res: Response) => {
         const isAgent = req.path.includes("/agent");
         const role = isAgent ? Role.AGENT : Role.CUSTOMER;
 
-        const state = crypto.randomBytes(16).toString("hex");
+        const randomPart = crypto.randomBytes(16).toString("hex");
+        const state = `${randomPart}_${role}`;
         stateStore.set(state, { createdAt: Date.now(), role });
         setTimeout(() => stateStore.delete(state), 10 * 60 * 1000);
 
         const params = new URLSearchParams({
             client_id: envConfig.GOOGLE_CLIENT_ID,
-            redirect_uri: `${envConfig.BETTER_AUTH_URL}/api/v1/auth/google/callback`,
+            redirect_uri: `${envConfig.BACKEND_URL}/auth/google/callback`,
             response_type: "code",
             scope: "openid email profile",
             state,
@@ -243,12 +246,21 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
         if (error) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_denied`);
         if (!code || !state) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_callback`);
 
-        const stateEntry = stateStore.get(state as string);
-        if (!stateEntry) {
+        // ✅ state থেকে role বের করো — serverless-safe
+        const stateParts = (state as string).split("_");
+        if (stateParts.length < 2) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_state`);
         }
-        stateStore.delete(state as string);
-        const requestedRole = stateEntry.role; // ✅ CUSTOMER বা AGENT
+
+        const roleFromState = stateParts[stateParts.length - 1] as Role;
+        if (!Object.values(Role).includes(roleFromState)) {
+            return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_role`);
+        }
+
+        const requestedRole = roleFromState;
+
+        // ✅ redirect_uri দুই জায়গায় same
+        const GOOGLE_REDIRECT_URI = `${envConfig.BACKEND_URL}/auth/google/callback`;
 
         const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
             method: "POST",
@@ -257,12 +269,15 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
                 code: code as string,
                 client_id: envConfig.GOOGLE_CLIENT_ID,
                 client_secret: envConfig.GOOGLE_CLIENT_SECRET,
-                redirect_uri: `${envConfig.BETTER_AUTH_URL}/api/v1/auth/google/callback`,
+                redirect_uri: GOOGLE_REDIRECT_URI,
                 grant_type: "authorization_code",
             }),
         });
 
         const tokenData = (await tokenRes.json()) as any;
+
+        console.error("GOOGLE_TOKEN_DEBUG:", JSON.stringify(tokenData));
+
         if (!tokenData.access_token) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=token_failed`);
         }
@@ -271,25 +286,149 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
             headers: { Authorization: `Bearer ${tokenData.access_token}` },
         });
         const googleUser = (await userRes.json()) as any;
+
         if (!googleUser.email) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=no_email`);
         }
 
-        const { accessToken, refreshToken, isNewUser } =
-            await authService.googleCallback(googleUser, requestedRole); // ✅ role pass
+        const { accessToken, refreshToken, sessionToken, isNewUser } =
+            await authService.googleCallback(googleUser, requestedRole);
 
         tokenUtils.setAccessTokenCookie(res, req, accessToken);
         tokenUtils.setRefreshTokenCookie(res, req, refreshToken);
+        if (sessionToken) {
+            tokenUtils.setBetterAuthSessionCookie(res, req, sessionToken);
+        }
 
-        res.redirect(
+        const tempToken = Buffer.from(JSON.stringify({
+            accessToken,
+            refreshToken,
+            sessionToken,
             isNewUser
-                ? `${envConfig.FRONTEND_URL}/dashboard?welcome=true`
-                : `${envConfig.FRONTEND_URL}/dashboard`
-        );
+        })).toString("base64url");
+
+        const searchParams = new URLSearchParams({
+            t: tempToken,
+            token: tempToken,
+            tempToken: tempToken,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            sessionToken: sessionToken || "",
+            google: "true",
+        });
+
+        if (isNewUser) {
+            searchParams.set("welcome", "true");
+        }
+
+        res.redirect(`${envConfig.FRONTEND_URL}/google/success?${searchParams.toString()}`);
     } catch (err: any) {
         console.error("Google callback error:", err);
         res.redirect(`${envConfig.FRONTEND_URL}/login?error=server_error`);
     }
+});
+const googleSetCookie = catchAsync(async (req: Request, res: Response) => {
+    const rawToken = req.body?.token || req.body?.t || req.body?.tempToken;
+    let accessToken = req.body?.accessToken;
+    let refreshToken = req.body?.refreshToken;
+    let sessionToken = req.body?.sessionToken;
+    let isNewUser = req.body?.isNewUser ?? false;
+
+    if (rawToken) {
+        try {
+            const decoded = typeof rawToken === "object"
+                ? rawToken
+                : JSON.parse(Buffer.from(rawToken, "base64url").toString("utf-8"));
+            accessToken = decoded.accessToken || accessToken;
+            refreshToken = decoded.refreshToken || refreshToken;
+            sessionToken = decoded.sessionToken || sessionToken;
+            if (decoded.isNewUser !== undefined) {
+                isNewUser = decoded.isNewUser;
+            }
+        } catch (e) {
+            if (!accessToken && typeof rawToken === "string") {
+                accessToken = rawToken;
+            }
+        }
+    }
+
+    if (!accessToken) {
+        throw new AppError(status.BAD_REQUEST, "Token missing");
+    }
+
+    // ✅ user data verify
+    const payload = JwtTokenUtils.verifyToken(
+        accessToken,
+        envConfig.ACCESS_TOKEN_SECRET
+    );
+
+    let userData: any = payload?.data || null;
+
+    if (payload?.data?.userId) {
+        try {
+            const dbUser = await prisma.user.findUnique({
+                where: { id: payload.data.userId },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    emailVerified: true,
+                    image: true,
+                }
+            });
+            if (dbUser) {
+                userData = dbUser;
+            }
+
+            // ✅ যদি sessionToken না থাকে, ইউজারের active session খুঁজুন অথবা তৈরি করুন
+            if (!sessionToken) {
+                const activeSession = await prisma.session.findFirst({
+                    where: {
+                        userId: payload.data.userId,
+                        expiresAt: { gt: new Date() }
+                    },
+                    orderBy: { createdAt: "desc" }
+                });
+                if (activeSession) {
+                    sessionToken = activeSession.token;
+                } else {
+                    sessionToken = crypto.randomBytes(32).toString("hex");
+                    await prisma.session.create({
+                        data: {
+                            id: crypto.randomUUID(),
+                            userId: payload.data.userId,
+                            token: sessionToken,
+                            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                        }
+                    });
+                }
+            }
+        } catch (sessionErr) {
+            console.error("Session lookup/create error:", sessionErr);
+        }
+    }
+
+    // ✅ এবার same-site / CORS request — ৩টি cookie-ই সেট হবে
+    tokenUtils.setAccessTokenCookie(res, req, accessToken);
+    if (refreshToken) {
+        tokenUtils.setRefreshTokenCookie(res, req, refreshToken);
+    }
+    if (sessionToken) {
+        tokenUtils.setBetterAuthSessionCookie(res, req, sessionToken);
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Cookies set successfully",
+        data: userData,
+        accessToken,
+        refreshToken,
+        sessionToken,
+        isNewUser,
+    });
 });
 export const authController = {
     refreshToken,
@@ -308,4 +447,5 @@ export const authController = {
     googleLogin,
     // googleSuccess,
     googleCallback,
+    googleSetCookie,
 };

@@ -25,5 +25,6 @@ router.post("/create-agent", registerRateLimit, validateRequest(registerSchema),
 router.get("/google", authController.googleLogin);
 router.get("/google/agent", authController.googleLogin);
 router.get("/google/callback", authController.googleCallback);
+router.post("/google/set-cookie", authController.googleSetCookie);
 
 export const authRouter: Router = router;
