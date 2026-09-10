@@ -358,11 +358,12 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
         console.error("Google callback error:", err);
         if (
             err.statusCode === status.FORBIDDEN ||
-            err.message?.includes("Maximum 3 devices")
+            (err.message && /device|simultaneous|3 devices|session_limit/i.test(err.message))
         ) {
             const emailParam = googleUser?.email ? `&email=${encodeURIComponent(googleUser.email)}` : "";
+            const messageParam = err.message ? `&message=${encodeURIComponent(err.message)}` : "";
             return res.redirect(
-                `${envConfig.FRONTEND_URL}/login?error=session_limit${emailParam}`
+                `${envConfig.FRONTEND_URL}/login?error=session_limit${emailParam}${messageParam}`
             );
         }
         res.redirect(`${envConfig.FRONTEND_URL}/login?error=server_error`);

@@ -19,7 +19,7 @@ router.post("/forgot-password", otpRateLimit, validateRequest(forgotPasswordSche
 router.post("/reset-password", validateRequest(resetPasswordSchema), authController.resetPassword);
 router.get("/me", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), authController.getMe)
 router.post("/change-password/send-otp", otpRateLimit, authenticate, authController.sendChangePasswordOTP);
-router.post("/change-password", authenticate, validateRequest(changePasswordSchema));
+router.post("/change-password", authenticate, validateRequest(changePasswordSchema), authController.changePassword);
 router.post("/create-admin", adminRegisterRateLimit, validateRequest(adminRegisterSchema), authController.createAdmin)
 router.post("/create-agent", registerRateLimit, validateRequest(registerSchema), authController.createAgent)
 router.get("/google", authController.googleLogin);
