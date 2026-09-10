@@ -81,11 +81,20 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const logout = catchAsync(async (req: Request, res: Response) => {
-    const accessToken = req.cookies?.accessToken;
-    const sessionToken = req.cookies?.["better-auth.session_token"];
+    const accessToken =
+        req.cookies?.accessToken ||
+        req.headers.authorization?.split(" ")[1];
+    let sessionToken = req.cookies?.["better-auth.session_token"];
 
-    if (accessToken && sessionToken) {
-        await authService.logout(accessToken, sessionToken);
+    if (!sessionToken && accessToken) {
+        const decoded = JwtTokenUtils.decodedToken(accessToken);
+        if (decoded?.sessionToken) {
+            sessionToken = decoded.sessionToken as string;
+        }
+    }
+
+    if (accessToken || sessionToken) {
+        await authService.logout(accessToken || "", sessionToken || "");
     }
     tokenUtils.clearAuthCookies(res, req);
 

@@ -11,7 +11,7 @@ import { IRequestUser } from "../../interface/requestUserInterface";
 import { isTempEmail } from "../../../utils/emailValidator";
 import { sendEmail } from "../../../utils/email";
 import { JwtTokenUtils } from "../../../utils/jwt";
-import { blacklistToken } from "../../../utils/tokenBlacklist";
+import { blacklistToken, isTokenBlacklisted } from "../../../utils/tokenBlacklist";
 import { envConfig } from "../../../_config/env";
 import { sendWelcomeEmail } from "../../../utils/sendWelcomeEmail";
 
@@ -32,6 +32,24 @@ const refreshToken = async (token: string) => {
     }
 
     const decoded = result.data;
+
+    // Check if session has been revoked or expired
+    if (decoded.sessionToken) {
+        const isSessionRevoked = await isTokenBlacklisted(`session:${decoded.sessionToken}`);
+        if (isSessionRevoked) {
+            throw new AppError(status.UNAUTHORIZED, "Session has been revoked. Please log in again.");
+        }
+
+        const activeSession = await prisma.session.findUnique({
+            where: { token: decoded.sessionToken as string },
+            select: { id: true, expiresAt: true },
+        });
+
+        if (!activeSession || activeSession.expiresAt < new Date()) {
+            throw new AppError(status.UNAUTHORIZED, "Session has expired or been revoked. Please log in again.");
+        }
+    }
+
     const userExists = await prisma.user.findUnique({
         where: { id: decoded.userId as string },
         select: {
@@ -56,6 +74,7 @@ const refreshToken = async (token: string) => {
         image: userExists.image,
         emailVerified: userExists.emailVerified,
         createdAt: userExists.createdAt,
+        sessionToken: decoded.sessionToken,
     };
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);
@@ -159,11 +178,43 @@ const loginUser = async (payload: ILoginInput) => {
         throw new AppError(status.NOT_FOUND, "Customer not found");
     }
 
+    // ─── Enforce Maximum 3 Devices Limit ───
+    const now = new Date();
+    // Clean up expired sessions for this user first
+    await prisma.session.deleteMany({
+        where: {
+            userId: customer.id,
+            expiresAt: { lte: now },
+        },
+    });
+
+    const activeSessionsCount = await prisma.session.count({
+        where: {
+            userId: customer.id,
+            expiresAt: { gt: now },
+        },
+    });
+
+    // signInEmail already inserted the new session row into prisma.session.
+    // If active sessions count exceeds 3, delete this newly created session and reject login.
+    if (activeSessionsCount > 3) {
+        if (result.token) {
+            await prisma.session.deleteMany({
+                where: { token: result.token },
+            });
+        }
+        throw new AppError(
+            status.FORBIDDEN,
+            "Maximum 3 devices can be logged in simultaneously. Please log out from another device to continue."
+        );
+    }
+
     const tokenPayload = {
         userId: customer.id,
         email: customer.email,
         role: customer.role,
         name: customer.name,
+        sessionToken: result.token,
     };
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);
@@ -180,26 +231,41 @@ const loginUser = async (payload: ILoginInput) => {
 
 const logout = async (accessToken: string, sessionToken: string) => {
     //  Access token decode করো — expire time বের করো
-    const decoded = JwtTokenUtils.decodedToken(accessToken);
+    if (accessToken) {
+        const decoded = JwtTokenUtils.decodedToken(accessToken);
+        if (decoded && decoded.exp) {
+            const now = Math.floor(Date.now() / 1000);
+            const expiresIn = decoded.exp - now; // বাকি seconds
 
-    if (decoded && decoded.exp) {
-        const now = Math.floor(Date.now() / 1000);
-        const expiresIn = decoded.exp - now; // বাকি seconds
-
-        if (expiresIn > 0) {
-            await blacklistToken(accessToken, expiresIn); // ← Redis এ রাখো
+            if (expiresIn > 0) {
+                await blacklistToken(accessToken, expiresIn); // ← Redis এ রাখো
+            }
         }
     }
 
-    //  BetterAuth session revoke করো
-    await auth.api.revokeSession({
-        body: {
-            token: sessionToken
-        },
-        headers: {
-            authorization: `Bearer ${sessionToken} `
+    if (sessionToken) {
+        // Blacklist session in Redis
+        await blacklistToken(`session:${sessionToken}`, 7 * 24 * 60 * 60);
+
+        // Delete from Prisma Session table
+        await prisma.session.deleteMany({
+            where: { token: sessionToken },
+        });
+
+        //  BetterAuth session revoke করো
+        try {
+            await auth.api.revokeSession({
+                body: {
+                    token: sessionToken
+                },
+                headers: {
+                    authorization: `Bearer ${sessionToken} `
+                }
+            });
+        } catch (e) {
+            // ignore if already deleted
         }
-    });
+    }
 };
 const sendOtp = async (email: string) => {
     const user = await prisma.user.findUnique({
@@ -245,11 +311,41 @@ const verifyEmail = async (otp: string, email: string) => {
         throw new AppError(status.NOT_FOUND, "User not found");
     }
     await sendWelcomeEmail(user.name, user.email, user.role);
+
+    // Enforce 3 device limit
+    const now = new Date();
+    await prisma.session.deleteMany({
+        where: {
+            userId: result.user.id,
+            expiresAt: { lte: now },
+        },
+    });
+
+    const activeSessionsCount = await prisma.session.count({
+        where: {
+            userId: result.user.id,
+            expiresAt: { gt: now },
+        },
+    });
+
+    if (activeSessionsCount > 3) {
+        if (result.token) {
+            await prisma.session.deleteMany({
+                where: { token: result.token },
+            });
+        }
+        throw new AppError(
+            status.FORBIDDEN,
+            "Maximum 3 devices can be logged in simultaneously. Please log out from another device to continue."
+        );
+    }
+
     const tokenPayload = {
         userId: result.user.id,
         email: result.user.email,
         role: result.user.role || Role.CUSTOMER,
         emailVerified: true,
+        sessionToken: result.token,
     };
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);
@@ -547,6 +643,29 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
         }
     }
 
+    // Enforce 3 device limit before creating session
+    const now = new Date();
+    await prisma.session.deleteMany({
+        where: {
+            userId: user.id,
+            expiresAt: { lte: now },
+        },
+    });
+
+    const activeSessionsCount = await prisma.session.count({
+        where: {
+            userId: user.id,
+            expiresAt: { gt: now },
+        },
+    });
+
+    if (activeSessionsCount >= 3) {
+        throw new AppError(
+            status.FORBIDDEN,
+            "Maximum 3 devices can be logged in simultaneously. Please log out from another device to continue."
+        );
+    }
+
     //  Better-Auth Session তৈরি করো (যাতে Better-Auth getSession() সফল হয়)
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const sessionExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
@@ -565,6 +684,7 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
     const tokenPayload = {
         userId: user.id, email: user.email, role: user.role,
         name: user.name, emailVerified: user.emailVerified, image: user.image,
+        sessionToken,
     };
 
     const accessToken = tokenUtils.getAccessToken(tokenPayload);

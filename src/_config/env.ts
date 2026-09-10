@@ -58,10 +58,7 @@ const loadVariabales = (): EnvConfig => {
         "UPSTASH_REDIS_REST_TOKEN",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
-        "CRON_SECRET",
-        "CLOUDINARY_CLOUD_NAME",
-        "CLOUDINARY_API_KEY",
-        "CLOUDINARY_API_SECRET"
+        "CRON_SECRET"
     ];
 
     requirementVariables.forEach((variable) => {

@@ -8,4 +8,5 @@ export interface IRequestUser {
     image?: string | null;
     emailVerified?: boolean;
     createdAt?: Date;
+    sessionToken?: string;
 }

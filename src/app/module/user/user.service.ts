@@ -16,6 +16,8 @@ import {
     extractPublicIdFromUrl,
 } from "../../../utils/cloudinary";
 import { parseUserAgent } from "../../../utils/deviceDetector";
+import { blacklistToken } from "../../../utils/tokenBlacklist";
+import { auth } from "../../../lib/auth";
 
 // ─── Constants ────────────────────────────────────────────
 const PHONE_CODE_EXPIRY = 10 * 60 * 1000; // 10 minutes
@@ -327,6 +329,14 @@ const getActiveSessions = async (
 
     const now = new Date();
 
+    // Clean up expired sessions for this user
+    await prisma.session.deleteMany({
+        where: {
+            userId: user.userId,
+            expiresAt: { lte: now },
+        },
+    });
+
     const rawSessions = await prisma.session.findMany({
         where: {
             userId: user.userId,
@@ -380,21 +390,45 @@ const getActiveSessions = async (
 };
 
 // ─── 6. Revoke Session ────────────────────────────────────
-const revokeSession = async (user: IRequestUser, sessionId: string) => {
+const revokeSession = async (
+    user: IRequestUser,
+    sessionId: string,
+    currentSessionToken?: string
+) => {
     if (!user) throw new AppError(status.UNAUTHORIZED, "Unauthorized User");
 
     const session = await prisma.session.findUnique({
         where: { id: sessionId },
-        select: { id: true, userId: true, isCurrent: true },
+        select: { id: true, userId: true, isCurrent: true, token: true },
     });
 
-    if (!session)
+    if (!session) {
         throw new AppError(status.NOT_FOUND, "Session not found");
-    if (session.userId !== user.userId)
+    }
+    if (session.userId !== user.userId) {
         throw new AppError(status.FORBIDDEN, "Cannot revoke another user's session");
-    if (session.isCurrent)
-        throw new AppError(status.BAD_REQUEST, "Cannot revoke your current session");
+    }
+    if (currentSessionToken && session.token === currentSessionToken) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot revoke your current session. Please use logout instead."
+        );
+    }
 
+    // 1. Blacklist session token in Redis so any requests on that device immediately fail with 401
+    await blacklistToken(`session:${session.token}`, 7 * 24 * 60 * 60);
+
+    // 2. Revoke from BetterAuth if available
+    try {
+        await auth.api.revokeSession({
+            body: { token: session.token },
+            headers: { authorization: `Bearer ${session.token}` },
+        });
+    } catch (err) {
+        // ignore if already deleted or unsupported
+    }
+
+    // 3. Delete session record from Prisma
     await prisma.session.delete({ where: { id: sessionId } });
 
     return { message: "Session revoked successfully" };

@@ -81,7 +81,9 @@ const verifyAndSavePhone = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getActiveSessions = catchAsync(async (req: Request, res: Response) => {
-    const sessionToken = req.cookies?.["better-auth.session_token"];
+    const sessionToken =
+        (req.user as IRequestUser)?.sessionToken ||
+        req.cookies?.["better-auth.session_token"];
     const result = await userService.getActiveSessions(
         req.user as IRequestUser,
         sessionToken
@@ -95,9 +97,13 @@ const getActiveSessions = catchAsync(async (req: Request, res: Response) => {
 });
 
 const revokeSession = catchAsync(async (req: Request, res: Response) => {
+    const sessionToken =
+        (req.user as IRequestUser)?.sessionToken ||
+        req.cookies?.["better-auth.session_token"];
     const result = await userService.revokeSession(
         req.user as IRequestUser,
-        req.params.sessionId as string
+        req.params.sessionId as string,
+        sessionToken
     );
     sendResponse(res, {
         httpStatusCode: status.OK,
