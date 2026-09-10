@@ -196,17 +196,44 @@ const loginUser = async (payload: ILoginInput) => {
     });
 
     // signInEmail already inserted the new session row into prisma.session.
-    // If active sessions count exceeds 3, delete this newly created session and reject login.
+    // If active sessions count exceeds 3, check if revokeOthers was requested.
     if (activeSessionsCount > 3) {
-        if (result.token) {
-            await prisma.session.deleteMany({
-                where: { token: result.token },
+        if (payload.revokeOthers) {
+            // 1. Find all previous sessions of this user (except the newly created current session)
+            const oldSessions = await prisma.session.findMany({
+                where: {
+                    userId: customer.id,
+                    NOT: { token: result.token },
+                },
+                select: { token: true },
             });
+
+            // Blacklist all other session tokens in Redis
+            for (const s of oldSessions) {
+                if (s.token) {
+                    await blacklistToken(`session:${s.token}`, 7 * 24 * 60 * 60);
+                }
+            }
+
+            // 2. Delete all other sessions from database
+            await prisma.session.deleteMany({
+                where: {
+                    userId: customer.id,
+                    NOT: { token: result.token },
+                },
+            });
+        } else {
+            // If user hasn't confirmed revokeOthers yet, delete newly created session and throw 403
+            if (result.token) {
+                await prisma.session.deleteMany({
+                    where: { token: result.token },
+                });
+            }
+            throw new AppError(
+                status.FORBIDDEN,
+                "Maximum 3 devices can be logged in simultaneously. Please log out from another device to continue."
+            );
         }
-        throw new AppError(
-            status.FORBIDDEN,
-            "Maximum 3 devices can be logged in simultaneously. Please log out from another device to continue."
-        );
     }
 
     const tokenPayload = {

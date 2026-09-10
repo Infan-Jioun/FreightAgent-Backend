@@ -41,6 +41,7 @@ export const loginSchema = z.object({
             .email("Invalid email address"),
         password: requiredString("Password")
             .min(8, "Password must be at least 8 characters"),
+        revokeOthers: z.boolean().optional(),
     }),
 });
 
