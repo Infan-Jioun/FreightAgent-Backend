@@ -1,17 +1,29 @@
 model User {
-  id            String   @id // Better Auth নিজে set করে
-  email         String   @unique
-  name          String
-  role          Role     @default(CUSTOMER)
-  emailVerified Boolean  @default(false)
-  image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                  String              @id
+  email               String              @unique
+  name                String
+  role                Role                @default(CUSTOMER)
+  emailVerified       Boolean             @default(false)
+  image               String?
+  address             String?
+  phone               String?
+  isBlocked           Boolean             @default(false)
+  isDeleted           Boolean             @default(false)
+  blockedReason       String?
+  blockedAt           DateTime?
+  deletedAt           DateTime?
+  twoFactorEnabled    Boolean             @default(false)
+  lastLoginAt         DateTime?
+  lastLoginIp         String?
+  passwordChangedAt   DateTime?
+  failedLoginAttempts Int                 @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  phoneVerifications  PhoneVerification[]
+  sessions            Session[]
+  accounts            Account[]
 
-  sessions Session[]
-  accounts Account[]
-
-  // Business relations
   shipments    Shipment[]
   chatSessions ChatSession[]
 
@@ -28,6 +40,12 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  deviceName String?
+  deviceType String?
+  browser    String?
+  os         String?
+  isCurrent  Boolean @default(false)
 
   @@unique([token])
   @@index([userId])
@@ -122,6 +140,23 @@ enum ShipmentStatus {
   OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
+}
+
+model PhoneVerification {
+  id        String   @id @default(uuid())
+  userId    String
+  phone     String
+  code      String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([phone])
+  @@map("phone_verifications")
 }
 
 generator client {

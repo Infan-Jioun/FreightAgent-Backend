@@ -263,57 +263,7 @@ const verifyEmail = async (otp: string, email: string) => {
         sessionToken,
     };
 };
-const getMe = async (user: IRequestUser) => {
-    if (!user) {
-        throw new AppError(status.UNAUTHORIZED, "Unauthorized User");
-    }
-    const existingUser = await prisma.user.findUnique({
 
-        where: { id: user.userId },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            role: true,
-            image: true,
-            emailVerified: true,
-            createdAt: true,
-            shipments: {
-                select: {
-                    id: true,
-                    trackingId: true,
-                    origin: true,
-                    destination: true,
-                    weight: true,
-                    status: true,
-                    estimatedDate: true,
-                    createdAt: true,
-                    statusLogs: {
-                        select: {
-                            id: true,
-                            status: true,
-                            location: true,
-                            note: true,
-                            createdAt: true,
-                        },
-                        orderBy: { createdAt: "desc" }, // latest log আগে
-                    },
-                },
-                orderBy: { createdAt: "desc" },
-                take: 10
-            },
-        },
-    });
-
-    if (!existingUser) {
-        throw new AppError(status.NOT_FOUND, "User not found!");
-    }
-
-    if (!existingUser.emailVerified) {
-        throw new AppError(status.FORBIDDEN, "Email not verified");
-    }
-    return existingUser;
-};
 const forgotPassword = async (email: string) => {
     const userExits = await prisma.user.findUnique({
         where: {
@@ -630,7 +580,6 @@ export const authService = {
     logout,
     sendOtp,
     verifyEmail,
-    getMe,
     forgotPassword,
     resetPassword,
     changePassword,

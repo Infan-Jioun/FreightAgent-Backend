@@ -127,6 +127,19 @@ exports.Prisma.UserScalarFieldEnum = {
   role: 'role',
   emailVerified: 'emailVerified',
   image: 'image',
+  address: 'address',
+  phone: 'phone',
+  isBlocked: 'isBlocked',
+  isDeleted: 'isDeleted',
+  blockedReason: 'blockedReason',
+  blockedAt: 'blockedAt',
+  deletedAt: 'deletedAt',
+  twoFactorEnabled: 'twoFactorEnabled',
+  lastLoginAt: 'lastLoginAt',
+  lastLoginIp: 'lastLoginIp',
+  passwordChangedAt: 'passwordChangedAt',
+  failedLoginAttempts: 'failedLoginAttempts',
+  lockedUntil: 'lockedUntil',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -139,7 +152,12 @@ exports.Prisma.SessionScalarFieldEnum = {
   updatedAt: 'updatedAt',
   ipAddress: 'ipAddress',
   userAgent: 'userAgent',
-  userId: 'userId'
+  userId: 'userId',
+  deviceName: 'deviceName',
+  deviceType: 'deviceType',
+  browser: 'browser',
+  os: 'os',
+  isCurrent: 'isCurrent'
 };
 
 exports.Prisma.AccountScalarFieldEnum = {
@@ -188,6 +206,17 @@ exports.Prisma.KnowledgeChunkScalarFieldEnum = {
   content: 'content',
   source: 'source',
   category: 'category',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PhoneVerificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  phone: 'phone',
+  code: 'code',
+  expiresAt: 'expiresAt',
+  attempts: 'attempts',
+  verified: 'verified',
   createdAt: 'createdAt'
 };
 
@@ -254,6 +283,7 @@ exports.Prisma.ModelName = {
   ChatSession: 'ChatSession',
   ChatMessage: 'ChatMessage',
   KnowledgeChunk: 'KnowledgeChunk',
+  PhoneVerification: 'PhoneVerification',
   Shipment: 'Shipment',
   StatusLog: 'StatusLog'
 };

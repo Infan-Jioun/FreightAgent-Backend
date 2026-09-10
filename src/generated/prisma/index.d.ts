@@ -49,6 +49,11 @@ export type ChatMessage = $Result.DefaultSelection<Prisma.$ChatMessagePayload>
  */
 export type KnowledgeChunk = $Result.DefaultSelection<Prisma.$KnowledgeChunkPayload>
 /**
+ * Model PhoneVerification
+ * 
+ */
+export type PhoneVerification = $Result.DefaultSelection<Prisma.$PhoneVerificationPayload>
+/**
  * Model Shipment
  * 
  */
@@ -284,6 +289,16 @@ export class PrismaClient<
     * ```
     */
   get knowledgeChunk(): Prisma.KnowledgeChunkDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.phoneVerification`: Exposes CRUD operations for the **PhoneVerification** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PhoneVerifications
+    * const phoneVerifications = await prisma.phoneVerification.findMany()
+    * ```
+    */
+  get phoneVerification(): Prisma.PhoneVerificationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.shipment`: Exposes CRUD operations for the **Shipment** model.
@@ -758,6 +773,7 @@ export namespace Prisma {
     ChatSession: 'ChatSession',
     ChatMessage: 'ChatMessage',
     KnowledgeChunk: 'KnowledgeChunk',
+    PhoneVerification: 'PhoneVerification',
     Shipment: 'Shipment',
     StatusLog: 'StatusLog'
   };
@@ -775,7 +791,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "chatSession" | "chatMessage" | "knowledgeChunk" | "shipment" | "statusLog"
+      modelProps: "user" | "session" | "account" | "verification" | "chatSession" | "chatMessage" | "knowledgeChunk" | "phoneVerification" | "shipment" | "statusLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1297,6 +1313,80 @@ export namespace Prisma {
           }
         }
       }
+      PhoneVerification: {
+        payload: Prisma.$PhoneVerificationPayload<ExtArgs>
+        fields: Prisma.PhoneVerificationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PhoneVerificationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PhoneVerificationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>
+          }
+          findFirst: {
+            args: Prisma.PhoneVerificationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PhoneVerificationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>
+          }
+          findMany: {
+            args: Prisma.PhoneVerificationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>[]
+          }
+          create: {
+            args: Prisma.PhoneVerificationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>
+          }
+          createMany: {
+            args: Prisma.PhoneVerificationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PhoneVerificationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>[]
+          }
+          delete: {
+            args: Prisma.PhoneVerificationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>
+          }
+          update: {
+            args: Prisma.PhoneVerificationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>
+          }
+          deleteMany: {
+            args: Prisma.PhoneVerificationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PhoneVerificationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PhoneVerificationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>[]
+          }
+          upsert: {
+            args: Prisma.PhoneVerificationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhoneVerificationPayload>
+          }
+          aggregate: {
+            args: Prisma.PhoneVerificationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePhoneVerification>
+          }
+          groupBy: {
+            args: Prisma.PhoneVerificationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PhoneVerificationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PhoneVerificationCountArgs<ExtArgs>
+            result: $Utils.Optional<PhoneVerificationCountAggregateOutputType> | number
+          }
+        }
+      }
       Shipment: {
         payload: Prisma.$ShipmentPayload<ExtArgs>
         fields: Prisma.ShipmentFieldRefs
@@ -1575,6 +1665,7 @@ export namespace Prisma {
     chatSession?: ChatSessionOmit
     chatMessage?: ChatMessageOmit
     knowledgeChunk?: KnowledgeChunkOmit
+    phoneVerification?: PhoneVerificationOmit
     shipment?: ShipmentOmit
     statusLog?: StatusLogOmit
   }
@@ -1657,6 +1748,7 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    phoneVerifications: number
     sessions: number
     accounts: number
     shipments: number
@@ -1664,6 +1756,7 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    phoneVerifications?: boolean | UserCountOutputTypeCountPhoneVerificationsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     shipments?: boolean | UserCountOutputTypeCountShipmentsArgs
@@ -1679,6 +1772,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPhoneVerificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PhoneVerificationWhereInput
   }
 
   /**
@@ -1782,8 +1882,18 @@ export namespace Prisma {
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
+  }
+
+  export type UserAvgAggregateOutputType = {
+    failedLoginAttempts: number | null
+  }
+
+  export type UserSumAggregateOutputType = {
+    failedLoginAttempts: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1793,6 +1903,19 @@ export namespace Prisma {
     role: $Enums.Role | null
     emailVerified: boolean | null
     image: string | null
+    address: string | null
+    phone: string | null
+    isBlocked: boolean | null
+    isDeleted: boolean | null
+    blockedReason: string | null
+    blockedAt: Date | null
+    deletedAt: Date | null
+    twoFactorEnabled: boolean | null
+    lastLoginAt: Date | null
+    lastLoginIp: string | null
+    passwordChangedAt: Date | null
+    failedLoginAttempts: number | null
+    lockedUntil: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1804,6 +1927,19 @@ export namespace Prisma {
     role: $Enums.Role | null
     emailVerified: boolean | null
     image: string | null
+    address: string | null
+    phone: string | null
+    isBlocked: boolean | null
+    isDeleted: boolean | null
+    blockedReason: string | null
+    blockedAt: Date | null
+    deletedAt: Date | null
+    twoFactorEnabled: boolean | null
+    lastLoginAt: Date | null
+    lastLoginIp: string | null
+    passwordChangedAt: Date | null
+    failedLoginAttempts: number | null
+    lockedUntil: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1815,11 +1951,32 @@ export namespace Prisma {
     role: number
     emailVerified: number
     image: number
+    address: number
+    phone: number
+    isBlocked: number
+    isDeleted: number
+    blockedReason: number
+    blockedAt: number
+    deletedAt: number
+    twoFactorEnabled: number
+    lastLoginAt: number
+    lastLoginIp: number
+    passwordChangedAt: number
+    failedLoginAttempts: number
+    lockedUntil: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
+
+  export type UserAvgAggregateInputType = {
+    failedLoginAttempts?: true
+  }
+
+  export type UserSumAggregateInputType = {
+    failedLoginAttempts?: true
+  }
 
   export type UserMinAggregateInputType = {
     id?: true
@@ -1828,6 +1985,19 @@ export namespace Prisma {
     role?: true
     emailVerified?: true
     image?: true
+    address?: true
+    phone?: true
+    isBlocked?: true
+    isDeleted?: true
+    blockedReason?: true
+    blockedAt?: true
+    deletedAt?: true
+    twoFactorEnabled?: true
+    lastLoginAt?: true
+    lastLoginIp?: true
+    passwordChangedAt?: true
+    failedLoginAttempts?: true
+    lockedUntil?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1839,6 +2009,19 @@ export namespace Prisma {
     role?: true
     emailVerified?: true
     image?: true
+    address?: true
+    phone?: true
+    isBlocked?: true
+    isDeleted?: true
+    blockedReason?: true
+    blockedAt?: true
+    deletedAt?: true
+    twoFactorEnabled?: true
+    lastLoginAt?: true
+    lastLoginIp?: true
+    passwordChangedAt?: true
+    failedLoginAttempts?: true
+    lockedUntil?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1850,6 +2033,19 @@ export namespace Prisma {
     role?: true
     emailVerified?: true
     image?: true
+    address?: true
+    phone?: true
+    isBlocked?: true
+    isDeleted?: true
+    blockedReason?: true
+    blockedAt?: true
+    deletedAt?: true
+    twoFactorEnabled?: true
+    lastLoginAt?: true
+    lastLoginIp?: true
+    passwordChangedAt?: true
+    failedLoginAttempts?: true
+    lockedUntil?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1893,6 +2089,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: UserAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
@@ -1923,6 +2131,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: UserCountAggregateInputType | true
+    _avg?: UserAvgAggregateInputType
+    _sum?: UserSumAggregateInputType
     _min?: UserMinAggregateInputType
     _max?: UserMaxAggregateInputType
   }
@@ -1934,9 +2144,24 @@ export namespace Prisma {
     role: $Enums.Role
     emailVerified: boolean
     image: string | null
+    address: string | null
+    phone: string | null
+    isBlocked: boolean
+    isDeleted: boolean
+    blockedReason: string | null
+    blockedAt: Date | null
+    deletedAt: Date | null
+    twoFactorEnabled: boolean
+    lastLoginAt: Date | null
+    lastLoginIp: string | null
+    passwordChangedAt: Date | null
+    failedLoginAttempts: number
+    lockedUntil: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
@@ -1962,8 +2187,22 @@ export namespace Prisma {
     role?: boolean
     emailVerified?: boolean
     image?: boolean
+    address?: boolean
+    phone?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: boolean
+    blockedAt?: boolean
+    deletedAt?: boolean
+    twoFactorEnabled?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
+    passwordChangedAt?: boolean
+    failedLoginAttempts?: boolean
+    lockedUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    phoneVerifications?: boolean | User$phoneVerificationsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     shipments?: boolean | User$shipmentsArgs<ExtArgs>
@@ -1978,6 +2217,19 @@ export namespace Prisma {
     role?: boolean
     emailVerified?: boolean
     image?: boolean
+    address?: boolean
+    phone?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: boolean
+    blockedAt?: boolean
+    deletedAt?: boolean
+    twoFactorEnabled?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
+    passwordChangedAt?: boolean
+    failedLoginAttempts?: boolean
+    lockedUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1989,6 +2241,19 @@ export namespace Prisma {
     role?: boolean
     emailVerified?: boolean
     image?: boolean
+    address?: boolean
+    phone?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: boolean
+    blockedAt?: boolean
+    deletedAt?: boolean
+    twoFactorEnabled?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
+    passwordChangedAt?: boolean
+    failedLoginAttempts?: boolean
+    lockedUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2000,12 +2265,26 @@ export namespace Prisma {
     role?: boolean
     emailVerified?: boolean
     image?: boolean
+    address?: boolean
+    phone?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: boolean
+    blockedAt?: boolean
+    deletedAt?: boolean
+    twoFactorEnabled?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
+    passwordChangedAt?: boolean
+    failedLoginAttempts?: boolean
+    lockedUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "emailVerified" | "image" | "address" | "phone" | "isBlocked" | "isDeleted" | "blockedReason" | "blockedAt" | "deletedAt" | "twoFactorEnabled" | "lastLoginAt" | "lastLoginIp" | "passwordChangedAt" | "failedLoginAttempts" | "lockedUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    phoneVerifications?: boolean | User$phoneVerificationsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     shipments?: boolean | User$shipmentsArgs<ExtArgs>
@@ -2018,6 +2297,7 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      phoneVerifications: Prisma.$PhoneVerificationPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       shipments: Prisma.$ShipmentPayload<ExtArgs>[]
@@ -2030,6 +2310,19 @@ export namespace Prisma {
       role: $Enums.Role
       emailVerified: boolean
       image: string | null
+      address: string | null
+      phone: string | null
+      isBlocked: boolean
+      isDeleted: boolean
+      blockedReason: string | null
+      blockedAt: Date | null
+      deletedAt: Date | null
+      twoFactorEnabled: boolean
+      lastLoginAt: Date | null
+      lastLoginIp: string | null
+      passwordChangedAt: Date | null
+      failedLoginAttempts: number
+      lockedUntil: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2426,6 +2719,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    phoneVerifications<T extends User$phoneVerificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$phoneVerificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shipments<T extends User$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2465,6 +2759,19 @@ export namespace Prisma {
     readonly role: FieldRef<"User", 'Role'>
     readonly emailVerified: FieldRef<"User", 'Boolean'>
     readonly image: FieldRef<"User", 'String'>
+    readonly address: FieldRef<"User", 'String'>
+    readonly phone: FieldRef<"User", 'String'>
+    readonly isBlocked: FieldRef<"User", 'Boolean'>
+    readonly isDeleted: FieldRef<"User", 'Boolean'>
+    readonly blockedReason: FieldRef<"User", 'String'>
+    readonly blockedAt: FieldRef<"User", 'DateTime'>
+    readonly deletedAt: FieldRef<"User", 'DateTime'>
+    readonly twoFactorEnabled: FieldRef<"User", 'Boolean'>
+    readonly lastLoginAt: FieldRef<"User", 'DateTime'>
+    readonly lastLoginIp: FieldRef<"User", 'String'>
+    readonly passwordChangedAt: FieldRef<"User", 'DateTime'>
+    readonly failedLoginAttempts: FieldRef<"User", 'Int'>
+    readonly lockedUntil: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -2860,6 +3167,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.phoneVerifications
+   */
+  export type User$phoneVerificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    where?: PhoneVerificationWhereInput
+    orderBy?: PhoneVerificationOrderByWithRelationInput | PhoneVerificationOrderByWithRelationInput[]
+    cursor?: PhoneVerificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PhoneVerificationScalarFieldEnum | PhoneVerificationScalarFieldEnum[]
+  }
+
+  /**
    * User.sessions
    */
   export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2993,6 +3324,11 @@ export namespace Prisma {
     ipAddress: string | null
     userAgent: string | null
     userId: string | null
+    deviceName: string | null
+    deviceType: string | null
+    browser: string | null
+    os: string | null
+    isCurrent: boolean | null
   }
 
   export type SessionMaxAggregateOutputType = {
@@ -3004,6 +3340,11 @@ export namespace Prisma {
     ipAddress: string | null
     userAgent: string | null
     userId: string | null
+    deviceName: string | null
+    deviceType: string | null
+    browser: string | null
+    os: string | null
+    isCurrent: boolean | null
   }
 
   export type SessionCountAggregateOutputType = {
@@ -3015,6 +3356,11 @@ export namespace Prisma {
     ipAddress: number
     userAgent: number
     userId: number
+    deviceName: number
+    deviceType: number
+    browser: number
+    os: number
+    isCurrent: number
     _all: number
   }
 
@@ -3028,6 +3374,11 @@ export namespace Prisma {
     ipAddress?: true
     userAgent?: true
     userId?: true
+    deviceName?: true
+    deviceType?: true
+    browser?: true
+    os?: true
+    isCurrent?: true
   }
 
   export type SessionMaxAggregateInputType = {
@@ -3039,6 +3390,11 @@ export namespace Prisma {
     ipAddress?: true
     userAgent?: true
     userId?: true
+    deviceName?: true
+    deviceType?: true
+    browser?: true
+    os?: true
+    isCurrent?: true
   }
 
   export type SessionCountAggregateInputType = {
@@ -3050,6 +3406,11 @@ export namespace Prisma {
     ipAddress?: true
     userAgent?: true
     userId?: true
+    deviceName?: true
+    deviceType?: true
+    browser?: true
+    os?: true
+    isCurrent?: true
     _all?: true
   }
 
@@ -3134,6 +3495,11 @@ export namespace Prisma {
     ipAddress: string | null
     userAgent: string | null
     userId: string
+    deviceName: string | null
+    deviceType: string | null
+    browser: string | null
+    os: string | null
+    isCurrent: boolean
     _count: SessionCountAggregateOutputType | null
     _min: SessionMinAggregateOutputType | null
     _max: SessionMaxAggregateOutputType | null
@@ -3162,6 +3528,11 @@ export namespace Prisma {
     ipAddress?: boolean
     userAgent?: boolean
     userId?: boolean
+    deviceName?: boolean
+    deviceType?: boolean
+    browser?: boolean
+    os?: boolean
+    isCurrent?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["session"]>
 
@@ -3174,6 +3545,11 @@ export namespace Prisma {
     ipAddress?: boolean
     userAgent?: boolean
     userId?: boolean
+    deviceName?: boolean
+    deviceType?: boolean
+    browser?: boolean
+    os?: boolean
+    isCurrent?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["session"]>
 
@@ -3186,6 +3562,11 @@ export namespace Prisma {
     ipAddress?: boolean
     userAgent?: boolean
     userId?: boolean
+    deviceName?: boolean
+    deviceType?: boolean
+    browser?: boolean
+    os?: boolean
+    isCurrent?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["session"]>
 
@@ -3198,9 +3579,14 @@ export namespace Prisma {
     ipAddress?: boolean
     userAgent?: boolean
     userId?: boolean
+    deviceName?: boolean
+    deviceType?: boolean
+    browser?: boolean
+    os?: boolean
+    isCurrent?: boolean
   }
 
-  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "expiresAt" | "token" | "createdAt" | "updatedAt" | "ipAddress" | "userAgent" | "userId", ExtArgs["result"]["session"]>
+  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "expiresAt" | "token" | "createdAt" | "updatedAt" | "ipAddress" | "userAgent" | "userId" | "deviceName" | "deviceType" | "browser" | "os" | "isCurrent", ExtArgs["result"]["session"]>
   export type SessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3225,6 +3611,11 @@ export namespace Prisma {
       ipAddress: string | null
       userAgent: string | null
       userId: string
+      deviceName: string | null
+      deviceType: string | null
+      browser: string | null
+      os: string | null
+      isCurrent: boolean
     }, ExtArgs["result"]["session"]>
     composites: {}
   }
@@ -3657,6 +4048,11 @@ export namespace Prisma {
     readonly ipAddress: FieldRef<"Session", 'String'>
     readonly userAgent: FieldRef<"Session", 'String'>
     readonly userId: FieldRef<"Session", 'String'>
+    readonly deviceName: FieldRef<"Session", 'String'>
+    readonly deviceType: FieldRef<"Session", 'String'>
+    readonly browser: FieldRef<"Session", 'String'>
+    readonly os: FieldRef<"Session", 'String'>
+    readonly isCurrent: FieldRef<"Session", 'Boolean'>
   }
     
 
@@ -9413,6 +9809,1142 @@ export namespace Prisma {
 
 
   /**
+   * Model PhoneVerification
+   */
+
+  export type AggregatePhoneVerification = {
+    _count: PhoneVerificationCountAggregateOutputType | null
+    _avg: PhoneVerificationAvgAggregateOutputType | null
+    _sum: PhoneVerificationSumAggregateOutputType | null
+    _min: PhoneVerificationMinAggregateOutputType | null
+    _max: PhoneVerificationMaxAggregateOutputType | null
+  }
+
+  export type PhoneVerificationAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type PhoneVerificationSumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type PhoneVerificationMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    phone: string | null
+    code: string | null
+    expiresAt: Date | null
+    attempts: number | null
+    verified: boolean | null
+    createdAt: Date | null
+  }
+
+  export type PhoneVerificationMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    phone: string | null
+    code: string | null
+    expiresAt: Date | null
+    attempts: number | null
+    verified: boolean | null
+    createdAt: Date | null
+  }
+
+  export type PhoneVerificationCountAggregateOutputType = {
+    id: number
+    userId: number
+    phone: number
+    code: number
+    expiresAt: number
+    attempts: number
+    verified: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PhoneVerificationAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type PhoneVerificationSumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type PhoneVerificationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    phone?: true
+    code?: true
+    expiresAt?: true
+    attempts?: true
+    verified?: true
+    createdAt?: true
+  }
+
+  export type PhoneVerificationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    phone?: true
+    code?: true
+    expiresAt?: true
+    attempts?: true
+    verified?: true
+    createdAt?: true
+  }
+
+  export type PhoneVerificationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    phone?: true
+    code?: true
+    expiresAt?: true
+    attempts?: true
+    verified?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PhoneVerificationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PhoneVerification to aggregate.
+     */
+    where?: PhoneVerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhoneVerifications to fetch.
+     */
+    orderBy?: PhoneVerificationOrderByWithRelationInput | PhoneVerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PhoneVerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhoneVerifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhoneVerifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PhoneVerifications
+    **/
+    _count?: true | PhoneVerificationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PhoneVerificationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PhoneVerificationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PhoneVerificationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PhoneVerificationMaxAggregateInputType
+  }
+
+  export type GetPhoneVerificationAggregateType<T extends PhoneVerificationAggregateArgs> = {
+        [P in keyof T & keyof AggregatePhoneVerification]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePhoneVerification[P]>
+      : GetScalarType<T[P], AggregatePhoneVerification[P]>
+  }
+
+
+
+
+  export type PhoneVerificationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PhoneVerificationWhereInput
+    orderBy?: PhoneVerificationOrderByWithAggregationInput | PhoneVerificationOrderByWithAggregationInput[]
+    by: PhoneVerificationScalarFieldEnum[] | PhoneVerificationScalarFieldEnum
+    having?: PhoneVerificationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PhoneVerificationCountAggregateInputType | true
+    _avg?: PhoneVerificationAvgAggregateInputType
+    _sum?: PhoneVerificationSumAggregateInputType
+    _min?: PhoneVerificationMinAggregateInputType
+    _max?: PhoneVerificationMaxAggregateInputType
+  }
+
+  export type PhoneVerificationGroupByOutputType = {
+    id: string
+    userId: string
+    phone: string
+    code: string
+    expiresAt: Date
+    attempts: number
+    verified: boolean
+    createdAt: Date
+    _count: PhoneVerificationCountAggregateOutputType | null
+    _avg: PhoneVerificationAvgAggregateOutputType | null
+    _sum: PhoneVerificationSumAggregateOutputType | null
+    _min: PhoneVerificationMinAggregateOutputType | null
+    _max: PhoneVerificationMaxAggregateOutputType | null
+  }
+
+  type GetPhoneVerificationGroupByPayload<T extends PhoneVerificationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PhoneVerificationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PhoneVerificationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PhoneVerificationGroupByOutputType[P]>
+            : GetScalarType<T[P], PhoneVerificationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PhoneVerificationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    phone?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
+    verified?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["phoneVerification"]>
+
+  export type PhoneVerificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    phone?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
+    verified?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["phoneVerification"]>
+
+  export type PhoneVerificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    phone?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
+    verified?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["phoneVerification"]>
+
+  export type PhoneVerificationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    phone?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    attempts?: boolean
+    verified?: boolean
+    createdAt?: boolean
+  }
+
+  export type PhoneVerificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "phone" | "code" | "expiresAt" | "attempts" | "verified" | "createdAt", ExtArgs["result"]["phoneVerification"]>
+  export type PhoneVerificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PhoneVerificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PhoneVerificationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $PhoneVerificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PhoneVerification"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      phone: string
+      code: string
+      expiresAt: Date
+      attempts: number
+      verified: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["phoneVerification"]>
+    composites: {}
+  }
+
+  type PhoneVerificationGetPayload<S extends boolean | null | undefined | PhoneVerificationDefaultArgs> = $Result.GetResult<Prisma.$PhoneVerificationPayload, S>
+
+  type PhoneVerificationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PhoneVerificationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PhoneVerificationCountAggregateInputType | true
+    }
+
+  export interface PhoneVerificationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PhoneVerification'], meta: { name: 'PhoneVerification' } }
+    /**
+     * Find zero or one PhoneVerification that matches the filter.
+     * @param {PhoneVerificationFindUniqueArgs} args - Arguments to find a PhoneVerification
+     * @example
+     * // Get one PhoneVerification
+     * const phoneVerification = await prisma.phoneVerification.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PhoneVerificationFindUniqueArgs>(args: SelectSubset<T, PhoneVerificationFindUniqueArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PhoneVerification that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PhoneVerificationFindUniqueOrThrowArgs} args - Arguments to find a PhoneVerification
+     * @example
+     * // Get one PhoneVerification
+     * const phoneVerification = await prisma.phoneVerification.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PhoneVerificationFindUniqueOrThrowArgs>(args: SelectSubset<T, PhoneVerificationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PhoneVerification that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhoneVerificationFindFirstArgs} args - Arguments to find a PhoneVerification
+     * @example
+     * // Get one PhoneVerification
+     * const phoneVerification = await prisma.phoneVerification.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PhoneVerificationFindFirstArgs>(args?: SelectSubset<T, PhoneVerificationFindFirstArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PhoneVerification that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhoneVerificationFindFirstOrThrowArgs} args - Arguments to find a PhoneVerification
+     * @example
+     * // Get one PhoneVerification
+     * const phoneVerification = await prisma.phoneVerification.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PhoneVerificationFindFirstOrThrowArgs>(args?: SelectSubset<T, PhoneVerificationFindFirstOrThrowArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PhoneVerifications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhoneVerificationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PhoneVerifications
+     * const phoneVerifications = await prisma.phoneVerification.findMany()
+     * 
+     * // Get first 10 PhoneVerifications
+     * const phoneVerifications = await prisma.phoneVerification.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const phoneVerificationWithIdOnly = await prisma.phoneVerification.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PhoneVerificationFindManyArgs>(args?: SelectSubset<T, PhoneVerificationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PhoneVerification.
+     * @param {PhoneVerificationCreateArgs} args - Arguments to create a PhoneVerification.
+     * @example
+     * // Create one PhoneVerification
+     * const PhoneVerification = await prisma.phoneVerification.create({
+     *   data: {
+     *     // ... data to create a PhoneVerification
+     *   }
+     * })
+     * 
+     */
+    create<T extends PhoneVerificationCreateArgs>(args: SelectSubset<T, PhoneVerificationCreateArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PhoneVerifications.
+     * @param {PhoneVerificationCreateManyArgs} args - Arguments to create many PhoneVerifications.
+     * @example
+     * // Create many PhoneVerifications
+     * const phoneVerification = await prisma.phoneVerification.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PhoneVerificationCreateManyArgs>(args?: SelectSubset<T, PhoneVerificationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PhoneVerifications and returns the data saved in the database.
+     * @param {PhoneVerificationCreateManyAndReturnArgs} args - Arguments to create many PhoneVerifications.
+     * @example
+     * // Create many PhoneVerifications
+     * const phoneVerification = await prisma.phoneVerification.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PhoneVerifications and only return the `id`
+     * const phoneVerificationWithIdOnly = await prisma.phoneVerification.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PhoneVerificationCreateManyAndReturnArgs>(args?: SelectSubset<T, PhoneVerificationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PhoneVerification.
+     * @param {PhoneVerificationDeleteArgs} args - Arguments to delete one PhoneVerification.
+     * @example
+     * // Delete one PhoneVerification
+     * const PhoneVerification = await prisma.phoneVerification.delete({
+     *   where: {
+     *     // ... filter to delete one PhoneVerification
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PhoneVerificationDeleteArgs>(args: SelectSubset<T, PhoneVerificationDeleteArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PhoneVerification.
+     * @param {PhoneVerificationUpdateArgs} args - Arguments to update one PhoneVerification.
+     * @example
+     * // Update one PhoneVerification
+     * const phoneVerification = await prisma.phoneVerification.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PhoneVerificationUpdateArgs>(args: SelectSubset<T, PhoneVerificationUpdateArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PhoneVerifications.
+     * @param {PhoneVerificationDeleteManyArgs} args - Arguments to filter PhoneVerifications to delete.
+     * @example
+     * // Delete a few PhoneVerifications
+     * const { count } = await prisma.phoneVerification.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PhoneVerificationDeleteManyArgs>(args?: SelectSubset<T, PhoneVerificationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PhoneVerifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhoneVerificationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PhoneVerifications
+     * const phoneVerification = await prisma.phoneVerification.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PhoneVerificationUpdateManyArgs>(args: SelectSubset<T, PhoneVerificationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PhoneVerifications and returns the data updated in the database.
+     * @param {PhoneVerificationUpdateManyAndReturnArgs} args - Arguments to update many PhoneVerifications.
+     * @example
+     * // Update many PhoneVerifications
+     * const phoneVerification = await prisma.phoneVerification.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PhoneVerifications and only return the `id`
+     * const phoneVerificationWithIdOnly = await prisma.phoneVerification.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PhoneVerificationUpdateManyAndReturnArgs>(args: SelectSubset<T, PhoneVerificationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PhoneVerification.
+     * @param {PhoneVerificationUpsertArgs} args - Arguments to update or create a PhoneVerification.
+     * @example
+     * // Update or create a PhoneVerification
+     * const phoneVerification = await prisma.phoneVerification.upsert({
+     *   create: {
+     *     // ... data to create a PhoneVerification
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PhoneVerification we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PhoneVerificationUpsertArgs>(args: SelectSubset<T, PhoneVerificationUpsertArgs<ExtArgs>>): Prisma__PhoneVerificationClient<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PhoneVerifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhoneVerificationCountArgs} args - Arguments to filter PhoneVerifications to count.
+     * @example
+     * // Count the number of PhoneVerifications
+     * const count = await prisma.phoneVerification.count({
+     *   where: {
+     *     // ... the filter for the PhoneVerifications we want to count
+     *   }
+     * })
+    **/
+    count<T extends PhoneVerificationCountArgs>(
+      args?: Subset<T, PhoneVerificationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PhoneVerificationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PhoneVerification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhoneVerificationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PhoneVerificationAggregateArgs>(args: Subset<T, PhoneVerificationAggregateArgs>): Prisma.PrismaPromise<GetPhoneVerificationAggregateType<T>>
+
+    /**
+     * Group by PhoneVerification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhoneVerificationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PhoneVerificationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PhoneVerificationGroupByArgs['orderBy'] }
+        : { orderBy?: PhoneVerificationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PhoneVerificationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPhoneVerificationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PhoneVerification model
+   */
+  readonly fields: PhoneVerificationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PhoneVerification.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PhoneVerificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PhoneVerification model
+   */
+  interface PhoneVerificationFieldRefs {
+    readonly id: FieldRef<"PhoneVerification", 'String'>
+    readonly userId: FieldRef<"PhoneVerification", 'String'>
+    readonly phone: FieldRef<"PhoneVerification", 'String'>
+    readonly code: FieldRef<"PhoneVerification", 'String'>
+    readonly expiresAt: FieldRef<"PhoneVerification", 'DateTime'>
+    readonly attempts: FieldRef<"PhoneVerification", 'Int'>
+    readonly verified: FieldRef<"PhoneVerification", 'Boolean'>
+    readonly createdAt: FieldRef<"PhoneVerification", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PhoneVerification findUnique
+   */
+  export type PhoneVerificationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhoneVerification to fetch.
+     */
+    where: PhoneVerificationWhereUniqueInput
+  }
+
+  /**
+   * PhoneVerification findUniqueOrThrow
+   */
+  export type PhoneVerificationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhoneVerification to fetch.
+     */
+    where: PhoneVerificationWhereUniqueInput
+  }
+
+  /**
+   * PhoneVerification findFirst
+   */
+  export type PhoneVerificationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhoneVerification to fetch.
+     */
+    where?: PhoneVerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhoneVerifications to fetch.
+     */
+    orderBy?: PhoneVerificationOrderByWithRelationInput | PhoneVerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PhoneVerifications.
+     */
+    cursor?: PhoneVerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhoneVerifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhoneVerifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PhoneVerifications.
+     */
+    distinct?: PhoneVerificationScalarFieldEnum | PhoneVerificationScalarFieldEnum[]
+  }
+
+  /**
+   * PhoneVerification findFirstOrThrow
+   */
+  export type PhoneVerificationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhoneVerification to fetch.
+     */
+    where?: PhoneVerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhoneVerifications to fetch.
+     */
+    orderBy?: PhoneVerificationOrderByWithRelationInput | PhoneVerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PhoneVerifications.
+     */
+    cursor?: PhoneVerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhoneVerifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhoneVerifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PhoneVerifications.
+     */
+    distinct?: PhoneVerificationScalarFieldEnum | PhoneVerificationScalarFieldEnum[]
+  }
+
+  /**
+   * PhoneVerification findMany
+   */
+  export type PhoneVerificationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhoneVerifications to fetch.
+     */
+    where?: PhoneVerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhoneVerifications to fetch.
+     */
+    orderBy?: PhoneVerificationOrderByWithRelationInput | PhoneVerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PhoneVerifications.
+     */
+    cursor?: PhoneVerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhoneVerifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhoneVerifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PhoneVerifications.
+     */
+    distinct?: PhoneVerificationScalarFieldEnum | PhoneVerificationScalarFieldEnum[]
+  }
+
+  /**
+   * PhoneVerification create
+   */
+  export type PhoneVerificationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PhoneVerification.
+     */
+    data: XOR<PhoneVerificationCreateInput, PhoneVerificationUncheckedCreateInput>
+  }
+
+  /**
+   * PhoneVerification createMany
+   */
+  export type PhoneVerificationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PhoneVerifications.
+     */
+    data: PhoneVerificationCreateManyInput | PhoneVerificationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PhoneVerification createManyAndReturn
+   */
+  export type PhoneVerificationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * The data used to create many PhoneVerifications.
+     */
+    data: PhoneVerificationCreateManyInput | PhoneVerificationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PhoneVerification update
+   */
+  export type PhoneVerificationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PhoneVerification.
+     */
+    data: XOR<PhoneVerificationUpdateInput, PhoneVerificationUncheckedUpdateInput>
+    /**
+     * Choose, which PhoneVerification to update.
+     */
+    where: PhoneVerificationWhereUniqueInput
+  }
+
+  /**
+   * PhoneVerification updateMany
+   */
+  export type PhoneVerificationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PhoneVerifications.
+     */
+    data: XOR<PhoneVerificationUpdateManyMutationInput, PhoneVerificationUncheckedUpdateManyInput>
+    /**
+     * Filter which PhoneVerifications to update
+     */
+    where?: PhoneVerificationWhereInput
+    /**
+     * Limit how many PhoneVerifications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PhoneVerification updateManyAndReturn
+   */
+  export type PhoneVerificationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * The data used to update PhoneVerifications.
+     */
+    data: XOR<PhoneVerificationUpdateManyMutationInput, PhoneVerificationUncheckedUpdateManyInput>
+    /**
+     * Filter which PhoneVerifications to update
+     */
+    where?: PhoneVerificationWhereInput
+    /**
+     * Limit how many PhoneVerifications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PhoneVerification upsert
+   */
+  export type PhoneVerificationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PhoneVerification to update in case it exists.
+     */
+    where: PhoneVerificationWhereUniqueInput
+    /**
+     * In case the PhoneVerification found by the `where` argument doesn't exist, create a new PhoneVerification with this data.
+     */
+    create: XOR<PhoneVerificationCreateInput, PhoneVerificationUncheckedCreateInput>
+    /**
+     * In case the PhoneVerification was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PhoneVerificationUpdateInput, PhoneVerificationUncheckedUpdateInput>
+  }
+
+  /**
+   * PhoneVerification delete
+   */
+  export type PhoneVerificationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+    /**
+     * Filter which PhoneVerification to delete.
+     */
+    where: PhoneVerificationWhereUniqueInput
+  }
+
+  /**
+   * PhoneVerification deleteMany
+   */
+  export type PhoneVerificationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PhoneVerifications to delete
+     */
+    where?: PhoneVerificationWhereInput
+    /**
+     * Limit how many PhoneVerifications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PhoneVerification without action
+   */
+  export type PhoneVerificationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhoneVerification
+     */
+    select?: PhoneVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhoneVerification
+     */
+    omit?: PhoneVerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhoneVerificationInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Shipment
    */
 
@@ -11740,6 +13272,19 @@ export namespace Prisma {
     role: 'role',
     emailVerified: 'emailVerified',
     image: 'image',
+    address: 'address',
+    phone: 'phone',
+    isBlocked: 'isBlocked',
+    isDeleted: 'isDeleted',
+    blockedReason: 'blockedReason',
+    blockedAt: 'blockedAt',
+    deletedAt: 'deletedAt',
+    twoFactorEnabled: 'twoFactorEnabled',
+    lastLoginAt: 'lastLoginAt',
+    lastLoginIp: 'lastLoginIp',
+    passwordChangedAt: 'passwordChangedAt',
+    failedLoginAttempts: 'failedLoginAttempts',
+    lockedUntil: 'lockedUntil',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -11755,7 +13300,12 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     ipAddress: 'ipAddress',
     userAgent: 'userAgent',
-    userId: 'userId'
+    userId: 'userId',
+    deviceName: 'deviceName',
+    deviceType: 'deviceType',
+    browser: 'browser',
+    os: 'os',
+    isCurrent: 'isCurrent'
   };
 
   export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
@@ -11823,6 +13373,20 @@ export namespace Prisma {
   };
 
   export type KnowledgeChunkScalarFieldEnum = (typeof KnowledgeChunkScalarFieldEnum)[keyof typeof KnowledgeChunkScalarFieldEnum]
+
+
+  export const PhoneVerificationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    phone: 'phone',
+    code: 'code',
+    expiresAt: 'expiresAt',
+    attempts: 'attempts',
+    verified: 'verified',
+    createdAt: 'createdAt'
+  };
+
+  export type PhoneVerificationScalarFieldEnum = (typeof PhoneVerificationScalarFieldEnum)[keyof typeof PhoneVerificationScalarFieldEnum]
 
 
   export const ShipmentScalarFieldEnum: {
@@ -11935,6 +13499,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -11960,20 +13538,6 @@ export namespace Prisma {
    */
   export type ListEnumShipmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShipmentStatus[]'>
     
-
-
-  /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
   /**
    * Deep Input Types
    */
@@ -11989,8 +13553,22 @@ export namespace Prisma {
     role?: EnumRoleFilter<"User"> | $Enums.Role
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
+    address?: StringNullableFilter<"User"> | string | null
+    phone?: StringNullableFilter<"User"> | string | null
+    isBlocked?: BoolFilter<"User"> | boolean
+    isDeleted?: BoolFilter<"User"> | boolean
+    blockedReason?: StringNullableFilter<"User"> | string | null
+    blockedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    twoFactorEnabled?: BoolFilter<"User"> | boolean
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    lastLoginIp?: StringNullableFilter<"User"> | string | null
+    passwordChangedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    failedLoginAttempts?: IntFilter<"User"> | number
+    lockedUntil?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    phoneVerifications?: PhoneVerificationListRelationFilter
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
     shipments?: ShipmentListRelationFilter
@@ -12004,8 +13582,22 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    isBlocked?: SortOrder
+    isDeleted?: SortOrder
+    blockedReason?: SortOrderInput | SortOrder
+    blockedAt?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    twoFactorEnabled?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    lastLoginIp?: SortOrderInput | SortOrder
+    passwordChangedAt?: SortOrderInput | SortOrder
+    failedLoginAttempts?: SortOrder
+    lockedUntil?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    phoneVerifications?: PhoneVerificationOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
     shipments?: ShipmentOrderByRelationAggregateInput
@@ -12022,8 +13614,22 @@ export namespace Prisma {
     role?: EnumRoleFilter<"User"> | $Enums.Role
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
+    address?: StringNullableFilter<"User"> | string | null
+    phone?: StringNullableFilter<"User"> | string | null
+    isBlocked?: BoolFilter<"User"> | boolean
+    isDeleted?: BoolFilter<"User"> | boolean
+    blockedReason?: StringNullableFilter<"User"> | string | null
+    blockedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    twoFactorEnabled?: BoolFilter<"User"> | boolean
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    lastLoginIp?: StringNullableFilter<"User"> | string | null
+    passwordChangedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    failedLoginAttempts?: IntFilter<"User"> | number
+    lockedUntil?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    phoneVerifications?: PhoneVerificationListRelationFilter
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
     shipments?: ShipmentListRelationFilter
@@ -12037,11 +13643,26 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    isBlocked?: SortOrder
+    isDeleted?: SortOrder
+    blockedReason?: SortOrderInput | SortOrder
+    blockedAt?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    twoFactorEnabled?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    lastLoginIp?: SortOrderInput | SortOrder
+    passwordChangedAt?: SortOrderInput | SortOrder
+    failedLoginAttempts?: SortOrder
+    lockedUntil?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
+    _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
+    _sum?: UserSumOrderByAggregateInput
   }
 
   export type UserScalarWhereWithAggregatesInput = {
@@ -12054,6 +13675,19 @@ export namespace Prisma {
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
+    address?: StringNullableWithAggregatesFilter<"User"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isBlocked?: BoolWithAggregatesFilter<"User"> | boolean
+    isDeleted?: BoolWithAggregatesFilter<"User"> | boolean
+    blockedReason?: StringNullableWithAggregatesFilter<"User"> | string | null
+    blockedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    twoFactorEnabled?: BoolWithAggregatesFilter<"User"> | boolean
+    lastLoginAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    lastLoginIp?: StringNullableWithAggregatesFilter<"User"> | string | null
+    passwordChangedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    failedLoginAttempts?: IntWithAggregatesFilter<"User"> | number
+    lockedUntil?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -12070,6 +13704,11 @@ export namespace Prisma {
     ipAddress?: StringNullableFilter<"Session"> | string | null
     userAgent?: StringNullableFilter<"Session"> | string | null
     userId?: StringFilter<"Session"> | string
+    deviceName?: StringNullableFilter<"Session"> | string | null
+    deviceType?: StringNullableFilter<"Session"> | string | null
+    browser?: StringNullableFilter<"Session"> | string | null
+    os?: StringNullableFilter<"Session"> | string | null
+    isCurrent?: BoolFilter<"Session"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -12082,6 +13721,11 @@ export namespace Prisma {
     ipAddress?: SortOrderInput | SortOrder
     userAgent?: SortOrderInput | SortOrder
     userId?: SortOrder
+    deviceName?: SortOrderInput | SortOrder
+    deviceType?: SortOrderInput | SortOrder
+    browser?: SortOrderInput | SortOrder
+    os?: SortOrderInput | SortOrder
+    isCurrent?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -12097,6 +13741,11 @@ export namespace Prisma {
     ipAddress?: StringNullableFilter<"Session"> | string | null
     userAgent?: StringNullableFilter<"Session"> | string | null
     userId?: StringFilter<"Session"> | string
+    deviceName?: StringNullableFilter<"Session"> | string | null
+    deviceType?: StringNullableFilter<"Session"> | string | null
+    browser?: StringNullableFilter<"Session"> | string | null
+    os?: StringNullableFilter<"Session"> | string | null
+    isCurrent?: BoolFilter<"Session"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "token">
 
@@ -12109,6 +13758,11 @@ export namespace Prisma {
     ipAddress?: SortOrderInput | SortOrder
     userAgent?: SortOrderInput | SortOrder
     userId?: SortOrder
+    deviceName?: SortOrderInput | SortOrder
+    deviceType?: SortOrderInput | SortOrder
+    browser?: SortOrderInput | SortOrder
+    os?: SortOrderInput | SortOrder
+    isCurrent?: SortOrder
     _count?: SessionCountOrderByAggregateInput
     _max?: SessionMaxOrderByAggregateInput
     _min?: SessionMinOrderByAggregateInput
@@ -12126,6 +13780,11 @@ export namespace Prisma {
     ipAddress?: StringNullableWithAggregatesFilter<"Session"> | string | null
     userAgent?: StringNullableWithAggregatesFilter<"Session"> | string | null
     userId?: StringWithAggregatesFilter<"Session"> | string
+    deviceName?: StringNullableWithAggregatesFilter<"Session"> | string | null
+    deviceType?: StringNullableWithAggregatesFilter<"Session"> | string | null
+    browser?: StringNullableWithAggregatesFilter<"Session"> | string | null
+    os?: StringNullableWithAggregatesFilter<"Session"> | string | null
+    isCurrent?: BoolWithAggregatesFilter<"Session"> | boolean
   }
 
   export type AccountWhereInput = {
@@ -12445,6 +14104,78 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"KnowledgeChunk"> | Date | string
   }
 
+  export type PhoneVerificationWhereInput = {
+    AND?: PhoneVerificationWhereInput | PhoneVerificationWhereInput[]
+    OR?: PhoneVerificationWhereInput[]
+    NOT?: PhoneVerificationWhereInput | PhoneVerificationWhereInput[]
+    id?: StringFilter<"PhoneVerification"> | string
+    userId?: StringFilter<"PhoneVerification"> | string
+    phone?: StringFilter<"PhoneVerification"> | string
+    code?: StringFilter<"PhoneVerification"> | string
+    expiresAt?: DateTimeFilter<"PhoneVerification"> | Date | string
+    attempts?: IntFilter<"PhoneVerification"> | number
+    verified?: BoolFilter<"PhoneVerification"> | boolean
+    createdAt?: DateTimeFilter<"PhoneVerification"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type PhoneVerificationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    phone?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type PhoneVerificationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PhoneVerificationWhereInput | PhoneVerificationWhereInput[]
+    OR?: PhoneVerificationWhereInput[]
+    NOT?: PhoneVerificationWhereInput | PhoneVerificationWhereInput[]
+    userId?: StringFilter<"PhoneVerification"> | string
+    phone?: StringFilter<"PhoneVerification"> | string
+    code?: StringFilter<"PhoneVerification"> | string
+    expiresAt?: DateTimeFilter<"PhoneVerification"> | Date | string
+    attempts?: IntFilter<"PhoneVerification"> | number
+    verified?: BoolFilter<"PhoneVerification"> | boolean
+    createdAt?: DateTimeFilter<"PhoneVerification"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type PhoneVerificationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    phone?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+    _count?: PhoneVerificationCountOrderByAggregateInput
+    _avg?: PhoneVerificationAvgOrderByAggregateInput
+    _max?: PhoneVerificationMaxOrderByAggregateInput
+    _min?: PhoneVerificationMinOrderByAggregateInput
+    _sum?: PhoneVerificationSumOrderByAggregateInput
+  }
+
+  export type PhoneVerificationScalarWhereWithAggregatesInput = {
+    AND?: PhoneVerificationScalarWhereWithAggregatesInput | PhoneVerificationScalarWhereWithAggregatesInput[]
+    OR?: PhoneVerificationScalarWhereWithAggregatesInput[]
+    NOT?: PhoneVerificationScalarWhereWithAggregatesInput | PhoneVerificationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PhoneVerification"> | string
+    userId?: StringWithAggregatesFilter<"PhoneVerification"> | string
+    phone?: StringWithAggregatesFilter<"PhoneVerification"> | string
+    code?: StringWithAggregatesFilter<"PhoneVerification"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"PhoneVerification"> | Date | string
+    attempts?: IntWithAggregatesFilter<"PhoneVerification"> | number
+    verified?: BoolWithAggregatesFilter<"PhoneVerification"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"PhoneVerification"> | Date | string
+  }
+
   export type ShipmentWhereInput = {
     AND?: ShipmentWhereInput | ShipmentWhereInput[]
     OR?: ShipmentWhereInput[]
@@ -12612,8 +14343,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     shipments?: ShipmentCreateNestedManyWithoutUserInput
@@ -12627,8 +14372,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
@@ -12642,8 +14401,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUpdateManyWithoutUserNestedInput
@@ -12657,8 +14430,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
@@ -12672,6 +14459,19 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12683,6 +14483,19 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12694,6 +14507,19 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12706,6 +14532,11 @@ export namespace Prisma {
     updatedAt?: Date | string
     ipAddress?: string | null
     userAgent?: string | null
+    deviceName?: string | null
+    deviceType?: string | null
+    browser?: string | null
+    os?: string | null
+    isCurrent?: boolean
     user: UserCreateNestedOneWithoutSessionsInput
   }
 
@@ -12718,6 +14549,11 @@ export namespace Prisma {
     ipAddress?: string | null
     userAgent?: string | null
     userId: string
+    deviceName?: string | null
+    deviceType?: string | null
+    browser?: string | null
+    os?: string | null
+    isCurrent?: boolean
   }
 
   export type SessionUpdateInput = {
@@ -12728,6 +14564,11 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceName?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceType?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    isCurrent?: BoolFieldUpdateOperationsInput | boolean
     user?: UserUpdateOneRequiredWithoutSessionsNestedInput
   }
 
@@ -12740,6 +14581,11 @@ export namespace Prisma {
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    deviceName?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceType?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    isCurrent?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type SessionCreateManyInput = {
@@ -12751,6 +14597,11 @@ export namespace Prisma {
     ipAddress?: string | null
     userAgent?: string | null
     userId: string
+    deviceName?: string | null
+    deviceType?: string | null
+    browser?: string | null
+    os?: string | null
+    isCurrent?: boolean
   }
 
   export type SessionUpdateManyMutationInput = {
@@ -12761,6 +14612,11 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceName?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceType?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    isCurrent?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type SessionUncheckedUpdateManyInput = {
@@ -12772,6 +14628,11 @@ export namespace Prisma {
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    deviceName?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceType?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    isCurrent?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AccountCreateInput = {
@@ -13118,6 +14979,82 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PhoneVerificationCreateInput = {
+    id?: string
+    phone: string
+    code: string
+    expiresAt: Date | string
+    attempts?: number
+    verified?: boolean
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutPhoneVerificationsInput
+  }
+
+  export type PhoneVerificationUncheckedCreateInput = {
+    id?: string
+    userId: string
+    phone: string
+    code: string
+    expiresAt: Date | string
+    attempts?: number
+    verified?: boolean
+    createdAt?: Date | string
+  }
+
+  export type PhoneVerificationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPhoneVerificationsNestedInput
+  }
+
+  export type PhoneVerificationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhoneVerificationCreateManyInput = {
+    id?: string
+    userId: string
+    phone: string
+    code: string
+    expiresAt: Date | string
+    attempts?: number
+    verified?: boolean
+    createdAt?: Date | string
+  }
+
+  export type PhoneVerificationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhoneVerificationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ShipmentCreateInput = {
     id?: string
     trackingId?: string
@@ -13337,6 +15274,28 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -13346,6 +15305,12 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type PhoneVerificationListRelationFilter = {
+    every?: PhoneVerificationWhereInput
+    some?: PhoneVerificationWhereInput
+    none?: PhoneVerificationWhereInput
   }
 
   export type SessionListRelationFilter = {
@@ -13377,6 +15342,10 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
+  export type PhoneVerificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type SessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -13400,8 +15369,25 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    address?: SortOrder
+    phone?: SortOrder
+    isBlocked?: SortOrder
+    isDeleted?: SortOrder
+    blockedReason?: SortOrder
+    blockedAt?: SortOrder
+    deletedAt?: SortOrder
+    twoFactorEnabled?: SortOrder
+    lastLoginAt?: SortOrder
+    lastLoginIp?: SortOrder
+    passwordChangedAt?: SortOrder
+    failedLoginAttempts?: SortOrder
+    lockedUntil?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type UserAvgOrderByAggregateInput = {
+    failedLoginAttempts?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -13411,6 +15397,19 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    address?: SortOrder
+    phone?: SortOrder
+    isBlocked?: SortOrder
+    isDeleted?: SortOrder
+    blockedReason?: SortOrder
+    blockedAt?: SortOrder
+    deletedAt?: SortOrder
+    twoFactorEnabled?: SortOrder
+    lastLoginAt?: SortOrder
+    lastLoginIp?: SortOrder
+    passwordChangedAt?: SortOrder
+    failedLoginAttempts?: SortOrder
+    lockedUntil?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -13422,8 +15421,25 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    address?: SortOrder
+    phone?: SortOrder
+    isBlocked?: SortOrder
+    isDeleted?: SortOrder
+    blockedReason?: SortOrder
+    blockedAt?: SortOrder
+    deletedAt?: SortOrder
+    twoFactorEnabled?: SortOrder
+    lastLoginAt?: SortOrder
+    lastLoginIp?: SortOrder
+    passwordChangedAt?: SortOrder
+    failedLoginAttempts?: SortOrder
+    lockedUntil?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type UserSumOrderByAggregateInput = {
+    failedLoginAttempts?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -13480,6 +15496,36 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -13508,6 +15554,11 @@ export namespace Prisma {
     ipAddress?: SortOrder
     userAgent?: SortOrder
     userId?: SortOrder
+    deviceName?: SortOrder
+    deviceType?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    isCurrent?: SortOrder
   }
 
   export type SessionMaxOrderByAggregateInput = {
@@ -13519,6 +15570,11 @@ export namespace Prisma {
     ipAddress?: SortOrder
     userAgent?: SortOrder
     userId?: SortOrder
+    deviceName?: SortOrder
+    deviceType?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    isCurrent?: SortOrder
   }
 
   export type SessionMinOrderByAggregateInput = {
@@ -13530,17 +15586,11 @@ export namespace Prisma {
     ipAddress?: SortOrder
     userAgent?: SortOrder
     userId?: SortOrder
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+    deviceName?: SortOrder
+    deviceType?: SortOrder
+    browser?: SortOrder
+    os?: SortOrder
+    isCurrent?: SortOrder
   }
 
   export type AccountCountOrderByAggregateInput = {
@@ -13589,20 +15639,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type VerificationCountOrderByAggregateInput = {
@@ -13717,6 +15753,47 @@ export namespace Prisma {
     source?: SortOrder
     category?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type PhoneVerificationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    phone?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PhoneVerificationAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type PhoneVerificationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    phone?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PhoneVerificationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    phone?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    attempts?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PhoneVerificationSumOrderByAggregateInput = {
+    attempts?: SortOrder
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -13861,6 +15938,13 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type PhoneVerificationCreateNestedManyWithoutUserInput = {
+    create?: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput> | PhoneVerificationCreateWithoutUserInput[] | PhoneVerificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PhoneVerificationCreateOrConnectWithoutUserInput | PhoneVerificationCreateOrConnectWithoutUserInput[]
+    createMany?: PhoneVerificationCreateManyUserInputEnvelope
+    connect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -13887,6 +15971,13 @@ export namespace Prisma {
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
     createMany?: ChatSessionCreateManyUserInputEnvelope
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+  }
+
+  export type PhoneVerificationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput> | PhoneVerificationCreateWithoutUserInput[] | PhoneVerificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PhoneVerificationCreateOrConnectWithoutUserInput | PhoneVerificationCreateOrConnectWithoutUserInput[]
+    createMany?: PhoneVerificationCreateManyUserInputEnvelope
+    connect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
   }
 
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -13933,8 +16024,34 @@ export namespace Prisma {
     set?: string | null
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type PhoneVerificationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput> | PhoneVerificationCreateWithoutUserInput[] | PhoneVerificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PhoneVerificationCreateOrConnectWithoutUserInput | PhoneVerificationCreateOrConnectWithoutUserInput[]
+    upsert?: PhoneVerificationUpsertWithWhereUniqueWithoutUserInput | PhoneVerificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PhoneVerificationCreateManyUserInputEnvelope
+    set?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    disconnect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    delete?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    connect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    update?: PhoneVerificationUpdateWithWhereUniqueWithoutUserInput | PhoneVerificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PhoneVerificationUpdateManyWithWhereWithoutUserInput | PhoneVerificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PhoneVerificationScalarWhereInput | PhoneVerificationScalarWhereInput[]
   }
 
   export type SessionUpdateManyWithoutUserNestedInput = {
@@ -13991,6 +16108,20 @@ export namespace Prisma {
     update?: ChatSessionUpdateWithWhereUniqueWithoutUserInput | ChatSessionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ChatSessionUpdateManyWithWhereWithoutUserInput | ChatSessionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput> | PhoneVerificationCreateWithoutUserInput[] | PhoneVerificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PhoneVerificationCreateOrConnectWithoutUserInput | PhoneVerificationCreateOrConnectWithoutUserInput[]
+    upsert?: PhoneVerificationUpsertWithWhereUniqueWithoutUserInput | PhoneVerificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PhoneVerificationCreateManyUserInputEnvelope
+    set?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    disconnect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    delete?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    connect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+    update?: PhoneVerificationUpdateWithWhereUniqueWithoutUserInput | PhoneVerificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PhoneVerificationUpdateManyWithWhereWithoutUserInput | PhoneVerificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PhoneVerificationScalarWhereInput | PhoneVerificationScalarWhereInput[]
   }
 
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -14069,10 +16200,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
@@ -14149,6 +16276,20 @@ export namespace Prisma {
     upsert?: ChatSessionUpsertWithoutMessagesInput
     connect?: ChatSessionWhereUniqueInput
     update?: XOR<XOR<ChatSessionUpdateToOneWithWhereWithoutMessagesInput, ChatSessionUpdateWithoutMessagesInput>, ChatSessionUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type UserCreateNestedOneWithoutPhoneVerificationsInput = {
+    create?: XOR<UserCreateWithoutPhoneVerificationsInput, UserUncheckedCreateWithoutPhoneVerificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPhoneVerificationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutPhoneVerificationsNestedInput = {
+    create?: XOR<UserCreateWithoutPhoneVerificationsInput, UserUncheckedCreateWithoutPhoneVerificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPhoneVerificationsInput
+    upsert?: UserUpsertWithoutPhoneVerificationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPhoneVerificationsInput, UserUpdateWithoutPhoneVerificationsInput>, UserUncheckedUpdateWithoutPhoneVerificationsInput>
   }
 
   export type UserCreateNestedOneWithoutShipmentsInput = {
@@ -14273,6 +16414,28 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -14299,17 +16462,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -14358,31 +16510,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -14397,6 +16524,22 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type NestedFloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -14406,6 +16549,20 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedEnumShipmentStatusFilter<$PrismaModel = never> = {
@@ -14441,6 +16598,36 @@ export namespace Prisma {
     _max?: NestedEnumShipmentStatusFilter<$PrismaModel>
   }
 
+  export type PhoneVerificationCreateWithoutUserInput = {
+    id?: string
+    phone: string
+    code: string
+    expiresAt: Date | string
+    attempts?: number
+    verified?: boolean
+    createdAt?: Date | string
+  }
+
+  export type PhoneVerificationUncheckedCreateWithoutUserInput = {
+    id?: string
+    phone: string
+    code: string
+    expiresAt: Date | string
+    attempts?: number
+    verified?: boolean
+    createdAt?: Date | string
+  }
+
+  export type PhoneVerificationCreateOrConnectWithoutUserInput = {
+    where: PhoneVerificationWhereUniqueInput
+    create: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type PhoneVerificationCreateManyUserInputEnvelope = {
+    data: PhoneVerificationCreateManyUserInput | PhoneVerificationCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SessionCreateWithoutUserInput = {
     id: string
     expiresAt: Date | string
@@ -14449,6 +16636,11 @@ export namespace Prisma {
     updatedAt?: Date | string
     ipAddress?: string | null
     userAgent?: string | null
+    deviceName?: string | null
+    deviceType?: string | null
+    browser?: string | null
+    os?: string | null
+    isCurrent?: boolean
   }
 
   export type SessionUncheckedCreateWithoutUserInput = {
@@ -14459,6 +16651,11 @@ export namespace Prisma {
     updatedAt?: Date | string
     ipAddress?: string | null
     userAgent?: string | null
+    deviceName?: string | null
+    deviceType?: string | null
+    browser?: string | null
+    os?: string | null
+    isCurrent?: boolean
   }
 
   export type SessionCreateOrConnectWithoutUserInput = {
@@ -14577,6 +16774,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PhoneVerificationUpsertWithWhereUniqueWithoutUserInput = {
+    where: PhoneVerificationWhereUniqueInput
+    update: XOR<PhoneVerificationUpdateWithoutUserInput, PhoneVerificationUncheckedUpdateWithoutUserInput>
+    create: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type PhoneVerificationUpdateWithWhereUniqueWithoutUserInput = {
+    where: PhoneVerificationWhereUniqueInput
+    data: XOR<PhoneVerificationUpdateWithoutUserInput, PhoneVerificationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PhoneVerificationUpdateManyWithWhereWithoutUserInput = {
+    where: PhoneVerificationScalarWhereInput
+    data: XOR<PhoneVerificationUpdateManyMutationInput, PhoneVerificationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PhoneVerificationScalarWhereInput = {
+    AND?: PhoneVerificationScalarWhereInput | PhoneVerificationScalarWhereInput[]
+    OR?: PhoneVerificationScalarWhereInput[]
+    NOT?: PhoneVerificationScalarWhereInput | PhoneVerificationScalarWhereInput[]
+    id?: StringFilter<"PhoneVerification"> | string
+    userId?: StringFilter<"PhoneVerification"> | string
+    phone?: StringFilter<"PhoneVerification"> | string
+    code?: StringFilter<"PhoneVerification"> | string
+    expiresAt?: DateTimeFilter<"PhoneVerification"> | Date | string
+    attempts?: IntFilter<"PhoneVerification"> | number
+    verified?: BoolFilter<"PhoneVerification"> | boolean
+    createdAt?: DateTimeFilter<"PhoneVerification"> | Date | string
+  }
+
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
     where: SessionWhereUniqueInput
     update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
@@ -14605,6 +16832,11 @@ export namespace Prisma {
     ipAddress?: StringNullableFilter<"Session"> | string | null
     userAgent?: StringNullableFilter<"Session"> | string | null
     userId?: StringFilter<"Session"> | string
+    deviceName?: StringNullableFilter<"Session"> | string | null
+    deviceType?: StringNullableFilter<"Session"> | string | null
+    browser?: StringNullableFilter<"Session"> | string | null
+    os?: StringNullableFilter<"Session"> | string | null
+    isCurrent?: BoolFilter<"Session"> | boolean
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -14710,8 +16942,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     shipments?: ShipmentCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
@@ -14724,8 +16970,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
@@ -14754,8 +17014,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
@@ -14768,8 +17042,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -14782,8 +17070,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     shipments?: ShipmentCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
@@ -14796,8 +17098,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
@@ -14826,8 +17142,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
@@ -14840,8 +17170,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -14854,8 +17198,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     shipments?: ShipmentCreateNestedManyWithoutUserInput
@@ -14868,8 +17226,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
@@ -14922,8 +17294,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUpdateManyWithoutUserNestedInput
@@ -14936,8 +17322,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
@@ -15018,6 +17418,134 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserCreateWithoutPhoneVerificationsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    shipments?: ShipmentCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutPhoneVerificationsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutPhoneVerificationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPhoneVerificationsInput, UserUncheckedCreateWithoutPhoneVerificationsInput>
+  }
+
+  export type UserUpsertWithoutPhoneVerificationsInput = {
+    update: XOR<UserUpdateWithoutPhoneVerificationsInput, UserUncheckedUpdateWithoutPhoneVerificationsInput>
+    create: XOR<UserCreateWithoutPhoneVerificationsInput, UserUncheckedCreateWithoutPhoneVerificationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPhoneVerificationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPhoneVerificationsInput, UserUncheckedUpdateWithoutPhoneVerificationsInput>
+  }
+
+  export type UserUpdateWithoutPhoneVerificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    shipments?: ShipmentUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPhoneVerificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutShipmentsInput = {
     id: string
     email: string
@@ -15025,8 +17553,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
@@ -15039,8 +17581,22 @@ export namespace Prisma {
     role?: $Enums.Role
     emailVerified?: boolean
     image?: string | null
+    address?: string | null
+    phone?: string | null
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
@@ -15097,8 +17653,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
@@ -15111,8 +17681,22 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -15223,6 +17807,16 @@ export namespace Prisma {
     updateBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type PhoneVerificationCreateManyUserInput = {
+    id?: string
+    phone: string
+    code: string
+    expiresAt: Date | string
+    attempts?: number
+    verified?: boolean
+    createdAt?: Date | string
+  }
+
   export type SessionCreateManyUserInput = {
     id: string
     expiresAt: Date | string
@@ -15231,6 +17825,11 @@ export namespace Prisma {
     updatedAt?: Date | string
     ipAddress?: string | null
     userAgent?: string | null
+    deviceName?: string | null
+    deviceType?: string | null
+    browser?: string | null
+    os?: string | null
+    isCurrent?: boolean
   }
 
   export type AccountCreateManyUserInput = {
@@ -15269,6 +17868,36 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type PhoneVerificationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhoneVerificationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhoneVerificationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15277,6 +17906,11 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceName?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceType?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    isCurrent?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type SessionUncheckedUpdateWithoutUserInput = {
@@ -15287,6 +17921,11 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceName?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceType?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    isCurrent?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type SessionUncheckedUpdateManyWithoutUserInput = {
@@ -15297,6 +17936,11 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceName?: NullableStringFieldUpdateOperationsInput | string | null
+    deviceType?: NullableStringFieldUpdateOperationsInput | string | null
+    browser?: NullableStringFieldUpdateOperationsInput | string | null
+    os?: NullableStringFieldUpdateOperationsInput | string | null
+    isCurrent?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AccountUpdateWithoutUserInput = {

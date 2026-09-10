@@ -86,7 +86,7 @@ app.use(
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/shipment", shipmentRouter);
-// app.use("/api/v1/user", userRouter); //  import আছে কিন্তু use নেই - দরকার হলে যোগ করো
+app.use("/api/v1/user", userRouter);
 
 //  Cron cleanup route
 app.post("/api/cron/cleanup", (req: Request, res: Response) => {

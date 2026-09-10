@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { authService } from "./auth.service";
+import { userService } from "../user/user.service";
 import status from "http-status";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/sendResonse";
@@ -12,6 +13,7 @@ import crypto from "crypto";
 import { Role } from "../../../generated/prisma";
 import { JwtTokenUtils } from "../../../utils/jwt";
 import { prisma } from "../../../lib/prisma";
+import { getClientIp, parseUserAgent } from "../../../utils/deviceDetector";
 
 
 const refreshToken = catchAsync(
@@ -46,6 +48,24 @@ const register = catchAsync(async (req: Request, res: Response) => {
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await authService.loginUser(req.body);
+
+    const ip = getClientIp(req);
+    const userAgent = req.headers["user-agent"] || "";
+    const deviceInfo = parseUserAgent(userAgent);
+
+    if (result.sessionToken) {
+        await prisma.session.updateMany({
+            where: { token: result.sessionToken },
+            data: {
+                ipAddress: ip,
+                userAgent,
+                deviceName: deviceInfo.deviceName,
+                deviceType: deviceInfo.deviceType,
+                browser: deviceInfo.browser,
+                os: deviceInfo.os,
+            },
+        });
+    }
 
     // Cookie set
     tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
@@ -114,7 +134,7 @@ const verifyEmail = catchAsync(async (req: Request, res: Response) => {
 const getMe = catchAsync(
     async (req: Request, res: Response) => {
         const user = req.user;
-        const result = await authService.getMe(user as IRequestUser);
+        const result = await userService.getMe(user as IRequestUser);
         sendResponse(res, {
             httpStatusCode: status.OK,
             success: true,
@@ -394,12 +414,22 @@ const googleSetCookie = catchAsync(async (req: Request, res: Response) => {
                     sessionToken = activeSession.token;
                 } else {
                     sessionToken = crypto.randomBytes(32).toString("hex");
+                    const gIp = getClientIp(req);
+                    const gUa = req.headers["user-agent"] || "";
+                    const gDev = parseUserAgent(gUa);
+
                     await prisma.session.create({
                         data: {
                             id: crypto.randomUUID(),
                             userId: payload.data.userId,
                             token: sessionToken,
                             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                            ipAddress: gIp,
+                            userAgent: gUa,
+                            deviceName: gDev.deviceName,
+                            deviceType: gDev.deviceType,
+                            browser: gDev.browser,
+                            os: gDev.os,
                             createdAt: new Date(),
                             updatedAt: new Date(),
                         }

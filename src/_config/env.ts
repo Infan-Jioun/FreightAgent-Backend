@@ -27,8 +27,10 @@ interface EnvConfig {
     UPSTASH_REDIS_REST_TOKEN: string;
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
-    CRON_SECRET: string
-
+    CRON_SECRET: string;
+    CLOUDINARY_CLOUD_NAME: string;
+    CLOUDINARY_API_KEY: string;
+    CLOUDINARY_API_SECRET: string;
 }
 
 const loadVariabales = (): EnvConfig => {
@@ -56,7 +58,10 @@ const loadVariabales = (): EnvConfig => {
         "UPSTASH_REDIS_REST_TOKEN",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
-        "CRON_SECRET"
+        "CRON_SECRET",
+        "CLOUDINARY_CLOUD_NAME",
+        "CLOUDINARY_API_KEY",
+        "CLOUDINARY_API_SECRET"
     ];
 
     requirementVariables.forEach((variable) => {
@@ -92,7 +97,10 @@ const loadVariabales = (): EnvConfig => {
         UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN as string,
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
-        CRON_SECRET: process.env.CRON_SECRET as string
+        CRON_SECRET: process.env.CRON_SECRET as string,
+        CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",
+        CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
+        CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "",
     };
 };
 

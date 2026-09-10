@@ -1,0 +1,16 @@
+model PhoneVerification {
+    id        String   @id @default(uuid())
+    userId    String
+    phone     String
+    code      String
+    expiresAt DateTime
+    attempts  Int      @default(0)
+    verified  Boolean  @default(false)
+    createdAt DateTime @default(now())
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@index([phone])
+    @@map("phone_verifications")
+}

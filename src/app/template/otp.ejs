@@ -58,14 +58,14 @@
                 font-size: 24px;
                 font-weight: 700;
                 letter-spacing: 0.5px;
-              ">Verify Your Email</h1>
+              "><%= typeof title !== 'undefined' && title ? title : 'Verify Your Account' %></h1>
                             <p style="
                 margin: 10px 0 0;
                 color: #7ecfc4;
                 font-size: 14px;
               ">Hello, <strong style="color:#00e5c0;">
                                     <%= name %>
-                                </strong>! Use the OTP below to verify your account.</p>
+                                </strong>! <%= typeof message !== 'undefined' && message ? message : 'Use the OTP below to verify your account.' %></p>
                         </td>
                     </tr>
 

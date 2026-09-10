@@ -4,15 +4,25 @@ import status from "http-status";
 import path from "path";
 import ejs from 'ejs';
 import AppError from "../errorHelper/AppError";
-const transporter = nodemailer.createTransport({
-    host: envConfig.EMAIL_HOST,
-    secure: false,
-    auth: {
-        user: envConfig.EMAIL_SMTP_USER,
-        pass: envConfig.EMAIL_SMTP_PASS
-    },
-    port: Number(envConfig.EMAIL_PORT)
-})
+const isGmail = envConfig.EMAIL_HOST?.toLowerCase().includes("gmail");
+
+const transporter = isGmail
+    ? nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+              user: envConfig.EMAIL_SMTP_USER,
+              pass: envConfig.EMAIL_SMTP_PASS.replace(/\s+/g, ""),
+          },
+      })
+    : nodemailer.createTransport({
+          host: envConfig.EMAIL_HOST,
+          port: Number(envConfig.EMAIL_PORT),
+          secure: Number(envConfig.EMAIL_PORT) === 465,
+          auth: {
+              user: envConfig.EMAIL_SMTP_USER,
+              pass: envConfig.EMAIL_SMTP_PASS.replace(/\s+/g, ""),
+          },
+      });
 // *File sneding
 interface SendEmailOption {
     to: string;
