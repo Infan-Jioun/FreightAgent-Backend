@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../../../shared/catchAsync";
 import { adminService } from "./admin.service";
-import { Role } from "better-auth/plugins";
+import { Role } from "../../../generated/prisma";
 import { sendResponse } from "../../../shared/sendResonse";
 import status from "http-status";
 import { IGetUserQuery, IRoleUpdate } from "./admin.interface";
@@ -31,8 +31,14 @@ const getUserById = catchAsync(async (req: Request, res: Response) => {
 });
 const updateRole = catchAsync(async (req: Request, res: Response) => {
     const currentUser = req.user as IRequestUser;
-    const payload = req.body as IRoleUpdate;
+
+    const payload: IRoleUpdate = {
+        id: req.params.id as string,
+        role: req.body.role as Role,
+    };
+
     const result = await adminService.updateRole(payload, currentUser);
+
     sendResponse(res, {
         httpStatusCode: status.OK,
         success: true,

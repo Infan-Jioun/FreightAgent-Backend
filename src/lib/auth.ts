@@ -53,8 +53,8 @@ export const auth = betterAuth({
     },
 
     trustedOrigins: [
-        envConfig.FRONTEND_URL,                    // ✅ production URL
-        "http://localhost:3000",                   // ✅ local dev
+        envConfig.FRONTEND_URL,                    //  production URL
+        "http://localhost:3000",                   //  local dev
         "http://localhost:5000",
     ],
 
@@ -70,11 +70,11 @@ export const auth = betterAuth({
             expiresIn: 600,
             async sendVerificationOTP({ email, otp, type }) {
 
-                // ✅ একবার user fetch করো, বারবার না
+                //  একবার user fetch করো, বারবার না
                 const user = await prisma.user.findUnique({ where: { email } });
 
                 if (type === "email-verification") {
-                    // ✅ emailVerified check ঠিক আছে
+                    //  emailVerified check ঠিক আছে
                     if (user && !user.emailVerified) {
                         await sendEmail({
                             to: email,

@@ -22,7 +22,7 @@ dotenv.config();
 
 const app: Application = express();
 
-// ✅ Trust proxy - Vercel এর জন্য জরুরি
+//  Trust proxy - Vercel এর জন্য জরুরি
 app.set("trust proxy", 1);
 
 const allowedOrigins = [
@@ -33,7 +33,7 @@ const allowedOrigins = [
     envConfig.FRONTEND_URL?.replace(/\/$/, ""),
 ].filter(Boolean);
 
-// ✅ CORS - better-auth handler এর আগে থাকতে হবে
+//  CORS - better-auth handler এর আগে থাকতে হবে
 app.use(
     cors({
         origin: (origin, callback) => {
@@ -56,20 +56,20 @@ app.use(
     })
 );
 
-// ✅ better-auth handler - CORS এর পরে, body parser এর আগে (এটা জরুরি)
-app.all("/api/auth/{*path}", toNodeHandler(auth)); // ✅ {*path} → /* করা হয়েছে, Express 5 এ /* কাজ করে
+//  better-auth handler - CORS এর পরে, body parser এর আগে (এটা জরুরি)
+app.all("/api/auth/{*path}", toNodeHandler(auth)); //  {*path} → /* করা হয়েছে, Express 5 এ /* কাজ করে
 
-// ✅ Body parsers - auth handler এর পরে
+//  Body parsers - auth handler এর পরে
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ View engine
+//  View engine
 app.set("view engine", "ejs");
 app.set("views", path.resolve(process.cwd(), "src/app/templates"));
 app.set("query parser", (str: string) => qs.parse(str));
 
-// ✅ Swagger
+//  Swagger
 app.use(
     "/api/v1/api-docs",
     basicAuth({
@@ -82,23 +82,23 @@ app.use(
     swaggerUi.setup(swaggerSpec)
 );
 
-// ✅ Routes
+//  Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/shipment", shipmentRouter);
-// app.use("/api/v1/user", userRouter); // ✅ import আছে কিন্তু use নেই - দরকার হলে যোগ করো
+// app.use("/api/v1/user", userRouter); //  import আছে কিন্তু use নেই - দরকার হলে যোগ করো
 
-// ✅ Cron cleanup route
+//  Cron cleanup route
 app.post("/api/cron/cleanup", (req: Request, res: Response) => {
     if (req.headers["x-cron-secret"] !== envConfig.CRON_SECRET) {
-        res.status(401).json({ message: "Unauthorized" }); // ✅ return সরিয়ে দিলাম - Express 5 এ return res... কাজ করে না
+        res.status(401).json({ message: "Unauthorized" }); //  return সরিয়ে দিলাম - Express 5 এ return res... কাজ করে না
         return;
     }
     startCronJobs();
     res.json({ message: "Cleanup started" });
 });
 
-// ✅ Health check
+//  Health check
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({
         status: "ok",
@@ -108,7 +108,7 @@ app.get("/", (req: Request, res: Response) => {
     });
 });
 
-// ✅ Error handlers - সবার শেষে
+//  Error handlers - সবার শেষে
 app.use(globalErrorHandler);
 app.use(notFound);
 

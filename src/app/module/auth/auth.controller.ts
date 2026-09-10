@@ -209,7 +209,7 @@ const createAgent = catchAsync(
 );
 
 
-// ✅ State store — simple in-memory (production এ Redis use করো)
+//  State store — simple in-memory (production এ Redis use করো)
 const stateStore = new Map<string, { createdAt: number; role: Role }>();
 
 const googleLogin = async (req: Request, res: Response) => {
@@ -246,7 +246,7 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
         if (error) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_denied`);
         if (!code || !state) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_callback`);
 
-        // ✅ state থেকে role বের করো — serverless-safe
+        //  state থেকে role বের করো — serverless-safe
         const stateParts = (state as string).split("_");
         if (stateParts.length < 2) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_state`);
@@ -259,7 +259,7 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
 
         const requestedRole = roleFromState;
 
-        // ✅ redirect_uri দুই জায়গায় same
+        //  redirect_uri দুই জায়গায় same
         const GOOGLE_REDIRECT_URI = `${envConfig.BACKEND_URL}/auth/google/callback`;
 
         const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
@@ -356,7 +356,7 @@ const googleSetCookie = catchAsync(async (req: Request, res: Response) => {
         throw new AppError(status.BAD_REQUEST, "Token missing");
     }
 
-    // ✅ user data verify
+    //  user data verify
     const payload = JwtTokenUtils.verifyToken(
         accessToken,
         envConfig.ACCESS_TOKEN_SECRET
@@ -381,7 +381,7 @@ const googleSetCookie = catchAsync(async (req: Request, res: Response) => {
                 userData = dbUser;
             }
 
-            // ✅ যদি sessionToken না থাকে, ইউজারের active session খুঁজুন অথবা তৈরি করুন
+            //  যদি sessionToken না থাকে, ইউজারের active session খুঁজুন অথবা তৈরি করুন
             if (!sessionToken) {
                 const activeSession = await prisma.session.findFirst({
                     where: {
@@ -411,7 +411,7 @@ const googleSetCookie = catchAsync(async (req: Request, res: Response) => {
         }
     }
 
-    // ✅ এবার same-site / CORS request — ৩টি cookie-ই সেট হবে
+    //  এবার same-site / CORS request — ৩টি cookie-ই সেট হবে
     tokenUtils.setAccessTokenCookie(res, req, accessToken);
     if (refreshToken) {
         tokenUtils.setRefreshTokenCookie(res, req, refreshToken);

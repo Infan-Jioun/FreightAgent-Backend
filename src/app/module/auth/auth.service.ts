@@ -549,7 +549,7 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
                 email,
                 name: name || email.split("@")[0],
                 image: image || null,
-                role: requestedRole, // ✅ এখানে CUSTOMER বা AGENT বসবে
+                role: requestedRole, //  এখানে CUSTOMER বা AGENT বসবে
                 emailVerified: true,
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -573,7 +573,7 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
 
     if (!user) throw new AppError(status.NOT_FOUND, "User not found");
 
-    // ✅ Better-Auth Account link (যদি না থাকে)
+    //  Better-Auth Account link (যদি না থাকে)
     const googleId = googleUser.id || googleUser.sub;
     if (googleId) {
         try {
@@ -597,7 +597,7 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
         }
     }
 
-    // ✅ Better-Auth Session তৈরি করো (যাতে Better-Auth getSession() সফল হয়)
+    //  Better-Auth Session তৈরি করো (যাতে Better-Auth getSession() সফল হয়)
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const sessionExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
