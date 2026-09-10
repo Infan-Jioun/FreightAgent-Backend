@@ -428,8 +428,8 @@ const revokeSession = async (
         // ignore if already deleted or unsupported
     }
 
-    // 3. Delete session record from Prisma
-    await prisma.session.delete({ where: { id: sessionId } });
+    // 3. Delete session record from Prisma (deleteMany avoids P2025 error if BetterAuth already removed it)
+    await prisma.session.deleteMany({ where: { id: sessionId } });
 
     return { message: "Session revoked successfully" };
 };
