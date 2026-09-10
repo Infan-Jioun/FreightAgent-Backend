@@ -244,10 +244,11 @@ const stateStore = new Map<string, { createdAt: number; role: Role }>();
 const googleLogin = async (req: Request, res: Response) => {
     try {
         const isAgent = req.path.includes("/agent");
-        const role = isAgent ? Role.AGENT : Role.CUSTOMER;
+        const role = req.query.role === "AGENT" || isAgent ? Role.AGENT : Role.CUSTOMER;
+        const revokeOthers = req.query.revokeOthers === "true";
 
         const randomPart = crypto.randomBytes(16).toString("hex");
-        const state = `${randomPart}_${role}`;
+        const state = `${randomPart}_${role}_${revokeOthers ? "revoke" : "normal"}`;
         stateStore.set(state, { createdAt: Date.now(), role });
         setTimeout(() => stateStore.delete(state), 10 * 60 * 1000);
 
@@ -269,24 +270,26 @@ const googleLogin = async (req: Request, res: Response) => {
 };
 
 const googleCallback = catchAsync(async (req: Request, res: Response) => {
+    let googleUser: any = null;
     try {
         const { code, state, error } = req.query;
 
         if (error) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=google_denied`);
         if (!code || !state) return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_callback`);
 
-        //  state থেকে role বের করো — serverless-safe
+        //  state থেকে role ও revokeOthers বের করো — serverless-safe
         const stateParts = (state as string).split("_");
         if (stateParts.length < 2) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_state`);
         }
 
-        const roleFromState = stateParts[stateParts.length - 1] as Role;
+        const roleFromState = stateParts[1] as Role;
         if (!Object.values(Role).includes(roleFromState)) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=invalid_role`);
         }
 
         const requestedRole = roleFromState;
+        const revokeOthers = stateParts[2] === "revoke" || req.query.revokeOthers === "true";
 
         //  redirect_uri দুই জায়গায় same
         const GOOGLE_REDIRECT_URI = `${envConfig.BACKEND_URL}/auth/google/callback`;
@@ -314,14 +317,14 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
         const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
             headers: { Authorization: `Bearer ${tokenData.access_token}` },
         });
-        const googleUser = (await userRes.json()) as any;
+        googleUser = (await userRes.json()) as any;
 
         if (!googleUser.email) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=no_email`);
         }
 
         const { accessToken, refreshToken, sessionToken, isNewUser } =
-            await authService.googleCallback(googleUser, requestedRole);
+            await authService.googleCallback(googleUser, requestedRole, revokeOthers);
 
         tokenUtils.setAccessTokenCookie(res, req, accessToken);
         tokenUtils.setRefreshTokenCookie(res, req, refreshToken);
@@ -353,6 +356,15 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
         res.redirect(`${envConfig.FRONTEND_URL}/google/success?${searchParams.toString()}`);
     } catch (err: any) {
         console.error("Google callback error:", err);
+        if (
+            err.statusCode === status.FORBIDDEN ||
+            err.message?.includes("Maximum 3 devices")
+        ) {
+            const emailParam = googleUser?.email ? `&email=${encodeURIComponent(googleUser.email)}` : "";
+            return res.redirect(
+                `${envConfig.FRONTEND_URL}/login?error=session_limit${emailParam}`
+            );
+        }
         res.redirect(`${envConfig.FRONTEND_URL}/login?error=server_error`);
     }
 });

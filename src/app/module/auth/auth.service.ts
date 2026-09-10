@@ -600,7 +600,11 @@ const createAgent = async (payload: IRegisterInput) => {
     };
 
 }
-const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOMER) => {
+const googleCallback = async (
+    googleUser: any,
+    requestedRole: Role = Role.CUSTOMER,
+    revokeOthers = false
+) => {
     const email = googleUser.email;
     const name = googleUser.name;
     const image = googleUser.picture;
@@ -687,10 +691,28 @@ const googleCallback = async (googleUser: any, requestedRole: Role = Role.CUSTOM
     });
 
     if (activeSessionsCount >= 3) {
-        throw new AppError(
-            status.FORBIDDEN,
-            "Maximum 3 devices can be logged in simultaneously. Please log out from another device to continue."
-        );
+        if (revokeOthers) {
+            // 1. Blacklist old sessions in Redis
+            const oldSessions = await prisma.session.findMany({
+                where: { userId: user.id },
+                select: { token: true },
+            });
+            for (const s of oldSessions) {
+                if (s.token) {
+                    await blacklistToken(`session:${s.token}`, 7 * 24 * 60 * 60);
+                }
+            }
+
+            // 2. Delete all previous sessions from database
+            await prisma.session.deleteMany({
+                where: { userId: user.id },
+            });
+        } else {
+            throw new AppError(
+                status.FORBIDDEN,
+                "Maximum 3 devices can be logged in simultaneously. Please log out from another device to continue."
+            );
+        }
     }
 
     //  Better-Auth Session তৈরি করো (যাতে Better-Auth getSession() সফল হয়)
