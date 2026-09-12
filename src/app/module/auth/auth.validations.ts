@@ -71,14 +71,20 @@ export const resetPasswordSchema = z.object({
 });
 
 export const changePasswordSchema = z.object({
-    body: z.object({
-        currentPassword: requiredString("Current password")
-            .min(8, "Password must be at least 8 characters"),
-        newPassword: requiredString("New password")
-            .min(8, "Password must be at least 8 characters"),
-        otp: requiredString("OTP")
-            .length(6, "OTP must be 6 digits"),
-    }),
+    body: z
+        .object({
+            currentPassword: requiredString("Current password")
+                .min(8, "Current password must be at least 8 characters"),
+            newPassword: requiredString("New password")
+                .min(8, "New password must be at least 8 characters"),
+            otp: requiredString("OTP")
+                .length(6, "OTP must be 6 digits")
+                .regex(/^\d+$/, "OTP must contain only numbers"),
+        })
+        .refine((data) => data.newPassword !== data.currentPassword, {
+            message: "New password cannot be the same as current password",
+            path: ["newPassword"],
+        }),
 });
 
 export const verifyOtpSchema = z.object({

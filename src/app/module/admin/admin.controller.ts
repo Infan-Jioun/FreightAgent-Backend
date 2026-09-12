@@ -4,7 +4,7 @@ import { adminService } from "./admin.service";
 import { Role } from "../../../generated/prisma";
 import { sendResponse } from "../../../shared/sendResonse";
 import status from "http-status";
-import { IGetUserQuery, IRoleUpdate } from "./admin.interface";
+import { IGetUserQuery, IRoleUpdate, IUserStatusUpdate } from "./admin.interface";
 import { IRequestUser } from "../../interface/requestUserInterface";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
@@ -47,6 +47,29 @@ const updateRole = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
+    const currentUser = req.user as IRequestUser;
+
+    const payload: IUserStatusUpdate = {
+        id: req.params.id as string,
+        isBlocked: req.body.isBlocked,
+        status: req.body.status,
+        reason: req.body.reason,
+        blockedReason: req.body.blockedReason,
+    };
+
+    const result = await adminService.updateUserStatus(payload, currentUser);
+
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: result.isBlocked
+            ? "User suspended successfully"
+            : "User activated successfully",
+        data: result,
+    });
+});
+
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
     const currentUser = req.user as IRequestUser;
     const result = await adminService.deleteUser(req.params.id as string, currentUser);
@@ -61,5 +84,6 @@ export const adminController = {
     getAllUsers,
     getUserById,
     updateRole,
-    deleteUser
-}
+    updateUserStatus,
+    deleteUser,
+};

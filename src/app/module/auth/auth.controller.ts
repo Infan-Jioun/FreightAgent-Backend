@@ -47,9 +47,9 @@ const register = catchAsync(async (req: Request, res: Response) => {
 });
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
-    const result = await authService.loginUser(req.body);
-
     const ip = getClientIp(req);
+    const result = await authService.loginUser({ ...req.body, ip });
+
     const userAgent = req.headers["user-agent"] || "";
     const deviceInfo = parseUserAgent(userAgent);
 
@@ -461,6 +461,19 @@ const googleSetCookie = catchAsync(async (req: Request, res: Response) => {
         } catch (sessionErr) {
             console.error("Session lookup/create error:", sessionErr);
         }
+    }
+
+    if (payload.data?.userId) {
+        const clientIp = getClientIp(req);
+        await prisma.user.update({
+            where: { id: payload.data.userId },
+            data: {
+                lastLoginAt: new Date(),
+                lastLoginIp: clientIp,
+                failedLoginAttempts: 0,
+                lockedUntil: null,
+            },
+        });
     }
 
     //  এবার same-site / CORS request — ৩টি cookie-ই সেট হবে

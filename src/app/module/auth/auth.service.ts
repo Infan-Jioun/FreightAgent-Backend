@@ -14,6 +14,7 @@ import { JwtTokenUtils } from "../../../utils/jwt";
 import { blacklistToken, isTokenBlacklisted } from "../../../utils/tokenBlacklist";
 import { envConfig } from "../../../_config/env";
 import { sendWelcomeEmail } from "../../../utils/sendWelcomeEmail";
+import { invalidateAdminUsersCache } from "../../../utils/invalidateUserCache";
 
 
 const refreshToken = async (token: string) => {
@@ -137,20 +138,86 @@ const register = async (payload: IRegisterInput) => {
 
 
 const loginUser = async (payload: ILoginInput) => {
-    const result = await auth.api.signInEmail({
-        body: {
-            email: payload.email as string,
-            password: payload.password,
+    const existingUser = await prisma.user.findUnique({
+        where: { email: payload.email as string },
+        select: {
+            id: true,
+            email: true,
+            isBlocked: true,
+            isDeleted: true,
+            failedLoginAttempts: true,
+            lockedUntil: true,
         },
-        asResponse: false,
     });
+
+    if (existingUser?.isBlocked) {
+        throw new AppError(status.FORBIDDEN, "Your account has been suspended");
+    }
+    if (existingUser?.isDeleted) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    const now = new Date();
+
+    // Check account lockout
+    if (existingUser?.lockedUntil && existingUser.lockedUntil > now) {
+        const remainingMinutes = Math.ceil(
+            (existingUser.lockedUntil.getTime() - now.getTime()) / (1000 * 60)
+        );
+        throw new AppError(
+            status.TOO_MANY_REQUESTS,
+            `Account is temporarily locked due to multiple failed login attempts. Please try again after ${remainingMinutes} minute(s).`
+        );
+    }
+
+    let result: any;
+    try {
+        result = await auth.api.signInEmail({
+            body: {
+                email: payload.email as string,
+                password: payload.password,
+            },
+            asResponse: false,
+        });
+    } catch (err: any) {
+        if (existingUser) {
+            const MAX_FAILED_ATTEMPTS = 5;
+            const isLockExpired = existingUser.lockedUntil && existingUser.lockedUntil <= now;
+            const currentAttempts = isLockExpired ? 0 : (existingUser.failedLoginAttempts || 0);
+            const newAttempts = currentAttempts + 1;
+            const shouldLock = newAttempts >= MAX_FAILED_ATTEMPTS;
+            const lockedUntil = shouldLock ? new Date(Date.now() + 15 * 60 * 1000) : null;
+
+            await prisma.user.update({
+                where: { id: existingUser.id },
+                data: {
+                    failedLoginAttempts: shouldLock ? 0 : newAttempts,
+                    lockedUntil,
+                },
+            });
+
+            if (shouldLock) {
+                throw new AppError(
+                    status.TOO_MANY_REQUESTS,
+                    "Account has been locked for 15 minutes due to 5 consecutive failed login attempts."
+                );
+            }
+
+            const remaining = MAX_FAILED_ATTEMPTS - newAttempts;
+            throw new AppError(
+                status.BAD_REQUEST,
+                `Invalid Email or Password. You have ${remaining} attempt(s) remaining before account lockout.`
+            );
+        }
+
+        throw new AppError(status.BAD_REQUEST, "Invalid Email or Password");
+    }
 
     if (!result) {
         throw new AppError(status.BAD_REQUEST, "Invalid Email or Password");
     }
 
     if (!result.user.emailVerified) {
-
         await auth.api.sendVerificationOTP({
             body: {
                 email: payload.email as string,
@@ -163,6 +230,17 @@ const loginUser = async (payload: ILoginInput) => {
             "Email not verified. OTP sent to your email."
         );
     }
+
+    // Reset lockout and record lastLoginAt and lastLoginIp
+    await prisma.user.update({
+        where: { id: result.user.id },
+        data: {
+            failedLoginAttempts: 0,
+            lockedUntil: null,
+            lastLoginAt: now,
+            ...(payload.ip && { lastLoginIp: payload.ip }),
+        },
+    });
 
     const customer = await prisma.user.findUnique({
         where: { id: result.user.id },
@@ -179,7 +257,6 @@ const loginUser = async (payload: ILoginInput) => {
     }
 
     // ─── Enforce Maximum 3 Devices Limit ───
-    const now = new Date();
     // Clean up expired sessions for this user first
     await prisma.session.deleteMany({
         where: {
@@ -427,6 +504,15 @@ const resetPassword = async (email: string, otp: string, newPassword: string) =>
         }
     });
 
+    await prisma.user.update({
+        where: { id: userExits.id },
+        data: {
+            passwordChangedAt: new Date(),
+            failedLoginAttempts: 0,
+            lockedUntil: null,
+        },
+    });
+
     await prisma.session.deleteMany({
         where: { userId: userExits.id }
     });
@@ -488,6 +574,16 @@ const changePassword = async (payload: IChangePassword, user: IRequestUser) => {
     } catch (error: any) {
         throw new AppError(status.BAD_REQUEST, "Invalid or expired OTP");
     }
+
+    await prisma.user.update({
+        where: { id: user.userId },
+        data: {
+            passwordChangedAt: new Date(),
+            failedLoginAttempts: 0,
+            lockedUntil: null,
+        },
+    });
+
     await prisma.session.deleteMany({
         where: { userId: user.userId }
     });
@@ -555,7 +651,8 @@ const createAdmin = async (payload: IRegisterInput) => {
             type: "email-verification"
         }
     });
-    console.log(adminData)
+    console.log(adminData);
+    await invalidateAdminUsersCache();
     return {
         adminData
     };
@@ -591,6 +688,7 @@ const createAgent = async (payload: IRegisterInput) => {
             type: "email-verification"
         }
     });
+    await invalidateAdminUsersCache();
     return {
         id: data.user.id,
         name: data.user.name,
@@ -727,6 +825,15 @@ const googleCallback = async (
             expiresAt: sessionExpiresAt,
             createdAt: new Date(),
             updatedAt: new Date(),
+        },
+    });
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            lastLoginAt: new Date(),
+            failedLoginAttempts: 0,
+            lockedUntil: null,
         },
     });
 

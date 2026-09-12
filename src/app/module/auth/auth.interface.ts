@@ -12,6 +12,7 @@ export interface ILoginInput {
     email: string;
     password: string;
     revokeOthers?: boolean;
+    ip?: string;
 }
 export interface ILogoutInput {
     email: string;

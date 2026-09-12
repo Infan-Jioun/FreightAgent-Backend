@@ -9,6 +9,11 @@ import {
     verifyPhoneSchema,
 } from "./user.validation";
 import { Role } from "../../../generated/prisma";
+import {
+    profileUpdateRateLimit,
+    phoneRequestRateLimit,
+    phoneVerifyRateLimit,
+} from "../../../utils/rateLimit";
 
 const router = Router();
 
@@ -21,15 +26,27 @@ router.patch(
     "/profile",
     uploadSingleImage("image"),
     validateRequest(updateProfileSchema),
+    profileUpdateRateLimit,
     userController.updateProfile
 );
 router.post(
     "/avatar",
     uploadSingleImage("image"),
+    profileUpdateRateLimit,
     userController.uploadAvatar
 );
-router.post("/phone/request", validateRequest(requestPhoneVerificationSchema), userController.requestPhoneVerification);
-router.post("/phone/verify", validateRequest(verifyPhoneSchema), userController.verifyAndSavePhone);
+router.post(
+    "/phone/request",
+    validateRequest(requestPhoneVerificationSchema),
+    phoneRequestRateLimit,
+    userController.requestPhoneVerification
+);
+router.post(
+    "/phone/verify",
+    validateRequest(verifyPhoneSchema),
+    phoneVerifyRateLimit,
+    userController.verifyAndSavePhone
+);
 router.get("/sessions", userController.getActiveSessions);
 router.delete("/sessions/:sessionId", userController.revokeSession);
 

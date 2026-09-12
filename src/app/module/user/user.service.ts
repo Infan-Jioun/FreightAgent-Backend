@@ -118,12 +118,18 @@ const updateProfile = async (
         }
     }
 
+    const addressToUpdate = payload.address || payload.location;
+
+    if (!file && !payload.name && !imageUrl && !addressToUpdate) {
+        throw new AppError(status.BAD_REQUEST, "Please provide at least one field to update");
+    }
+
     const updatedUser = await prisma.user.update({
         where: { id: user.userId },
         data: {
             ...(payload.name && { name: payload.name }),
             ...(imageUrl && { image: imageUrl }),
-            ...(payload.address && { address: payload.address }),
+            ...(addressToUpdate && { address: addressToUpdate }),
         },
         select: {
             id: true,

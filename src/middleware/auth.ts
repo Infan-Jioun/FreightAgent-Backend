@@ -54,7 +54,18 @@ export const authenticate = async (
 
             const activeSession = await prisma.session.findUnique({
                 where: { token: sessionToken },
-                select: { id: true, expiresAt: true, userId: true },
+                select: {
+                    id: true,
+                    expiresAt: true,
+                    userId: true,
+                    user: {
+                        select: {
+                            isBlocked: true,
+                            isDeleted: true,
+                            passwordChangedAt: true,
+                        },
+                    },
+                },
             });
 
             if (
@@ -67,19 +78,68 @@ export const authenticate = async (
                     "Session has ended or been revoked. Please log in again."
                 );
             }
+
+            if (activeSession.user?.isBlocked) {
+                throw new AppError(status.FORBIDDEN, "Your account has been suspended");
+            }
+            if (activeSession.user?.isDeleted) {
+                throw new AppError(status.NOT_FOUND, "User account not found");
+            }
+
+            // Invalidate token if password was changed after token generation
+            if (activeSession.user?.passwordChangedAt && decoded.iat) {
+                const passwordChangedSec = Math.floor(
+                    activeSession.user.passwordChangedAt.getTime() / 1000
+                );
+                if (decoded.iat < passwordChangedSec) {
+                    throw new AppError(
+                        status.UNAUTHORIZED,
+                        "Password was recently changed. Please log in again."
+                    );
+                }
+            }
         } else {
             const hasAnyActiveSession = await prisma.session.findFirst({
                 where: {
                     userId: decoded.userId as string,
                     expiresAt: { gt: new Date() },
                 },
-                select: { id: true },
+                select: {
+                    id: true,
+                    user: {
+                        select: {
+                            isBlocked: true,
+                            isDeleted: true,
+                            passwordChangedAt: true,
+                        },
+                    },
+                },
             });
             if (!hasAnyActiveSession) {
                 throw new AppError(
                     status.UNAUTHORIZED,
                     "No active session found. Please log in again."
                 );
+            }
+
+            if (hasAnyActiveSession.user?.isBlocked) {
+                throw new AppError(status.FORBIDDEN, "Your account has been suspended");
+            }
+            if (hasAnyActiveSession.user?.isDeleted) {
+                throw new AppError(status.NOT_FOUND, "User account not found");
+            }
+
+            // Invalidate token if password was changed after token generation
+            if (hasAnyActiveSession.user?.passwordChangedAt && decoded.iat) {
+                const passwordChangedSec = Math.floor(
+                    hasAnyActiveSession.user.passwordChangedAt.getTime() / 1000
+                );
+                if (decoded.iat < passwordChangedSec) {
+                    throw new AppError(
+                        status.UNAUTHORIZED,
+                        "Password was recently changed. Please log in again."
+                    );
+                }
             }
         }
 

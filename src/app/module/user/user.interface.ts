@@ -2,6 +2,7 @@ export interface IUpdateProfilePayload {
     name?: string;
     image?: string;
     address?: string;
+    location?: string;
 }
 
 export interface IRequestPhonePayload {

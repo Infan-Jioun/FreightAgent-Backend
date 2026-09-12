@@ -10,3 +10,11 @@ export interface IRoleUpdate {
     id : string,
     role : Role
 }
+
+export interface IUserStatusUpdate {
+    id: string;
+    isBlocked?: boolean | undefined;
+    status?: "ACTIVE" | "BLOCKED" | "SUSPENDED" | undefined;
+    reason?: string | undefined;
+    blockedReason?: string | undefined;
+}

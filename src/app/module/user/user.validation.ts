@@ -31,9 +31,25 @@ const internationalPhoneSchema = z
 export const updateProfileSchema = z.object({
     body: z
         .object({
-            name: z.string().min(2).max(100).optional(),
+            name: z
+                .string()
+                .trim()
+                .min(2, "Name must be at least 2 characters")
+                .max(100, "Name cannot exceed 100 characters")
+                .optional(),
             image: z.string().url("Image must be a valid URL").optional(),
-            address: z.string().min(3).max(255).optional(),
+            address: z
+                .string()
+                .trim()
+                .min(3, "Address must be at least 3 characters")
+                .max(255, "Address cannot exceed 255 characters")
+                .optional(),
+            location: z
+                .string()
+                .trim()
+                .min(3, "Location must be at least 3 characters")
+                .max(255, "Location cannot exceed 255 characters")
+                .optional(),
         })
         .optional(),
 });

@@ -3,12 +3,16 @@ import { authController } from "./auth.controller";
 import { adminRegisterSchema, changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyOtpSchema } from "./auth.validations";
 import { validateRequest } from "../../../middleware/validateRequest";
 import { authenticate, authorize } from "../../../middleware/auth";
+import {
+    adminRegisterRateLimit,
+    changePasswordOtpRateLimit,
+    changePasswordRateLimit,
+    loginRateLimit,
+    otpRateLimit,
+    registerRateLimit,
+} from "../../../utils/rateLimit";
 import { Role } from "../../../generated/prisma";
-import { adminRegisterRateLimit, loginRateLimit, otpRateLimit, registerRateLimit } from "../../../utils/rateLimit";
-import { toNodeHandler } from "better-auth/node";
-import { auth } from "../../../lib/auth";
 const router = Router();
-// router.all("/better-auth/*splat", toNodeHandler(auth));
 router.post("/refresh-token", authController.refreshToken);
 router.post("/register", registerRateLimit, validateRequest(registerSchema), authController.register);
 router.post("/login", loginRateLimit, validateRequest(loginSchema), authController.loginUser);
@@ -18,8 +22,8 @@ router.post("/verify-otp", validateRequest(verifyOtpSchema), authController.veri
 router.post("/forgot-password", otpRateLimit, validateRequest(forgotPasswordSchema), authController.forgotPassword);
 router.post("/reset-password", validateRequest(resetPasswordSchema), authController.resetPassword);
 router.get("/me", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), authController.getMe)
-router.post("/change-password/send-otp", otpRateLimit, authenticate, authController.sendChangePasswordOTP);
-router.post("/change-password", authenticate, validateRequest(changePasswordSchema), authController.changePassword);
+router.post("/change-password/send-otp", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), changePasswordOtpRateLimit, authController.sendChangePasswordOTP);
+router.post("/change-password", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), validateRequest(changePasswordSchema), changePasswordRateLimit, authController.changePassword);
 router.post("/create-admin", adminRegisterRateLimit, validateRequest(adminRegisterSchema), authController.createAdmin)
 router.post("/create-agent", registerRateLimit, validateRequest(registerSchema), authController.createAgent)
 router.get("/google", authController.googleLogin);
