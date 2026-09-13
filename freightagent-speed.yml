@@ -1,0 +1,33 @@
+config:
+  target: "https://freight-agent-backend.vercel.app"
+  phases:
+    - duration: 30
+      arrivalRate: 5     # 5 req/sec for 30s (safe for Vercel & Upstash Redis free tiers)
+      name: "Light Load Phase"
+  environments:
+    production:
+      target: "https://freight-agent-backend.vercel.app"
+      phases:
+        - duration: 30
+          arrivalRate: 5
+    local:
+      target: "http://localhost:5000"
+      phases:
+        - duration: 30
+          arrivalRate: 5
+  defaults:
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "API Health & Speed Check"
+    flow:
+      # 1. Root Health Check (Public, No Rate Limit - Measures true server latency)
+      - get:
+          url: "/"
+      # 2. Shipment API (Requires Bearer token; uncomment headers if testing auth)
+      - get:
+          url: "/api/v1/shipment"
+          # headers:
+          #   Authorization: "Bearer YOUR_ACCESS_TOKEN_HERE"
