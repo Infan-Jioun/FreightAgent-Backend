@@ -43,7 +43,7 @@ const getMe = async (user: IRequestUser) => {
             isBlocked: true,
             isDeleted: true,
             createdAt: true,
-            shipments: {
+            customerShipments: {
                 select: {
                     id: true,
                     trackingId: true,
@@ -77,7 +77,10 @@ const getMe = async (user: IRequestUser) => {
     if (!existingUser.emailVerified)
         throw new AppError(status.FORBIDDEN, "Email not verified");
 
-    return existingUser;
+    return {
+        ...existingUser,
+        shipments: existingUser.customerShipments,
+    };
 };
 
 // ─── 2. Update Profile ────────────────────────────────────

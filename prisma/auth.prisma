@@ -1,34 +1,53 @@
 model User {
-    id            String    @id
-    email         String    @unique
-    name          String
-    role          Role      @default(CUSTOMER)
-    emailVerified Boolean   @default(false)
-    image         String?
-    address       String?
-    phone         String?
-    assignedArea String?
-    isBlocked     Boolean   @default(false)
-    isDeleted     Boolean   @default(false)
-    blockedReason String?
-    blockedAt     DateTime?
-    deletedAt     DateTime?
-    twoFactorEnabled    Boolean   @default(false)
-    lastLoginAt         DateTime?
-    lastLoginIp         String?
-    passwordChangedAt   DateTime?
-    failedLoginAttempts Int       @default(0)
-    lockedUntil         DateTime?
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    phoneVerifications PhoneVerification[]
-      agentShipments Shipment[] @relation("AgentShipments")
-      customerShipments Shipment[] @relation("CustomerShipments")
-    sessions Session[]
-    accounts Account[]
+    id                      String                  @id
+    email                   String                  @unique
+    name                    String
+    role                    Role                    @default(CUSTOMER)
+    emailVerified           Boolean                 @default(false)
+    image                   String?
+    address                 String?
+    phone                   String?
+    assignedArea            String?
+    isAvailable             Boolean                 @default(true)
+    isBlocked               Boolean                 @default(false)
+    isDeleted               Boolean                 @default(false)
+    blockedReason           String?
+    blockedAt               DateTime?
+    deletedAt               DateTime?
+    twoFactorEnabled        Boolean                 @default(false)
+    lastLoginAt             DateTime?
+    lastLoginIp             String?
+    passwordChangedAt       DateTime?
+    failedLoginAttempts     Int                     @default(0)
+    lockedUntil             DateTime?
 
-    shipments    Shipment[]
-    chatSessions ChatSession[]
+    // Agent Verification
+    agentVerificationStatus AgentVerificationStatus @default(NOT_APPLICABLE)
+    verifiedAt              DateTime?
+    verifiedById            String?
+
+    createdAt               DateTime                @default(now())
+    updatedAt               DateTime                @updatedAt
+
+    phoneVerifications      PhoneVerification[]
+    agentShipments          Shipment[]              @relation("AgentShipments")
+    customerShipments       Shipment[]              @relation("CustomerShipments")
+    assignedShipments       Shipment[]              @relation("AssignedShipments")
+    sessions                Session[]
+    accounts                Account[]
+    chatSessions            ChatSession[]
+    statusLogs              StatusLog[]             @relation("StatusLogUpdater")
+
+    // Corridors & Credentials
+    agentCorridors          AgentCorridor[]         @relation("AgentCorridors")
+    agentCredentials        AgentCredential[]       @relation("AgentCredentials")
+    verifiedCredentials     AgentCredential[]       @relation("CredentialsVerified")
+
+    // Admin Audits & Location Management
+    adminAuditLogs          AdminAuditLog[]         @relation("AdminAudits")
+    locationsCreated        Location[]              @relation("LocationsCreated")
+    locationsUpdated        Location[]              @relation("LocationsUpdated")
+    locationsDeleted        Location[]              @relation("LocationsDeleted")
 
     @@map("users")
 }
@@ -44,17 +63,17 @@ model Session {
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-
-    deviceName    String?  
-    deviceType    String?   
-    browser       String?   
-    os            String?   
-    isCurrent     Boolean   @default(false) 
+    deviceName String?
+    deviceType String?
+    browser    String?
+    os         String?
+    isCurrent  Boolean  @default(false)
 
     @@unique([token])
     @@index([userId])
     @@map("session")
 }
+
 model Account {
     id                    String    @id
     accountId             String

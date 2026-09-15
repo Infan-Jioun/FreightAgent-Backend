@@ -3,7 +3,7 @@ import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/sendResonse";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { shipmentService } from "./shipment.service";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { IQueryShipment, IUpdateShipmentStatus } from "./shipment.interface";
 
 const createShipment = catchAsync(async (req: Request, res: Response) => {
@@ -73,7 +73,7 @@ const deleteShipment = catchAsync(async (req: Request, res: Response) => {
 });
 const trackShipment = catchAsync(async (req: Request, res: Response) => {
     const result = await shipmentService.trackShipment(
-        req.params.trackingId as string );
+        req.params.trackingId as string);
     sendResponse(res, {
         httpStatusCode: status.OK,
         success: true,
@@ -81,6 +81,23 @@ const trackShipment = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+const getAgentShipments = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await shipmentService.getAgentShipments(
+            req.query as IQueryShipment,
+            req.user as IRequestUser
+        );
+
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: 'Agent shipments fetched successfully',
+            data: result,
+        });
+    } catch (error) {
+        next(error);
+    };
+})
 export const shipmentController = {
     createShipment,
     getAllShipments,
@@ -88,5 +105,6 @@ export const shipmentController = {
     getShipmentById,
     updateShipmentStatus,
     deleteShipment,
-    trackShipment
+    trackShipment,
+    getAgentShipments
 }

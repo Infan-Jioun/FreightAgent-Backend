@@ -15,6 +15,10 @@ export const createShipmentSchema = z.object({
         weight: z.number({
             error: () => "Weight must be a number",
         }).positive("Weight must be positive"),
+        declaredCargoValue: z.number({
+            error: () => "Declared cargo value must be a number",
+        }).min(0, "Declared cargo value must be non-negative").optional().default(0),
+        currency: z.string().optional().default("USD"),
         description: z.string().optional(),
         estimatedDate: z.string().optional(),
     }),
@@ -24,6 +28,8 @@ export const updateShipmentStatusSchema = z.object({
     body: z.object({
         status: z.enum([
             "PENDING",
+            "ASSIGNED",
+            "ACCEPTED",
             "PICKED_UP",
             "IN_TRANSIT",
             "AT_CUSTOMS",

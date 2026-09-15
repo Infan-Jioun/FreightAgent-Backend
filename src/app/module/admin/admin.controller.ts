@@ -80,10 +80,42 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+
+const getRoadAgents = catchAsync(async (req: Request, res: Response) => {
+    const result = await adminService.getRoadAgents(req.query);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Road agents fetched successfully",
+        data: result.agents,
+        meta: result.meta,
+    });
+});
+
+const assignRoadAgent = catchAsync(async (req: Request, res: Response) => {
+    const currentUser = req.user as IRequestUser;
+    const { id } = req.params;
+    const { agentId, note } = req.body;
+
+    const result = await adminService.assignRoadAgent(
+        { shipmentId: id as string, agentId, note },
+        currentUser
+    );
+
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Road agent assigned to shipment successfully",
+        data: result,
+    });
+});
+
 export const adminController = {
     getAllUsers,
     getUserById,
     updateRole,
     updateUserStatus,
     deleteUser,
-};
+    getRoadAgents,
+    assignRoadAgent,
+};

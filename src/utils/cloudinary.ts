@@ -77,4 +77,94 @@ export const extractPublicIdFromUrl = (url: string): string | null => {
     }
 };
 
+import { redis } from "../lib/redis";
+
+export const uploadPrivateDocumentToCloudinary = async (
+    buffer: Buffer,
+    folder = "freightagent/credentials"
+): Promise<UploadApiResponse> => {
+    if (
+        !envConfig.CLOUDINARY_CLOUD_NAME ||
+        !envConfig.CLOUDINARY_API_KEY ||
+        !envConfig.CLOUDINARY_API_SECRET
+    ) {
+        throw new AppError(
+            status.INTERNAL_SERVER_ERROR,
+            "Cloudinary credentials are missing in .env"
+        );
+    }
+
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder,
+                resource_type: "auto",
+                type: "authenticated", // Secure private storage - not public
+            },
+            (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
+                if (error || !result) {
+                    return reject(
+                        new AppError(
+                            status.INTERNAL_SERVER_ERROR,
+                            error?.message || "Failed to upload document to Cloudinary"
+                        )
+                    );
+                }
+                resolve(result);
+            }
+        );
+
+        uploadStream.end(buffer);
+    });
+};
+
+/**
+ * Generates an authenticated, time-limited Cloudinary signed URL for private license documents.
+ * Employs Redis caching for 50 minutes (3,000s) to prevent redundant signature generation
+ * on repetitive admin views, expiring safely ahead of Cloudinary's 60-minute (3,600s) window.
+ */
+export const getSignedDocumentUrl = async (
+    publicId: string,
+    expiresInSeconds = 3600
+): Promise<string> => {
+    if (!publicId) return "";
+
+    const cacheKey = `cloudinary:signed_url:${publicId}`;
+
+    try {
+        const cached = await redis.get<string>(cacheKey);
+        if (cached) {
+            return cached;
+        }
+    } catch (err) {
+        console.warn("[Cloudinary] Redis cache check failed, generating fresh URL:", err);
+    }
+
+    const expiresAt = Math.floor(Date.now() / 1000) + expiresInSeconds;
+    const signedUrl = cloudinary.url(publicId, {
+        sign_url: true,
+        type: "authenticated",
+        secure: true,
+        expires_at: expiresAt,
+    });
+
+    try {
+        // Cache for 50 minutes (3,000 seconds)
+        await redis.set(cacheKey, signedUrl, { ex: 50 * 60 });
+    } catch (err) {
+        console.warn("[Cloudinary] Failed to cache signed URL in Redis:", err);
+    }
+
+    return signedUrl;
+};
+
+export const invalidateSignedDocumentUrlCache = async (publicId: string): Promise<void> => {
+    try {
+        await redis.del(`cloudinary:signed_url:${publicId}`);
+    } catch (err) {
+        console.error("[Cloudinary] Failed to invalidate signed URL cache:", err);
+    }
+};
+
 export { cloudinary };
+

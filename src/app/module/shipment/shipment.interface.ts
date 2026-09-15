@@ -4,6 +4,8 @@ export interface ICreateShipment {
     origin: string;
     destination: string;
     weight: number;
+    declaredCargoValue?: number;
+    currency?: string;
     description?: string;
     estimatedDate?: string;
 }

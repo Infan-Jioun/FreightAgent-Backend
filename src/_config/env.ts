@@ -31,6 +31,8 @@ interface EnvConfig {
     CLOUDINARY_CLOUD_NAME: string;
     CLOUDINARY_API_KEY: string;
     CLOUDINARY_API_SECRET: string;
+    STRIPE_SECRET_KEY: string;
+    STRIPE_WEBHOOK_SECRET: string;
 }
 
 const loadVariabales = (): EnvConfig => {
@@ -98,7 +100,18 @@ const loadVariabales = (): EnvConfig => {
         CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",
         CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
         CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "",
+        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
+        STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
     };
 };
 
 export const envConfig = loadVariabales();
+
+// Startup check for Stripe configuration
+if (!envConfig.STRIPE_SECRET_KEY || !envConfig.STRIPE_WEBHOOK_SECRET) {
+    if (envConfig.NODE_ENV === "production") {
+        console.error("❌ CRITICAL: STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET must be set in production!");
+    } else {
+        console.warn("⚠️ [Config Warning] STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET is not configured in .env. Stripe features will require valid API keys before live processing.");
+    }
+}

@@ -18,3 +18,17 @@ export interface IUserStatusUpdate {
     reason?: string | undefined;
     blockedReason?: string | undefined;
 }
+
+export interface IRoadAgentQuery {
+    page?: number | string;
+    limit?: number | string;
+    area?: string;
+    isAvailable?: string | boolean;
+    search?: string;
+}
+
+export interface IAssignRoadAgent {
+    shipmentId: string;
+    agentId: string;
+    note?: string;
+}

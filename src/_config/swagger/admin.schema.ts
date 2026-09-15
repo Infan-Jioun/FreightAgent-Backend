@@ -260,4 +260,176 @@ export const adminSwaggerDocs = {
             },
         },
     },
+    "/admin/agents": {
+        get: {
+            summary: "List Road Agents (Admin only)",
+            description: "Fetches a paginated list of road agents with filtering by area/road, availability status, search term, and active workload count to facilitate optimal dispatching.",
+            tags: ["Admin"],
+            security: [{ cookieAuth: [] }, { bearerAuth: [] }],
+            parameters: [
+                {
+                    name: "page",
+                    in: "query",
+                    description: "Page number",
+                    required: false,
+                    schema: { type: "integer", default: 1, example: 1 },
+                },
+                {
+                    name: "limit",
+                    in: "query",
+                    description: "Number of agents per page",
+                    required: false,
+                    schema: { type: "integer", default: 10, example: 10 },
+                },
+                {
+                    name: "area",
+                    in: "query",
+                    description: "Filter by assigned road or area name",
+                    required: false,
+                    schema: { type: "string", example: "Chattogram" },
+                },
+                {
+                    name: "isAvailable",
+                    in: "query",
+                    description: "Filter by agent availability",
+                    required: false,
+                    schema: { type: "boolean", example: true },
+                },
+                {
+                    name: "search",
+                    in: "query",
+                    description: "Search by agent name, email, phone, or road area",
+                    required: false,
+                    schema: { type: "string", example: "Rahim" },
+                },
+            ],
+            responses: {
+                200: {
+                    description: "Road agents fetched successfully",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    httpStatusCode: { type: "integer", example: 200 },
+                                    success: { type: "boolean", example: true },
+                                    message: { type: "string", example: "Road agents fetched successfully" },
+                                    data: {
+                                        type: "array",
+                                        items: {
+                                            type: "object",
+                                            properties: {
+                                                id: { type: "string", example: "agent_uuid_123" },
+                                                name: { type: "string", example: "Agent Rahim" },
+                                                email: { type: "string", example: "rahim@freightagent.com" },
+                                                phone: { type: "string", example: "+8801811111111" },
+                                                assignedArea: { type: "string", example: "Chattogram Port Road" },
+                                                isAvailable: { type: "boolean", example: true },
+                                                isBlocked: { type: "boolean", example: false },
+                                                activeShipmentsCount: { type: "integer", example: 2 },
+                                            },
+                                        },
+                                    },
+                                    meta: {
+                                        type: "object",
+                                        properties: {
+                                            page: { type: "integer", example: 1 },
+                                            limit: { type: "integer", example: 10 },
+                                            total: { type: "integer", example: 4 },
+                                            totalPage: { type: "integer", example: 1 },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                401: { description: "Unauthorized" },
+                403: { description: "Forbidden - Admin access only" },
+            },
+        },
+    },
+    "/admin/shipments/{id}/assign": {
+        patch: {
+            summary: "Assign a Road Agent to a Shipment (Admin only)",
+            description: "Assigns a specific road agent to a pending or in-progress shipment. Sets status to ASSIGNED, records assignedById and assignedAt, creates an audit status log, and dispatches real-time web (Socket.IO) and email notifications to both the agent and customer.",
+            tags: ["Admin"],
+            security: [{ cookieAuth: [] }, { bearerAuth: [] }],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    description: "Shipment ID",
+                    required: true,
+                    schema: { type: "string", example: "shipment_uuid_123" },
+                },
+            ],
+            requestBody: {
+                required: true,
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            required: ["agentId"],
+                            properties: {
+                                agentId: { type: "string", example: "agent_uuid_456" },
+                                note: { type: "string", example: "Assigned for Agrabad to Banani corridor" },
+                            },
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: {
+                    description: "Road agent assigned to shipment successfully",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    httpStatusCode: { type: "integer", example: 200 },
+                                    success: { type: "boolean", example: true },
+                                    message: { type: "string", example: "Road agent assigned to shipment successfully" },
+                                    data: {
+                                        type: "object",
+                                        properties: {
+                                            id: { type: "string" },
+                                            trackingId: { type: "string" },
+                                            status: { type: "string", example: "ASSIGNED" },
+                                            agentId: { type: "string" },
+                                            assignedById: { type: "string" },
+                                            assignedAt: { type: "string", format: "date-time" },
+                                            agent: {
+                                                type: "object",
+                                                properties: {
+                                                    id: { type: "string" },
+                                                    name: { type: "string", example: "Agent Rahim" },
+                                                    email: { type: "string", example: "rahim@freightagent.com" },
+                                                    phone: { type: "string", example: "+8801811111111" },
+                                                    assignedArea: { type: "string", example: "Chattogram" },
+                                                },
+                                            },
+                                            assignedBy: {
+                                                type: "object",
+                                                properties: {
+                                                    id: { type: "string" },
+                                                    name: { type: "string", example: "Admin Super" },
+                                                    email: { type: "string", example: "admin@freightagent.com" },
+                                                    role: { type: "string", example: "ADMIN" },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                400: { description: "Bad Request - Shipment delivered/cancelled or agent is blocked" },
+                401: { description: "Unauthorized" },
+                403: { description: "Forbidden - Admin access only" },
+                404: { description: "Shipment or Agent not found" },
+            },
+        },
+    },
 };

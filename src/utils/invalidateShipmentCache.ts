@@ -1,28 +1,31 @@
 import { redis } from "../lib/redis";
 
-export const invalidateShipmentCache = async (): Promise<void> => {
-    let cursor = 0;
+export const invalidateShipmentCache = async (id?: string, userId?: string, p0?: string | undefined): Promise<void> => {
+    const patterns = ["shipment:*", "agent:assigned:*", "agent:shipment:*"];
 
-    do {
-        const [nextCursor, keys] = await redis.scan(cursor, {
-            match: "shipment:*",
-            count: 100,
-        });
-
-        cursor = Number(nextCursor);
-
-        if (keys.length > 0) {
-            const results = await Promise.allSettled(
-                keys.map((key) => redis.del(key))
-            );
-            results.forEach((result, index) => {
-                if (result.status === "rejected") {
-                    console.error(
-                        `Failed to delete cache key "${keys[index]}":`,
-                        result.reason
-                    );
-                }
+    for (const match of patterns) {
+        let cursor = 0;
+        do {
+            const [nextCursor, keys] = await redis.scan(cursor, {
+                match,
+                count: 100,
             });
-        }
-    } while (cursor !== 0);
+
+            cursor = Number(nextCursor);
+
+            if (keys.length > 0) {
+                const results = await Promise.allSettled(
+                    keys.map((key) => redis.del(key))
+                );
+                results.forEach((result, index) => {
+                    if (result.status === "rejected") {
+                        console.error(
+                            `Failed to delete cache key "${keys[index]}":`,
+                            result.reason
+                        );
+                    }
+                });
+            }
+        } while (cursor !== 0);
+    }
 };

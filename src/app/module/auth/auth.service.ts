@@ -22,7 +22,16 @@ const refreshToken = async (token: string) => {
         throw new AppError(status.UNAUTHORIZED, "Refresh token missing");
     }
 
-    //  Refresh token verify করো
+    // Reuse detection: Check if the token was already used and blacklisted
+    const isRevoked = await isTokenBlacklisted(token);
+    if (isRevoked) {
+        throw new AppError(
+            status.UNAUTHORIZED,
+            "Refresh token has expired, been revoked, or already rotated. Please log in again."
+        );
+    }
+
+    // Verify Refresh token signature & expiry
     const result = JwtTokenUtils.verifyToken(
         token,
         envConfig.REFRESH_TOKEN_SECRET
@@ -34,7 +43,7 @@ const refreshToken = async (token: string) => {
 
     const decoded = result.data;
 
-    // Check if session has been revoked or expired
+    // Check if associated session has been revoked or expired
     if (decoded.sessionToken) {
         const isSessionRevoked = await isTokenBlacklisted(`session:${decoded.sessionToken}`);
         if (isSessionRevoked) {
@@ -56,18 +65,26 @@ const refreshToken = async (token: string) => {
         select: {
             id: true,
             email: true,
+            name: true,
             role: true,
             image: true,
             emailVerified: true,
+            isBlocked: true,
+            isDeleted: true,
             createdAt: true,
         },
     });
 
-    if (!userExists) {
-        throw new AppError(status.NOT_FOUND, "User not found");
+    if (!userExists || userExists.isBlocked || userExists.isDeleted) {
+        throw new AppError(status.UNAUTHORIZED, "User account is unavailable or inactive");
     }
 
-    //  নতুন Access Token generate করো
+    // Invalidate the consumed refresh token to prevent replay attacks (Rotation)
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const remainingSeconds = decoded.exp ? Math.max(60, decoded.exp - nowSeconds) : 7 * 24 * 3600;
+    await blacklistToken(token, remainingSeconds);
+
+    // Common payload for new tokens
     const tokenPayload = {
         userId: userExists.id,
         email: userExists.email,
@@ -78,9 +95,21 @@ const refreshToken = async (token: string) => {
         sessionToken: decoded.sessionToken,
     };
 
-    const accessToken = tokenUtils.getAccessToken(tokenPayload);
+    // Rotate: generate fresh access token and fresh refresh token
+    const newAccessToken = tokenUtils.getAccessToken(tokenPayload);
+    const newRefreshToken = tokenUtils.getRefreshToken(tokenPayload);
 
-    return { accessToken };
+    return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        user: {
+            id: userExists.id,
+            email: userExists.email,
+            name: userExists.name,
+            role: userExists.role,
+            image: userExists.image,
+        },
+    };
 };
 const register = async (payload: IRegisterInput) => {
     if (!payload.email || !payload.password || !payload.name) {
@@ -193,6 +222,11 @@ const loginUser = async (payload: ILoginInput) => {
                 data: {
                     failedLoginAttempts: shouldLock ? 0 : newAttempts,
                     lockedUntil,
+                },
+                select: {
+                    id: true,
+                    failedLoginAttempts: true,
+                    lockedUntil: true,
                 },
             });
 

@@ -13,7 +13,9 @@ import basicAuth from "express-basic-auth";
 import { envConfig } from './_config/env';
 import { userRouter } from './app/module/user/user.router';
 import { adminRouter } from './app/module/admin/admin.router';
+import { agentRouter } from './app/module/agent/agent.router';
 import { shipmentRouter } from './app/module/shipment/shipment.router';
+import { paymentRouter } from './app/module/payment/payment.router';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth';
 import { startCronJobs } from './app/jobs/cleanupJobs';
@@ -59,6 +61,12 @@ app.use(
 //  better-auth handler - CORS এর পরে, body parser এর আগে (এটা জরুরি)
 app.all("/api/auth/{*path}", toNodeHandler(auth)); //  {*path} → /* করা হয়েছে, Express 5 এ /* কাজ করে
 
+//  Stripe Webhook Raw Body Parser - MUST precede express.json() for signature verification
+app.use(
+    "/api/v1/payment/webhook",
+    express.raw({ type: "application/json" })
+);
+
 //  Body parsers - auth handler এর পরে
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -85,6 +93,8 @@ app.use(
 //  Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/agent", agentRouter);
+app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/shipment", shipmentRouter);
 app.use("/api/v1/user", userRouter);
 

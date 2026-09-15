@@ -1,31 +1,72 @@
+model AdminAuditLog {
+  id         String      @id @default(uuid())
+  adminId    String
+  admin      User        @relation("AdminAudits", fields: [adminId], references: [id], onDelete: Cascade)
+  action     AuditAction
+  targetType String
+  targetId   String
+  details    String
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+
+  @@index([adminId])
+  @@index([action])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
+}
+
 model User {
-  id                  String              @id
-  email               String              @unique
+  id                  String    @id
+  email               String    @unique
   name                String
-  role                Role                @default(CUSTOMER)
-  emailVerified       Boolean             @default(false)
+  role                Role      @default(CUSTOMER)
+  emailVerified       Boolean   @default(false)
   image               String?
   address             String?
   phone               String?
-  isBlocked           Boolean             @default(false)
-  isDeleted           Boolean             @default(false)
+  assignedArea        String?
+  isAvailable         Boolean   @default(true)
+  isBlocked           Boolean   @default(false)
+  isDeleted           Boolean   @default(false)
   blockedReason       String?
   blockedAt           DateTime?
   deletedAt           DateTime?
-  twoFactorEnabled    Boolean             @default(false)
+  twoFactorEnabled    Boolean   @default(false)
   lastLoginAt         DateTime?
   lastLoginIp         String?
   passwordChangedAt   DateTime?
-  failedLoginAttempts Int                 @default(0)
+  failedLoginAttempts Int       @default(0)
   lockedUntil         DateTime?
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  phoneVerifications  PhoneVerification[]
-  sessions            Session[]
-  accounts            Account[]
 
-  shipments    Shipment[]
-  chatSessions ChatSession[]
+  // Agent Verification
+  agentVerificationStatus AgentVerificationStatus @default(NOT_APPLICABLE)
+  verifiedAt              DateTime?
+  verifiedById            String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  phoneVerifications PhoneVerification[]
+  agentShipments     Shipment[]          @relation("AgentShipments")
+  customerShipments  Shipment[]          @relation("CustomerShipments")
+  assignedShipments  Shipment[]          @relation("AssignedShipments")
+  sessions           Session[]
+  accounts           Account[]
+  chatSessions       ChatSession[]
+  statusLogs         StatusLog[]         @relation("StatusLogUpdater")
+
+  // Corridors & Credentials
+  agentCorridors      AgentCorridor[]   @relation("AgentCorridors")
+  agentCredentials    AgentCredential[] @relation("AgentCredentials")
+  verifiedCredentials AgentCredential[] @relation("CredentialsVerified")
+
+  // Admin Audits & Location Management
+  adminAuditLogs   AdminAuditLog[] @relation("AdminAudits")
+  locationsCreated Location[]      @relation("LocationsCreated")
+  locationsUpdated Location[]      @relation("LocationsUpdated")
+  locationsDeleted Location[]      @relation("LocationsDeleted")
 
   @@map("users")
 }
@@ -126,6 +167,32 @@ model KnowledgeChunk {
   @@map("knowledge_chunks")
 }
 
+model AgentCredential {
+  id                 String           @id @default(uuid())
+  agentId            String
+  agent              User             @relation("AgentCredentials", fields: [agentId], references: [id], onDelete: Cascade)
+  type               CredentialType
+  documentNumber     String
+  cloudinaryPublicId String
+  documentUrl        String
+  issuingAuthority   String?
+  issueDate          DateTime?
+  expiryDate         DateTime?
+  status             CredentialStatus @default(PENDING)
+  rejectionReason    String?
+  verifiedById       String?
+  verifiedBy         User?            @relation("CredentialsVerified", fields: [verifiedById], references: [id], onDelete: SetNull)
+  verifiedAt         DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([agentId, type])
+  @@index([agentId])
+  @@index([status])
+  @@index([expiryDate])
+  @@map("agent_credentials")
+}
+
 enum Role {
   ADMIN
   AGENT
@@ -134,12 +201,128 @@ enum Role {
 
 enum ShipmentStatus {
   PENDING
+  ASSIGNED
+  ACCEPTED
   PICKED_UP
   IN_TRANSIT
   AT_CUSTOMS
   OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
+}
+
+enum LocationType {
+  SEA_PORT
+  AIR_PORT
+  INLAND_CONTAINER_DEPOT
+}
+
+enum CredentialType {
+  FIATA_MEMBERSHIP
+  IATA_ACCREDITATION
+  NVOCC_LICENSE
+  AEO_CERTIFICATE
+  ISO_9001
+  LOCAL_TRADE_LICENSE
+  LOCAL_CUSTOMS_LICENSE
+}
+
+enum CredentialStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum AgentVerificationStatus {
+  NOT_APPLICABLE
+  PENDING
+  VERIFIED
+  REJECTED
+  SUSPENDED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum AuditAction {
+  VERIFY_CREDENTIAL
+  REJECT_CREDENTIAL
+  APPROVE_AGENT
+  REJECT_AGENT
+  SUSPEND_AGENT
+  CREATE_LOCATION
+  UPDATE_LOCATION
+  BLOCK_LOCATION
+  DELETE_LOCATION
+  ASSIGN_AGENT
+  PROCESS_REFUND
+}
+
+model Location {
+  id            String       @id @default(uuid())
+  name          String
+  code          String       @unique
+  country       String
+  countryCode   String
+  city          String
+  region        String
+  latitude      Float
+  longitude     Float
+  type          LocationType @default(SEA_PORT)
+  isBlocked     Boolean      @default(false)
+  blockedReason String?
+  isDeleted     Boolean      @default(false)
+  deletedAt     DateTime?
+
+  createdById String?
+  createdBy   User?   @relation("LocationsCreated", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById String?
+  updatedBy   User?   @relation("LocationsUpdated", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedById String?
+  deletedBy   User?   @relation("LocationsDeleted", fields: [deletedById], references: [id], onDelete: SetNull)
+
+  originCorridors      AgentCorridor[] @relation("CorridorOrigin")
+  destinationCorridors AgentCorridor[] @relation("CorridorDestination")
+
+  originShipments      Shipment[] @relation("ShipmentOriginLocation")
+  destinationShipments Shipment[] @relation("ShipmentDestinationLocation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([country])
+  @@index([countryCode])
+  @@index([region])
+  @@index([type])
+  @@index([isBlocked, isDeleted])
+  @@index([code])
+  @@map("locations")
+}
+
+model AgentCorridor {
+  id                String   @id @default(uuid())
+  agentId           String
+  agent             User     @relation("AgentCorridors", fields: [agentId], references: [id], onDelete: Cascade)
+  originPortId      String
+  originPort        Location @relation("CorridorOrigin", fields: [originPortId], references: [id], onDelete: Cascade)
+  destinationPortId String
+  destinationPort   Location @relation("CorridorDestination", fields: [destinationPortId], references: [id], onDelete: Cascade)
+  originText        String
+  destinationText   String
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+
+  @@unique([agentId, originPortId, destinationPortId])
+  @@index([agentId])
+  @@index([originPortId])
+  @@index([destinationPortId])
+  @@map("agent_corridors")
 }
 
 model PhoneVerification {
@@ -170,37 +353,99 @@ datasource db {
 }
 
 model Shipment {
-  id            String         @id @default(uuid())
-  trackingId    String         @unique @default(uuid())
-  userId        String
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  origin        String
-  destination   String
-  weight        Float
-  description   String?
-  status        ShipmentStatus @default(PENDING)
-  estimatedDate DateTime?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  updateBy      String?
-  statusLogs    StatusLog[]
+  id         String @id @default(uuid())
+  trackingId String @unique @default(uuid())
+
+  // Customer
+  userId String
+  user   User   @relation("CustomerShipments", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Agent
+  agentId String?
+  agent   User?   @relation("AgentShipments", fields: [agentId], references: [id], onDelete: SetNull)
+
+  // Admin who assigned the shipment
+  assignedById String?
+  assignedBy   User?     @relation("AssignedShipments", fields: [assignedById], references: [id], onDelete: SetNull)
+  assignedAt   DateTime?
+
+  origin                String
+  destination           String
+  originLocationId      String?
+  originLocation        Location? @relation("ShipmentOriginLocation", fields: [originLocationId], references: [id], onDelete: SetNull)
+  destinationLocationId String?
+  destinationLocation   Location? @relation("ShipmentDestinationLocation", fields: [destinationLocationId], references: [id], onDelete: SetNull)
+
+  weight             Float
+  declaredCargoValue Float          @default(0)
+  description        String?
+  status             ShipmentStatus @default(PENDING)
+  estimatedDate      DateTime?
+  acceptedAt         DateTime?
+
+  // Payment & Stripe
+  paymentStatus         PaymentStatus @default(UNPAID)
+  stripePaymentIntentId String?       @unique
+  stripeRefundId        String?
+  paidAt                DateTime?
+
+  cost ShipmentCost?
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  updateBy   String?
+  statusLogs StatusLog[]
 
   @@index([userId])
-  @@index([status]) //  status দিয়ে filter fast হবে
-  @@index([trackingId]) //  tracking lookup fast
+  @@index([agentId])
+  @@index([assignedById])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([trackingId])
   @@map("shipments")
 }
 
-model StatusLog {
-  id         String         @id @default(uuid())
-  shipmentId String
-  shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-  status     ShipmentStatus
-  location   String
-  note       String?
-  updateBy   String?
-  createdAt  DateTime       @default(now())
+model ShipmentCost {
+  id                  String   @id @default(uuid())
+  shipmentId          String   @unique
+  shipment            Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  originHandling      Float
+  oceanFreight        Float
+  bafSurcharge        Float
+  thcOrigin           Float
+  thcDestination      Float
+  transshipmentFee    Float
+  customsClearance    Float
+  customsDuty         Float
+  vat                 Float
+  destinationHandling Float
+  cargoInsurance      Float
+  lastMileDelivery    Float
+  agencyFee           Float
+  platformFee         Float
+  totalCost           Float
+  currency            String   @default("USD")
+  exchangeRate        Float    @default(1.0)
+  convertedTotal      Float
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে
+  @@index([shipmentId])
+  @@index([currency])
+  @@map("shipment_costs")
+}
+
+model StatusLog {
+  id            String         @id @default(uuid())
+  shipmentId    String
+  shipment      Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  status        ShipmentStatus
+  location      String
+  note          String?
+  updateBy      String?
+  updatedByUser User?          @relation("StatusLogUpdater", fields: [updateBy], references: [id], onDelete: SetNull)
+  createdAt     DateTime       @default(now())
+
+  @@index([shipmentId, createdAt])
   @@map("status_logs")
 }

@@ -1,13 +1,17 @@
 import status from "http-status";
 import AppError from "../../../errorHelper/AppError";
 import { prisma } from "../../../lib/prisma";
-import { IGetUserQuery, IRoleUpdate, IUserStatusUpdate } from "./admin.interface"
+import { IGetUserQuery, IRoleUpdate, IUserStatusUpdate, IRoadAgentQuery, IAssignRoadAgent } from "./admin.interface";
 import { IRequestUser } from "../../interface/requestUserInterface";
-import { Prisma, Role } from "../../../generated/prisma";
+import { Prisma, Role, ShipmentStatus } from "../../../generated/prisma";
 import { sendEmail } from "../../../utils/email";
 import { redis } from "../../../lib/redis";
 import { invalidateAdminUsersCache } from "../../../utils/invalidateUserCache";
+import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
+import { invalidateRoadAgentsCache, invalidateAgentCache } from "../../../utils/invalidateAgentCache";
 import { blacklistToken } from "../../../utils/tokenBlacklist";
+import { notifyAgent, notifyCustomer, notifyAdmin } from "../../../lib/socket";
+import { envConfig } from "../../../_config/env";
 
 const USER_CACHE_TTL = 10 * 60; // 10 minutes in seconds
 
@@ -133,7 +137,7 @@ const getUserById = async (id: string, currentUser: IRequestUser) => {
             failedLoginAttempts: true,
             lockedUntil: true,
             createdAt: true,
-            shipments: {
+            customerShipments: {
                 select: {
                     id: true,
                     userId: true,
@@ -158,7 +162,10 @@ const getUserById = async (id: string, currentUser: IRequestUser) => {
     }
 
     const result = {
-        user,
+        user: {
+            ...user,
+            shipments: user.customerShipments,
+        },
     };
 
     // 2. Store in Redis cache for 10 minutes
@@ -395,10 +402,351 @@ const updateUserStatus = async (
     }
 };
 
+const getRoadAgents = async (query: IRoadAgentQuery) => {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const area = query.area || "all";
+    const isAvailable = query.isAvailable !== undefined ? String(query.isAvailable) : "all";
+    const search = query.search || "none";
+    const cacheKey = `admin:agents:${page}:${limit}:${area}:${isAvailable}:${search}`;
+
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+        try {
+            return typeof cached === "string" ? JSON.parse(cached) : cached;
+        } catch (e) {
+            await redis.del(cacheKey);
+        }
+    }
+
+    const where: Prisma.UserWhereInput = {
+        role: Role.AGENT,
+        isDeleted: false,
+    };
+
+    if (query.area) {
+        where.assignedArea = {
+            contains: query.area,
+            mode: "insensitive",
+        };
+    }
+
+    if (query.isAvailable !== undefined) {
+        const isAvail = query.isAvailable === true || query.isAvailable === "true";
+        where.isAvailable = isAvail;
+    }
+
+    if (query.search) {
+        where.OR = [
+            { name: { contains: query.search, mode: "insensitive" } },
+            { email: { contains: query.search, mode: "insensitive" } },
+            { phone: { contains: query.search, mode: "insensitive" } },
+            { assignedArea: { contains: query.search, mode: "insensitive" } },
+        ];
+    }
+
+    const [agents, total] = await Promise.all([
+        prisma.user.findMany({
+            where,
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                image: true,
+                assignedArea: true,
+                isAvailable: true,
+                isBlocked: true,
+                createdAt: true,
+                _count: {
+                    select: {
+                        agentShipments: {
+                            where: {
+                                status: {
+                                    in: [
+                                        ShipmentStatus.ASSIGNED,
+                                        ShipmentStatus.ACCEPTED,
+                                        ShipmentStatus.PICKED_UP,
+                                        ShipmentStatus.IN_TRANSIT,
+                                        ShipmentStatus.AT_CUSTOMS,
+                                        ShipmentStatus.OUT_FOR_DELIVERY,
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: [{ isAvailable: "desc" }, { createdAt: "desc" }],
+            skip,
+            take: limit,
+        }),
+        prisma.user.count({ where }),
+    ]);
+
+    const formatted = agents.map((agent) => ({
+        id: agent.id,
+        name: agent.name,
+        email: agent.email,
+        phone: agent.phone,
+        image: agent.image,
+        assignedArea: agent.assignedArea,
+        isAvailable: agent.isAvailable,
+        isBlocked: agent.isBlocked,
+        createdAt: agent.createdAt,
+        activeShipmentsCount: agent._count.agentShipments,
+    }));
+
+    const result = {
+        agents: formatted,
+        meta: {
+            page,
+            limit,
+            total,
+            totalPage: Math.ceil(total / limit),
+        },
+    };
+
+    await redis.set(cacheKey, JSON.stringify(result), { ex: 60 });
+
+    return result;
+};
+
+const assignRoadAgent = async (
+    payload: IAssignRoadAgent,
+    adminUser: IRequestUser
+) => {
+    const shipment = await prisma.shipment.findUnique({
+        where: { id: payload.shipmentId },
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true,
+                },
+            },
+        },
+    });
+
+    if (!shipment) {
+        throw new AppError(status.NOT_FOUND, "Shipment not found");
+    }
+
+    if (shipment.status === ShipmentStatus.DELIVERED) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot assign agent to an already delivered shipment"
+        );
+    }
+
+    if (shipment.status === ShipmentStatus.CANCELLED) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot assign agent to a cancelled shipment"
+        );
+    }
+
+    const agent = await prisma.user.findFirst({
+        where: {
+            id: payload.agentId,
+            role: Role.AGENT,
+            isDeleted: false,
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            assignedArea: true,
+            isBlocked: true,
+            isAvailable: true,
+        },
+    });
+
+    if (!agent) {
+        throw new AppError(status.NOT_FOUND, "Agent not found or is not an active agent");
+    }
+
+    if (agent.isBlocked) {
+        throw new AppError(
+            status.BAD_REQUEST,
+            "Cannot assign a blocked agent to shipment"
+        );
+    }
+
+    const assignLocation = agent.assignedArea || shipment.origin;
+    const assignNote =
+        payload.note ||
+        `Assigned to road agent ${agent.name} (${agent.assignedArea || "Road Agent"}) by Admin ${adminUser.name}`;
+
+    const [updated] = await prisma.$transaction([
+        prisma.shipment.update({
+            where: { id: payload.shipmentId },
+            data: {
+                agentId: agent.id,
+                assignedById: adminUser.userId,
+                assignedAt: new Date(),
+                status: ShipmentStatus.ASSIGNED,
+                updateBy: adminUser.userId,
+            },
+            select: {
+                id: true,
+                trackingId: true,
+                origin: true,
+                destination: true,
+                weight: true,
+                status: true,
+                agentId: true,
+                assignedById: true,
+                assignedAt: true,
+                updatedAt: true,
+                agent: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        phone: true,
+                        assignedArea: true,
+                    },
+                },
+                assignedBy: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        role: true,
+                    },
+                },
+            },
+        }),
+        prisma.statusLog.create({
+            data: {
+                shipmentId: payload.shipmentId,
+                status: ShipmentStatus.ASSIGNED,
+                location: assignLocation,
+                note: assignNote,
+                updateBy: adminUser.userId,
+            },
+        }),
+    ]);
+
+    await invalidateShipmentCache();
+    await invalidateRoadAgentsCache();
+    await invalidateAgentCache(agent.id);
+
+    // ─── 1. Socket.IO Notifications ─────────────────────
+    // Notify Agent
+    notifyAgent(agent.id, {
+        event: "shipment_assigned",
+        message: `New road shipment #${shipment.trackingId} assigned to you by Admin ${adminUser.name}`,
+        trackingId: shipment.trackingId,
+        shipmentId: shipment.id,
+        origin: shipment.origin,
+        destination: shipment.destination,
+        weight: shipment.weight,
+        customer: {
+            name: shipment.user.name,
+            phone: shipment.user.phone,
+        },
+        assignedBy: {
+            name: adminUser.name,
+            email: adminUser.email,
+        },
+    }, "shipment_assigned");
+
+    // Notify Customer
+    notifyCustomer(shipment.userId, {
+        event: "agent_assigned",
+        message: `Road Agent ${agent.name} has been assigned to your shipment #${shipment.trackingId}`,
+        trackingId: shipment.trackingId,
+        shipmentId: shipment.id,
+        agent: {
+            id: agent.id,
+            name: agent.name,
+            email: agent.email,
+            phone: agent.phone,
+            assignedArea: agent.assignedArea,
+        },
+        assignedBy: {
+            name: adminUser.name,
+            email: adminUser.email,
+        },
+    }, "agent_assigned");
+
+    // Notify Admin Dashboard
+    notifyAdmin({
+        event: "agent_assigned",
+        message: `Admin ${adminUser.name} assigned ${agent.name} to shipment #${shipment.trackingId}`,
+        trackingId: shipment.trackingId,
+        agentId: agent.id,
+        adminId: adminUser.userId,
+    });
+
+    // ─── 2. Email Notifications ──────────────────────────
+    // Send email to Agent
+    try {
+        await sendEmail({
+            to: agent.email,
+            subject: `New Road Shipment Assigned: #${shipment.trackingId} - FreightAgent`,
+            templateName: "agentAssigned",
+            templateData: {
+                agentName: agent.name,
+                trackingId: shipment.trackingId,
+                origin: shipment.origin,
+                destination: shipment.destination,
+                weight: shipment.weight,
+                description: shipment.description,
+                customerName: shipment.user.name,
+                customerPhone: shipment.user.phone,
+                assignedByName: adminUser.name,
+                assignedByEmail: adminUser.email,
+                assignedAt: new Date().toLocaleString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                }),
+                dashboardUrl: envConfig.FRONTEND_URL,
+            },
+        });
+    } catch (err) {
+        console.error("Agent assignment email dispatch failed:", err);
+    }
+
+    // Send email to Customer
+    try {
+        await sendEmail({
+            to: shipment.user.email,
+            subject: `Road Agent Assigned to Your Shipment: #${shipment.trackingId} - FreightAgent`,
+            templateName: "customerAgentAssigned",
+            templateData: {
+                customerName: shipment.user.name,
+                trackingId: shipment.trackingId,
+                agentName: agent.name,
+                agentEmail: agent.email,
+                agentPhone: agent.phone,
+                assignedArea: agent.assignedArea,
+                assignedByName: adminUser.name,
+                origin: shipment.origin,
+                destination: shipment.destination,
+                trackUrl: envConfig.FRONTEND_URL,
+            },
+        });
+    } catch (err) {
+        console.error("Customer agent assignment email dispatch failed:", err);
+    }
+
+    return updated;
+};
+
 export const adminService = {
     getAlluser,
     getUserById,
     updateRole,
     updateUserStatus,
-    deleteUser
-}
+    deleteUser,
+    getRoadAgents,
+    assignRoadAgent,
+};

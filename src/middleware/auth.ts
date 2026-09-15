@@ -143,10 +143,13 @@ export const authenticate = async (
             }
         }
 
+        const resolvedUserId = (decoded.userId || decoded.id) as string;
+
         req.user = {
-            userId: decoded.userId as string,
+            id: resolvedUserId,
+            userId: resolvedUserId,
             email: decoded.email as string,
-            role: decoded.role as Role,
+            role: ((decoded.role as string)?.toUpperCase() || Role.CUSTOMER) as Role,
             name: decoded.name as string,
             image: decoded.image as string | null,
             emailVerified: decoded.emailVerified as boolean,

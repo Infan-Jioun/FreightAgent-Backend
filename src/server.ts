@@ -1,10 +1,19 @@
+// src/server.ts
+
 import { envConfig } from "./_config/env";
 import app from "./app";
 import { startCronJobs } from "./app/jobs/cleanupJobs";
 import { redis } from "./lib/redis";
+import { createServer } from "http";
+import { initSocket } from "./lib/socket";
+
+// ✅ app থেকে httpServer বানাও
+const httpServer = createServer(app);
+
+// ✅ Socket init করো
+initSocket(httpServer);
 
 const startServer = async () => {
-  // Redis connection check
   try {
     await redis.ping();
     console.log(`
@@ -15,6 +24,7 @@ const startServer = async () => {
 │  Port    : ${envConfig.PORT}            │
 │  Mode    : ${envConfig.NODE_ENV}        │
 │  Redis   :  Connected                 │
+│  Socket  :  Ready                     │
 └─────────────────────────────────────────┘
     `);
   } catch (error) {
@@ -26,6 +36,7 @@ const startServer = async () => {
 │  Port    : ${envConfig.PORT}            │
 │  Mode    : ${envConfig.NODE_ENV}        │
 │  Redis   : ❌ Connection Failed         │
+│  Socket  :  Ready                     │
 └─────────────────────────────────────────┘
     `);
     console.error("Redis Error:", error);
@@ -36,8 +47,9 @@ const startServer = async () => {
 
 
 if (envConfig.NODE_ENV !== "production") {
-  app.listen(envConfig.PORT, () => {
+  httpServer.listen(envConfig.PORT, () => {
     startServer();
   });
 }
+
 export default app;

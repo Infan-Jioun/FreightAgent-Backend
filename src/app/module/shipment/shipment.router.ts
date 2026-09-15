@@ -16,19 +16,16 @@ import {
 
 const router = Router();
 
-// ─── 1. Public Tracking Route (Accessible by anyone with trackingId, placed before /:id) ───
-// GET /api/v1/shipment/track/:trackingId
+// ─── 1. Public ───────────────────────────────────────
 router.get(
     "/track/:trackingId",
     getShipmentRateLimit,
     shipmentController.trackShipment
 );
 
-// ─── All routes below require authentication ──────────────────────────────────────────────
 router.use(authenticate);
 
-// ─── 2. Create Shipment ───
-// POST /api/v1/shipment
+// ─── 2. Create Shipment ──────────────────────────────
 router.post(
     "/",
     authorize(Role.ADMIN, Role.CUSTOMER, Role.AGENT),
@@ -37,17 +34,15 @@ router.post(
     shipmentController.createShipment
 );
 
-// ─── 3. Get All Shipments (Admin & Agent only) ───
-// GET /api/v1/shipment
+// ─── 3. Admin — All Shipments (Admin Only) ───────────
 router.get(
     "/",
-    authorize(Role.ADMIN, Role.AGENT),
+    authorize(Role.ADMIN),
     getShipmentRateLimit,
     shipmentController.getAllShipments
 );
 
-// ─── 4. Get Logged-in User Shipments (Customer, Agent, Admin) ───
-// GET /api/v1/shipment/my
+// ─── 4. Customer — My Shipments ──────────────────────
 router.get(
     "/my",
     authorize(Role.CUSTOMER, Role.AGENT, Role.ADMIN),
@@ -55,8 +50,16 @@ router.get(
     shipmentController.getMyShipments
 );
 
-// ─── 5. Update Shipment Status ───
-// PATCH /api/v1/shipment/:id/status
+// ─── 5. Agent — Assigned Shipments ✅ নতুন ───────────
+// GET /api/v1/shipment/agent/assigned
+router.get(
+    "/agent/assigned",
+    authorize(Role.AGENT),
+    getShipmentRateLimit,
+    shipmentController.getAgentShipments
+);
+
+// ─── 6. Update Status ────────────────────────────────
 router.patch(
     "/:id/status",
     authorize(Role.ADMIN, Role.AGENT),
@@ -65,8 +68,7 @@ router.patch(
     shipmentController.updateShipmentStatus
 );
 
-// ─── 6. Delete Shipment (Admin only) ───
-// DELETE /api/v1/shipment/:id
+// ─── 7. Delete ───────────────────────────────────────
 router.delete(
     "/:id",
     authorize(Role.ADMIN),
@@ -74,12 +76,12 @@ router.delete(
     shipmentController.deleteShipment
 );
 
-// ─── 7. Get Shipment By ID (Placed after static sub-routes /my and /track) ───
-// GET /api/v1/shipment/:id
+// ─── 8. Get By ID — সবার শেষে রাখো ─────────────────
+// (static routes যেমন /my, /agent/assigned এর পরে)
 router.get(
     "/:id",
     getShipmentRateLimit,
     shipmentController.getShipmentById
 );
 
-export const shipmentRouter: Router = router;
+export const shipmentRouter: Router = router;

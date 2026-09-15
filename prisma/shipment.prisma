@@ -1,35 +1,97 @@
 model Shipment {
-    id            String         @id @default(uuid())
-    trackingId    String         @unique @default(uuid())
-    userId        String
-    user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-    origin        String
-    destination   String
-    weight        Float
-    description   String?
-    status        ShipmentStatus @default(PENDING)
-    estimatedDate DateTime?
-    createdAt     DateTime       @default(now())
-    updatedAt     DateTime       @updatedAt
-    updateBy  String?
-    statusLogs StatusLog[]
+    id                     String         @id @default(uuid())
+    trackingId             String         @unique @default(uuid())
+
+    // Customer
+    userId                 String
+    user                   User           @relation("CustomerShipments", fields: [userId], references: [id], onDelete: Cascade)
+
+    // Agent
+    agentId                String?
+    agent                  User?          @relation("AgentShipments", fields: [agentId], references: [id], onDelete: SetNull)
+
+    // Admin who assigned the shipment
+    assignedById           String?
+    assignedBy             User?          @relation("AssignedShipments", fields: [assignedById], references: [id], onDelete: SetNull)
+    assignedAt             DateTime?
+
+    origin                 String
+    destination            String
+    originLocationId       String?
+    originLocation         Location?      @relation("ShipmentOriginLocation", fields: [originLocationId], references: [id], onDelete: SetNull)
+    destinationLocationId  String?
+    destinationLocation    Location?      @relation("ShipmentDestinationLocation", fields: [destinationLocationId], references: [id], onDelete: SetNull)
+
+    weight                 Float
+    declaredCargoValue     Float          @default(0)
+    description            String?
+    status                 ShipmentStatus @default(PENDING)
+    estimatedDate          DateTime?
+    acceptedAt             DateTime?
+
+    // Payment & Stripe
+    paymentStatus          PaymentStatus  @default(UNPAID)
+    stripePaymentIntentId  String?        @unique
+    stripeRefundId         String?
+    paidAt                 DateTime?
+
+    cost                   ShipmentCost?
+
+    createdAt              DateTime       @default(now())
+    updatedAt              DateTime       @updatedAt
+    updateBy               String?
+    statusLogs             StatusLog[]
 
     @@index([userId])
-    @@index([status]) //  status দিয়ে filter fast হবে
-    @@index([trackingId]) //  tracking lookup fast
+    @@index([agentId])
+    @@index([assignedById])
+    @@index([status])
+    @@index([paymentStatus])
+    @@index([trackingId])
     @@map("shipments")
 }
 
-model StatusLog {
-    id         String         @id @default(uuid())
-    shipmentId String
-    shipment   Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-    status     ShipmentStatus
-    location   String
-    note       String?
-    updateBy  String?
-    createdAt  DateTime       @default(now())
+model ShipmentCost {
+    id                  String   @id @default(uuid())
+    shipmentId          String   @unique
+    shipment            Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+    originHandling      Float
+    oceanFreight        Float
+    bafSurcharge        Float
+    thcOrigin           Float
+    thcDestination      Float
+    transshipmentFee    Float
+    customsClearance    Float
+    customsDuty         Float
+    vat                 Float
+    destinationHandling Float
+    cargoInsurance      Float
+    lastMileDelivery    Float
+    agencyFee           Float
+    platformFee         Float
+    totalCost           Float
+    currency            String   @default("USD")
+    exchangeRate        Float    @default(1.0)
+    convertedTotal      Float
+    createdAt           DateTime @default(now())
+    updatedAt           DateTime @updatedAt
 
-    @@index([shipmentId, createdAt]) //  fix — timeline query fast হবে
+    @@index([shipmentId])
+    @@index([currency])
+    @@map("shipment_costs")
+}
+
+model StatusLog {
+    id            String         @id @default(uuid())
+    shipmentId    String
+    shipment      Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+    status        ShipmentStatus
+    location      String
+    note          String?
+    updateBy      String?
+    updatedByUser User?          @relation("StatusLogUpdater", fields: [updateBy], references: [id], onDelete: SetNull)
+    createdAt     DateTime       @default(now())
+
+    @@index([shipmentId, createdAt])
     @@map("status_logs")
 }

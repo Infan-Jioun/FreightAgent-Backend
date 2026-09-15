@@ -18,18 +18,23 @@ import { getClientIp, parseUserAgent } from "../../../utils/deviceDetector";
 
 const refreshToken = catchAsync(
     async (req: Request, res: Response) => {
-        const token = req.cookies?.refreshToken;
+        const token = req.cookies?.refreshToken || req.body?.refreshToken;
         if (!token) {
             throw new AppError(status.UNAUTHORIZED, "Refresh token missing");
         }
         const result = await authService.refreshToken(token);
         tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
+        tokenUtils.setRefreshTokenCookie(res, req, result.refreshToken);
 
         sendResponse(res, {
             httpStatusCode: status.OK,
             success: true,
-            message: "Token refreshed successfully",
-            data: null,
+            message: "Token refreshed and rotated successfully",
+            data: {
+                accessToken: result.accessToken,
+                refreshToken: result.refreshToken,
+                user: result.user,
+            },
         });
     }
 );

@@ -1,0 +1,60 @@
+model Location {
+    id            String       @id @default(uuid())
+    name          String
+    code          String       @unique
+    country       String
+    countryCode   String
+    city          String
+    region        String
+    latitude      Float
+    longitude     Float
+    type          LocationType @default(SEA_PORT)
+    isBlocked     Boolean      @default(false)
+    blockedReason String?
+    isDeleted     Boolean      @default(false)
+    deletedAt     DateTime?
+
+    createdById   String?
+    createdBy     User?        @relation("LocationsCreated", fields: [createdById], references: [id], onDelete: SetNull)
+    updatedById   String?
+    updatedBy     User?        @relation("LocationsUpdated", fields: [updatedById], references: [id], onDelete: SetNull)
+    deletedById   String?
+    deletedBy     User?        @relation("LocationsDeleted", fields: [deletedById], references: [id], onDelete: SetNull)
+
+    originCorridors      AgentCorridor[] @relation("CorridorOrigin")
+    destinationCorridors AgentCorridor[] @relation("CorridorDestination")
+
+    originShipments      Shipment[]      @relation("ShipmentOriginLocation")
+    destinationShipments Shipment[]      @relation("ShipmentDestinationLocation")
+
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+
+    @@index([country])
+    @@index([countryCode])
+    @@index([region])
+    @@index([type])
+    @@index([isBlocked, isDeleted])
+    @@index([code])
+    @@map("locations")
+}
+
+model AgentCorridor {
+    id                String    @id @default(uuid())
+    agentId           String
+    agent             User      @relation("AgentCorridors", fields: [agentId], references: [id], onDelete: Cascade)
+    originPortId      String
+    originPort        Location  @relation("CorridorOrigin", fields: [originPortId], references: [id], onDelete: Cascade)
+    destinationPortId String
+    destinationPort   Location  @relation("CorridorDestination", fields: [destinationPortId], references: [id], onDelete: Cascade)
+    originText        String
+    destinationText   String
+    isActive          Boolean   @default(true)
+    createdAt         DateTime  @default(now())
+
+    @@unique([agentId, originPortId, destinationPortId])
+    @@index([agentId])
+    @@index([originPortId])
+    @@index([destinationPortId])
+    @@map("agent_corridors")
+}

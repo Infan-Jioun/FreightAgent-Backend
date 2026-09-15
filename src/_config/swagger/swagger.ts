@@ -1,7 +1,9 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import { authSwaggerDocs } from "./auth.schema";
 import { adminSwaggerDocs } from "./admin.schema";
+import { agentSwaggerDocs } from "./agent.schema";
 import { shipmentSwaggerDocs } from "./shipment.schema";
+import { paymentSwaggerDocs } from "./payment.schema";
 import { envConfig } from "../env";
 
 const options = {
@@ -10,7 +12,7 @@ const options = {
         info: {
             title: "FreightAgent API",
             version: "1.0.0",
-            description: "API Documentation for FreightAgent backend services (Auth, Admin, and Shipment modules)",
+            description: "Production API Documentation for FreightAgent backend services (Auth, Admin, Agent, Shipment, and Payment modules)",
         },
         servers: [
             {
@@ -21,15 +23,23 @@ const options = {
         tags: [
             {
                 name: "Auth",
-                description: "Authentication and user management APIs",
+                description: "Authentication and user session management APIs",
             },
             {
                 name: "Admin",
-                description: "Admin panel operations and role management APIs",
+                description: "Admin operations, road agent management, and shipment dispatch APIs",
+            },
+            {
+                name: "Agent",
+                description: "Road Agent operations, shipment transit updates, acceptance, and availability APIs",
             },
             {
                 name: "Shipment",
-                description: "Shipment creation, tracking, and status update APIs",
+                description: "Shipment creation, tracking, and customer APIs",
+            },
+            {
+                name: "Payment",
+                description: "Freight pricing engine, Stripe payment intents, webhooks, and refunds",
             },
         ],
         components: {
@@ -46,11 +56,13 @@ const options = {
                 },
             },
         },
-        // সব module এর schema এখানে merge হবে
+        // All module schemas merged here
         paths: {
             ...authSwaggerDocs,
             ...adminSwaggerDocs,
+            ...agentSwaggerDocs,
             ...shipmentSwaggerDocs,
+            ...paymentSwaggerDocs,
         },
     },
     apis: [], // static schemas loaded directly via paths

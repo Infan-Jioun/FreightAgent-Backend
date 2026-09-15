@@ -120,6 +120,18 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.AdminAuditLogScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  details: 'details',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -129,6 +141,8 @@ exports.Prisma.UserScalarFieldEnum = {
   image: 'image',
   address: 'address',
   phone: 'phone',
+  assignedArea: 'assignedArea',
+  isAvailable: 'isAvailable',
   isBlocked: 'isBlocked',
   isDeleted: 'isDeleted',
   blockedReason: 'blockedReason',
@@ -140,6 +154,9 @@ exports.Prisma.UserScalarFieldEnum = {
   passwordChangedAt: 'passwordChangedAt',
   failedLoginAttempts: 'failedLoginAttempts',
   lockedUntil: 'lockedUntil',
+  agentVerificationStatus: 'agentVerificationStatus',
+  verifiedAt: 'verifiedAt',
+  verifiedById: 'verifiedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -209,6 +226,57 @@ exports.Prisma.KnowledgeChunkScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AgentCredentialScalarFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  type: 'type',
+  documentNumber: 'documentNumber',
+  cloudinaryPublicId: 'cloudinaryPublicId',
+  documentUrl: 'documentUrl',
+  issuingAuthority: 'issuingAuthority',
+  issueDate: 'issueDate',
+  expiryDate: 'expiryDate',
+  status: 'status',
+  rejectionReason: 'rejectionReason',
+  verifiedById: 'verifiedById',
+  verifiedAt: 'verifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LocationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  country: 'country',
+  countryCode: 'countryCode',
+  city: 'city',
+  region: 'region',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  type: 'type',
+  isBlocked: 'isBlocked',
+  blockedReason: 'blockedReason',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  deletedById: 'deletedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgentCorridorScalarFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  originPortId: 'originPortId',
+  destinationPortId: 'destinationPortId',
+  originText: 'originText',
+  destinationText: 'destinationText',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.PhoneVerificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -224,15 +292,51 @@ exports.Prisma.ShipmentScalarFieldEnum = {
   id: 'id',
   trackingId: 'trackingId',
   userId: 'userId',
+  agentId: 'agentId',
+  assignedById: 'assignedById',
+  assignedAt: 'assignedAt',
   origin: 'origin',
   destination: 'destination',
+  originLocationId: 'originLocationId',
+  destinationLocationId: 'destinationLocationId',
   weight: 'weight',
+  declaredCargoValue: 'declaredCargoValue',
   description: 'description',
   status: 'status',
   estimatedDate: 'estimatedDate',
+  acceptedAt: 'acceptedAt',
+  paymentStatus: 'paymentStatus',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  stripeRefundId: 'stripeRefundId',
+  paidAt: 'paidAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   updateBy: 'updateBy'
+};
+
+exports.Prisma.ShipmentCostScalarFieldEnum = {
+  id: 'id',
+  shipmentId: 'shipmentId',
+  originHandling: 'originHandling',
+  oceanFreight: 'oceanFreight',
+  bafSurcharge: 'bafSurcharge',
+  thcOrigin: 'thcOrigin',
+  thcDestination: 'thcDestination',
+  transshipmentFee: 'transshipmentFee',
+  customsClearance: 'customsClearance',
+  customsDuty: 'customsDuty',
+  vat: 'vat',
+  destinationHandling: 'destinationHandling',
+  cargoInsurance: 'cargoInsurance',
+  lastMileDelivery: 'lastMileDelivery',
+  agencyFee: 'agencyFee',
+  platformFee: 'platformFee',
+  totalCost: 'totalCost',
+  currency: 'currency',
+  exchangeRate: 'exchangeRate',
+  convertedTotal: 'convertedTotal',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.StatusLogScalarFieldEnum = {
@@ -259,14 +363,61 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.AuditAction = exports.$Enums.AuditAction = {
+  VERIFY_CREDENTIAL: 'VERIFY_CREDENTIAL',
+  REJECT_CREDENTIAL: 'REJECT_CREDENTIAL',
+  APPROVE_AGENT: 'APPROVE_AGENT',
+  REJECT_AGENT: 'REJECT_AGENT',
+  SUSPEND_AGENT: 'SUSPEND_AGENT',
+  CREATE_LOCATION: 'CREATE_LOCATION',
+  UPDATE_LOCATION: 'UPDATE_LOCATION',
+  BLOCK_LOCATION: 'BLOCK_LOCATION',
+  DELETE_LOCATION: 'DELETE_LOCATION',
+  ASSIGN_AGENT: 'ASSIGN_AGENT',
+  PROCESS_REFUND: 'PROCESS_REFUND'
+};
+
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
   AGENT: 'AGENT',
   CUSTOMER: 'CUSTOMER'
 };
 
+exports.AgentVerificationStatus = exports.$Enums.AgentVerificationStatus = {
+  NOT_APPLICABLE: 'NOT_APPLICABLE',
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED',
+  SUSPENDED: 'SUSPENDED'
+};
+
+exports.CredentialType = exports.$Enums.CredentialType = {
+  FIATA_MEMBERSHIP: 'FIATA_MEMBERSHIP',
+  IATA_ACCREDITATION: 'IATA_ACCREDITATION',
+  NVOCC_LICENSE: 'NVOCC_LICENSE',
+  AEO_CERTIFICATE: 'AEO_CERTIFICATE',
+  ISO_9001: 'ISO_9001',
+  LOCAL_TRADE_LICENSE: 'LOCAL_TRADE_LICENSE',
+  LOCAL_CUSTOMS_LICENSE: 'LOCAL_CUSTOMS_LICENSE'
+};
+
+exports.CredentialStatus = exports.$Enums.CredentialStatus = {
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED',
+  EXPIRED: 'EXPIRED'
+};
+
+exports.LocationType = exports.$Enums.LocationType = {
+  SEA_PORT: 'SEA_PORT',
+  AIR_PORT: 'AIR_PORT',
+  INLAND_CONTAINER_DEPOT: 'INLAND_CONTAINER_DEPOT'
+};
+
 exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
   PENDING: 'PENDING',
+  ASSIGNED: 'ASSIGNED',
+  ACCEPTED: 'ACCEPTED',
   PICKED_UP: 'PICKED_UP',
   IN_TRANSIT: 'IN_TRANSIT',
   AT_CUSTOMS: 'AT_CUSTOMS',
@@ -275,7 +426,16 @@ exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  UNPAID: 'UNPAID',
+  PROCESSING: 'PROCESSING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
 exports.Prisma.ModelName = {
+  AdminAuditLog: 'AdminAuditLog',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
@@ -283,8 +443,12 @@ exports.Prisma.ModelName = {
   ChatSession: 'ChatSession',
   ChatMessage: 'ChatMessage',
   KnowledgeChunk: 'KnowledgeChunk',
+  AgentCredential: 'AgentCredential',
+  Location: 'Location',
+  AgentCorridor: 'AgentCorridor',
   PhoneVerification: 'PhoneVerification',
   Shipment: 'Shipment',
+  ShipmentCost: 'ShipmentCost',
   StatusLog: 'StatusLog'
 };
 

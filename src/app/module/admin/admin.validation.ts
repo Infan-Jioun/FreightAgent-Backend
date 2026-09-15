@@ -33,3 +33,15 @@ export const updateUserStatusSchema = z.object({
 });
 
 export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
+
+export const assignRoadAgentSchema = z.object({
+    body: z.object({
+        agentId: z.string({ error: () => "Agent ID is required" }),
+        note: z.string().optional(),
+    }),
+    params: z.object({
+        id: z.string({ error: () => "Shipment ID is required" }),
+    }),
+});
+
+export type AssignRoadAgentInput = z.infer<typeof assignRoadAgentSchema>;

@@ -14,6 +14,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
+ * Model AdminAuditLog
+ * 
+ */
+export type AdminAuditLog = $Result.DefaultSelection<Prisma.$AdminAuditLogPayload>
+/**
  * Model User
  * 
  */
@@ -49,6 +54,21 @@ export type ChatMessage = $Result.DefaultSelection<Prisma.$ChatMessagePayload>
  */
 export type KnowledgeChunk = $Result.DefaultSelection<Prisma.$KnowledgeChunkPayload>
 /**
+ * Model AgentCredential
+ * 
+ */
+export type AgentCredential = $Result.DefaultSelection<Prisma.$AgentCredentialPayload>
+/**
+ * Model Location
+ * 
+ */
+export type Location = $Result.DefaultSelection<Prisma.$LocationPayload>
+/**
+ * Model AgentCorridor
+ * 
+ */
+export type AgentCorridor = $Result.DefaultSelection<Prisma.$AgentCorridorPayload>
+/**
  * Model PhoneVerification
  * 
  */
@@ -58,6 +78,11 @@ export type PhoneVerification = $Result.DefaultSelection<Prisma.$PhoneVerificati
  * 
  */
 export type Shipment = $Result.DefaultSelection<Prisma.$ShipmentPayload>
+/**
+ * Model ShipmentCost
+ * 
+ */
+export type ShipmentCost = $Result.DefaultSelection<Prisma.$ShipmentCostPayload>
 /**
  * Model StatusLog
  * 
@@ -79,6 +104,8 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const ShipmentStatus: {
   PENDING: 'PENDING',
+  ASSIGNED: 'ASSIGNED',
+  ACCEPTED: 'ACCEPTED',
   PICKED_UP: 'PICKED_UP',
   IN_TRANSIT: 'IN_TRANSIT',
   AT_CUSTOMS: 'AT_CUSTOMS',
@@ -88,6 +115,77 @@ export const ShipmentStatus: {
 };
 
 export type ShipmentStatus = (typeof ShipmentStatus)[keyof typeof ShipmentStatus]
+
+
+export const LocationType: {
+  SEA_PORT: 'SEA_PORT',
+  AIR_PORT: 'AIR_PORT',
+  INLAND_CONTAINER_DEPOT: 'INLAND_CONTAINER_DEPOT'
+};
+
+export type LocationType = (typeof LocationType)[keyof typeof LocationType]
+
+
+export const CredentialType: {
+  FIATA_MEMBERSHIP: 'FIATA_MEMBERSHIP',
+  IATA_ACCREDITATION: 'IATA_ACCREDITATION',
+  NVOCC_LICENSE: 'NVOCC_LICENSE',
+  AEO_CERTIFICATE: 'AEO_CERTIFICATE',
+  ISO_9001: 'ISO_9001',
+  LOCAL_TRADE_LICENSE: 'LOCAL_TRADE_LICENSE',
+  LOCAL_CUSTOMS_LICENSE: 'LOCAL_CUSTOMS_LICENSE'
+};
+
+export type CredentialType = (typeof CredentialType)[keyof typeof CredentialType]
+
+
+export const CredentialStatus: {
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED',
+  EXPIRED: 'EXPIRED'
+};
+
+export type CredentialStatus = (typeof CredentialStatus)[keyof typeof CredentialStatus]
+
+
+export const AgentVerificationStatus: {
+  NOT_APPLICABLE: 'NOT_APPLICABLE',
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED',
+  SUSPENDED: 'SUSPENDED'
+};
+
+export type AgentVerificationStatus = (typeof AgentVerificationStatus)[keyof typeof AgentVerificationStatus]
+
+
+export const PaymentStatus: {
+  UNPAID: 'UNPAID',
+  PROCESSING: 'PROCESSING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const AuditAction: {
+  VERIFY_CREDENTIAL: 'VERIFY_CREDENTIAL',
+  REJECT_CREDENTIAL: 'REJECT_CREDENTIAL',
+  APPROVE_AGENT: 'APPROVE_AGENT',
+  REJECT_AGENT: 'REJECT_AGENT',
+  SUSPEND_AGENT: 'SUSPEND_AGENT',
+  CREATE_LOCATION: 'CREATE_LOCATION',
+  UPDATE_LOCATION: 'UPDATE_LOCATION',
+  BLOCK_LOCATION: 'BLOCK_LOCATION',
+  DELETE_LOCATION: 'DELETE_LOCATION',
+  ASSIGN_AGENT: 'ASSIGN_AGENT',
+  PROCESS_REFUND: 'PROCESS_REFUND'
+};
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
 
 }
 
@@ -99,6 +197,30 @@ export type ShipmentStatus = $Enums.ShipmentStatus
 
 export const ShipmentStatus: typeof $Enums.ShipmentStatus
 
+export type LocationType = $Enums.LocationType
+
+export const LocationType: typeof $Enums.LocationType
+
+export type CredentialType = $Enums.CredentialType
+
+export const CredentialType: typeof $Enums.CredentialType
+
+export type CredentialStatus = $Enums.CredentialStatus
+
+export const CredentialStatus: typeof $Enums.CredentialStatus
+
+export type AgentVerificationStatus = $Enums.AgentVerificationStatus
+
+export const AgentVerificationStatus: typeof $Enums.AgentVerificationStatus
+
+export type PaymentStatus = $Enums.PaymentStatus
+
+export const PaymentStatus: typeof $Enums.PaymentStatus
+
+export type AuditAction = $Enums.AuditAction
+
+export const AuditAction: typeof $Enums.AuditAction
+
 /**
  * ##  Prisma Client ʲˢ
  *
@@ -108,8 +230,8 @@ export const ShipmentStatus: typeof $Enums.ShipmentStatus
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more AdminAuditLogs
+ * const adminAuditLogs = await prisma.adminAuditLog.findMany()
  * ```
  *
  *
@@ -131,8 +253,8 @@ export class PrismaClient<
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Users
-   * const users = await prisma.user.findMany()
+   * // Fetch zero or more AdminAuditLogs
+   * const adminAuditLogs = await prisma.adminAuditLog.findMany()
    * ```
    *
    *
@@ -221,6 +343,16 @@ export class PrismaClient<
   }>>
 
       /**
+   * `prisma.adminAuditLog`: Exposes CRUD operations for the **AdminAuditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AdminAuditLogs
+    * const adminAuditLogs = await prisma.adminAuditLog.findMany()
+    * ```
+    */
+  get adminAuditLog(): Prisma.AdminAuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
     * Example usage:
     * ```ts
@@ -291,6 +423,36 @@ export class PrismaClient<
   get knowledgeChunk(): Prisma.KnowledgeChunkDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.agentCredential`: Exposes CRUD operations for the **AgentCredential** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AgentCredentials
+    * const agentCredentials = await prisma.agentCredential.findMany()
+    * ```
+    */
+  get agentCredential(): Prisma.AgentCredentialDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.location`: Exposes CRUD operations for the **Location** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Locations
+    * const locations = await prisma.location.findMany()
+    * ```
+    */
+  get location(): Prisma.LocationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.agentCorridor`: Exposes CRUD operations for the **AgentCorridor** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AgentCorridors
+    * const agentCorridors = await prisma.agentCorridor.findMany()
+    * ```
+    */
+  get agentCorridor(): Prisma.AgentCorridorDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.phoneVerification`: Exposes CRUD operations for the **PhoneVerification** model.
     * Example usage:
     * ```ts
@@ -309,6 +471,16 @@ export class PrismaClient<
     * ```
     */
   get shipment(): Prisma.ShipmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.shipmentCost`: Exposes CRUD operations for the **ShipmentCost** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ShipmentCosts
+    * const shipmentCosts = await prisma.shipmentCost.findMany()
+    * ```
+    */
+  get shipmentCost(): Prisma.ShipmentCostDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.statusLog`: Exposes CRUD operations for the **StatusLog** model.
@@ -766,6 +938,7 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    AdminAuditLog: 'AdminAuditLog',
     User: 'User',
     Session: 'Session',
     Account: 'Account',
@@ -773,8 +946,12 @@ export namespace Prisma {
     ChatSession: 'ChatSession',
     ChatMessage: 'ChatMessage',
     KnowledgeChunk: 'KnowledgeChunk',
+    AgentCredential: 'AgentCredential',
+    Location: 'Location',
+    AgentCorridor: 'AgentCorridor',
     PhoneVerification: 'PhoneVerification',
     Shipment: 'Shipment',
+    ShipmentCost: 'ShipmentCost',
     StatusLog: 'StatusLog'
   };
 
@@ -791,10 +968,84 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "chatSession" | "chatMessage" | "knowledgeChunk" | "phoneVerification" | "shipment" | "statusLog"
+      modelProps: "adminAuditLog" | "user" | "session" | "account" | "verification" | "chatSession" | "chatMessage" | "knowledgeChunk" | "agentCredential" | "location" | "agentCorridor" | "phoneVerification" | "shipment" | "shipmentCost" | "statusLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
+      AdminAuditLog: {
+        payload: Prisma.$AdminAuditLogPayload<ExtArgs>
+        fields: Prisma.AdminAuditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AdminAuditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AdminAuditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.AdminAuditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AdminAuditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>
+          }
+          findMany: {
+            args: Prisma.AdminAuditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>[]
+          }
+          create: {
+            args: Prisma.AdminAuditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>
+          }
+          createMany: {
+            args: Prisma.AdminAuditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AdminAuditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.AdminAuditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>
+          }
+          update: {
+            args: Prisma.AdminAuditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.AdminAuditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AdminAuditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AdminAuditLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.AdminAuditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminAuditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.AdminAuditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAdminAuditLog>
+          }
+          groupBy: {
+            args: Prisma.AdminAuditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AdminAuditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AdminAuditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<AdminAuditLogCountAggregateOutputType> | number
+          }
+        }
+      }
       User: {
         payload: Prisma.$UserPayload<ExtArgs>
         fields: Prisma.UserFieldRefs
@@ -1313,6 +1564,228 @@ export namespace Prisma {
           }
         }
       }
+      AgentCredential: {
+        payload: Prisma.$AgentCredentialPayload<ExtArgs>
+        fields: Prisma.AgentCredentialFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AgentCredentialFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AgentCredentialFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>
+          }
+          findFirst: {
+            args: Prisma.AgentCredentialFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AgentCredentialFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>
+          }
+          findMany: {
+            args: Prisma.AgentCredentialFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>[]
+          }
+          create: {
+            args: Prisma.AgentCredentialCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>
+          }
+          createMany: {
+            args: Prisma.AgentCredentialCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AgentCredentialCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>[]
+          }
+          delete: {
+            args: Prisma.AgentCredentialDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>
+          }
+          update: {
+            args: Prisma.AgentCredentialUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>
+          }
+          deleteMany: {
+            args: Prisma.AgentCredentialDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AgentCredentialUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AgentCredentialUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>[]
+          }
+          upsert: {
+            args: Prisma.AgentCredentialUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCredentialPayload>
+          }
+          aggregate: {
+            args: Prisma.AgentCredentialAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAgentCredential>
+          }
+          groupBy: {
+            args: Prisma.AgentCredentialGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AgentCredentialGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AgentCredentialCountArgs<ExtArgs>
+            result: $Utils.Optional<AgentCredentialCountAggregateOutputType> | number
+          }
+        }
+      }
+      Location: {
+        payload: Prisma.$LocationPayload<ExtArgs>
+        fields: Prisma.LocationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LocationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LocationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          findFirst: {
+            args: Prisma.LocationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LocationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          findMany: {
+            args: Prisma.LocationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>[]
+          }
+          create: {
+            args: Prisma.LocationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          createMany: {
+            args: Prisma.LocationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LocationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>[]
+          }
+          delete: {
+            args: Prisma.LocationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          update: {
+            args: Prisma.LocationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          deleteMany: {
+            args: Prisma.LocationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LocationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LocationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>[]
+          }
+          upsert: {
+            args: Prisma.LocationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LocationPayload>
+          }
+          aggregate: {
+            args: Prisma.LocationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLocation>
+          }
+          groupBy: {
+            args: Prisma.LocationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LocationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LocationCountArgs<ExtArgs>
+            result: $Utils.Optional<LocationCountAggregateOutputType> | number
+          }
+        }
+      }
+      AgentCorridor: {
+        payload: Prisma.$AgentCorridorPayload<ExtArgs>
+        fields: Prisma.AgentCorridorFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AgentCorridorFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AgentCorridorFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>
+          }
+          findFirst: {
+            args: Prisma.AgentCorridorFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AgentCorridorFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>
+          }
+          findMany: {
+            args: Prisma.AgentCorridorFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>[]
+          }
+          create: {
+            args: Prisma.AgentCorridorCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>
+          }
+          createMany: {
+            args: Prisma.AgentCorridorCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AgentCorridorCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>[]
+          }
+          delete: {
+            args: Prisma.AgentCorridorDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>
+          }
+          update: {
+            args: Prisma.AgentCorridorUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>
+          }
+          deleteMany: {
+            args: Prisma.AgentCorridorDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AgentCorridorUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AgentCorridorUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>[]
+          }
+          upsert: {
+            args: Prisma.AgentCorridorUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AgentCorridorPayload>
+          }
+          aggregate: {
+            args: Prisma.AgentCorridorAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAgentCorridor>
+          }
+          groupBy: {
+            args: Prisma.AgentCorridorGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AgentCorridorGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AgentCorridorCountArgs<ExtArgs>
+            result: $Utils.Optional<AgentCorridorCountAggregateOutputType> | number
+          }
+        }
+      }
       PhoneVerification: {
         payload: Prisma.$PhoneVerificationPayload<ExtArgs>
         fields: Prisma.PhoneVerificationFieldRefs
@@ -1458,6 +1931,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ShipmentCountArgs<ExtArgs>
             result: $Utils.Optional<ShipmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      ShipmentCost: {
+        payload: Prisma.$ShipmentCostPayload<ExtArgs>
+        fields: Prisma.ShipmentCostFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ShipmentCostFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ShipmentCostFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>
+          }
+          findFirst: {
+            args: Prisma.ShipmentCostFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ShipmentCostFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>
+          }
+          findMany: {
+            args: Prisma.ShipmentCostFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>[]
+          }
+          create: {
+            args: Prisma.ShipmentCostCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>
+          }
+          createMany: {
+            args: Prisma.ShipmentCostCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ShipmentCostCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>[]
+          }
+          delete: {
+            args: Prisma.ShipmentCostDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>
+          }
+          update: {
+            args: Prisma.ShipmentCostUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>
+          }
+          deleteMany: {
+            args: Prisma.ShipmentCostDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ShipmentCostUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ShipmentCostUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>[]
+          }
+          upsert: {
+            args: Prisma.ShipmentCostUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShipmentCostPayload>
+          }
+          aggregate: {
+            args: Prisma.ShipmentCostAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateShipmentCost>
+          }
+          groupBy: {
+            args: Prisma.ShipmentCostGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ShipmentCostGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ShipmentCostCountArgs<ExtArgs>
+            result: $Utils.Optional<ShipmentCostCountAggregateOutputType> | number
           }
         }
       }
@@ -1658,6 +2205,7 @@ export namespace Prisma {
     comments?: runtime.SqlCommenterPlugin[]
   }
   export type GlobalOmitConfig = {
+    adminAuditLog?: AdminAuditLogOmit
     user?: UserOmit
     session?: SessionOmit
     account?: AccountOmit
@@ -1665,8 +2213,12 @@ export namespace Prisma {
     chatSession?: ChatSessionOmit
     chatMessage?: ChatMessageOmit
     knowledgeChunk?: KnowledgeChunkOmit
+    agentCredential?: AgentCredentialOmit
+    location?: LocationOmit
+    agentCorridor?: AgentCorridorOmit
     phoneVerification?: PhoneVerificationOmit
     shipment?: ShipmentOmit
+    shipmentCost?: ShipmentCostOmit
     statusLog?: StatusLogOmit
   }
 
@@ -1749,18 +2301,38 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     phoneVerifications: number
+    agentShipments: number
+    customerShipments: number
+    assignedShipments: number
     sessions: number
     accounts: number
-    shipments: number
     chatSessions: number
+    statusLogs: number
+    agentCorridors: number
+    agentCredentials: number
+    verifiedCredentials: number
+    adminAuditLogs: number
+    locationsCreated: number
+    locationsUpdated: number
+    locationsDeleted: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     phoneVerifications?: boolean | UserCountOutputTypeCountPhoneVerificationsArgs
+    agentShipments?: boolean | UserCountOutputTypeCountAgentShipmentsArgs
+    customerShipments?: boolean | UserCountOutputTypeCountCustomerShipmentsArgs
+    assignedShipments?: boolean | UserCountOutputTypeCountAssignedShipmentsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
-    shipments?: boolean | UserCountOutputTypeCountShipmentsArgs
     chatSessions?: boolean | UserCountOutputTypeCountChatSessionsArgs
+    statusLogs?: boolean | UserCountOutputTypeCountStatusLogsArgs
+    agentCorridors?: boolean | UserCountOutputTypeCountAgentCorridorsArgs
+    agentCredentials?: boolean | UserCountOutputTypeCountAgentCredentialsArgs
+    verifiedCredentials?: boolean | UserCountOutputTypeCountVerifiedCredentialsArgs
+    adminAuditLogs?: boolean | UserCountOutputTypeCountAdminAuditLogsArgs
+    locationsCreated?: boolean | UserCountOutputTypeCountLocationsCreatedArgs
+    locationsUpdated?: boolean | UserCountOutputTypeCountLocationsUpdatedArgs
+    locationsDeleted?: boolean | UserCountOutputTypeCountLocationsDeletedArgs
   }
 
   // Custom InputTypes
@@ -1784,6 +2356,27 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountAgentShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShipmentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCustomerShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShipmentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAssignedShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShipmentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionWhereInput
   }
@@ -1798,15 +2391,64 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ShipmentWhereInput
+  export type UserCountOutputTypeCountChatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChatSessionWhereInput
   }
 
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountChatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ChatSessionWhereInput
+  export type UserCountOutputTypeCountStatusLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StatusLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAgentCorridorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AgentCorridorWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAgentCredentialsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AgentCredentialWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountVerifiedCredentialsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AgentCredentialWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAdminAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AdminAuditLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountLocationsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LocationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountLocationsUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LocationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountLocationsDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LocationWhereInput
   }
 
 
@@ -1838,6 +2480,64 @@ export namespace Prisma {
    */
   export type ChatSessionCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChatMessageWhereInput
+  }
+
+
+  /**
+   * Count Type LocationCountOutputType
+   */
+
+  export type LocationCountOutputType = {
+    originCorridors: number
+    destinationCorridors: number
+    originShipments: number
+    destinationShipments: number
+  }
+
+  export type LocationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    originCorridors?: boolean | LocationCountOutputTypeCountOriginCorridorsArgs
+    destinationCorridors?: boolean | LocationCountOutputTypeCountDestinationCorridorsArgs
+    originShipments?: boolean | LocationCountOutputTypeCountOriginShipmentsArgs
+    destinationShipments?: boolean | LocationCountOutputTypeCountDestinationShipmentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LocationCountOutputType
+     */
+    select?: LocationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeCountOriginCorridorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AgentCorridorWhereInput
+  }
+
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeCountDestinationCorridorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AgentCorridorWhereInput
+  }
+
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeCountOriginShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShipmentWhereInput
+  }
+
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeCountDestinationShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShipmentWhereInput
   }
 
 
@@ -1877,6 +2577,1121 @@ export namespace Prisma {
    */
 
   /**
+   * Model AdminAuditLog
+   */
+
+  export type AggregateAdminAuditLog = {
+    _count: AdminAuditLogCountAggregateOutputType | null
+    _min: AdminAuditLogMinAggregateOutputType | null
+    _max: AdminAuditLogMaxAggregateOutputType | null
+  }
+
+  export type AdminAuditLogMinAggregateOutputType = {
+    id: string | null
+    adminId: string | null
+    action: $Enums.AuditAction | null
+    targetType: string | null
+    targetId: string | null
+    details: string | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date | null
+  }
+
+  export type AdminAuditLogMaxAggregateOutputType = {
+    id: string | null
+    adminId: string | null
+    action: $Enums.AuditAction | null
+    targetType: string | null
+    targetId: string | null
+    details: string | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date | null
+  }
+
+  export type AdminAuditLogCountAggregateOutputType = {
+    id: number
+    adminId: number
+    action: number
+    targetType: number
+    targetId: number
+    details: number
+    ipAddress: number
+    userAgent: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AdminAuditLogMinAggregateInputType = {
+    id?: true
+    adminId?: true
+    action?: true
+    targetType?: true
+    targetId?: true
+    details?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+  }
+
+  export type AdminAuditLogMaxAggregateInputType = {
+    id?: true
+    adminId?: true
+    action?: true
+    targetType?: true
+    targetId?: true
+    details?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+  }
+
+  export type AdminAuditLogCountAggregateInputType = {
+    id?: true
+    adminId?: true
+    action?: true
+    targetType?: true
+    targetId?: true
+    details?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AdminAuditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AdminAuditLog to aggregate.
+     */
+    where?: AdminAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminAuditLogs to fetch.
+     */
+    orderBy?: AdminAuditLogOrderByWithRelationInput | AdminAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AdminAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AdminAuditLogs
+    **/
+    _count?: true | AdminAuditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AdminAuditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AdminAuditLogMaxAggregateInputType
+  }
+
+  export type GetAdminAuditLogAggregateType<T extends AdminAuditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateAdminAuditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAdminAuditLog[P]>
+      : GetScalarType<T[P], AggregateAdminAuditLog[P]>
+  }
+
+
+
+
+  export type AdminAuditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AdminAuditLogWhereInput
+    orderBy?: AdminAuditLogOrderByWithAggregationInput | AdminAuditLogOrderByWithAggregationInput[]
+    by: AdminAuditLogScalarFieldEnum[] | AdminAuditLogScalarFieldEnum
+    having?: AdminAuditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AdminAuditLogCountAggregateInputType | true
+    _min?: AdminAuditLogMinAggregateInputType
+    _max?: AdminAuditLogMaxAggregateInputType
+  }
+
+  export type AdminAuditLogGroupByOutputType = {
+    id: string
+    adminId: string
+    action: $Enums.AuditAction
+    targetType: string
+    targetId: string
+    details: string
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date
+    _count: AdminAuditLogCountAggregateOutputType | null
+    _min: AdminAuditLogMinAggregateOutputType | null
+    _max: AdminAuditLogMaxAggregateOutputType | null
+  }
+
+  type GetAdminAuditLogGroupByPayload<T extends AdminAuditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AdminAuditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AdminAuditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AdminAuditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], AdminAuditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AdminAuditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    adminId?: boolean
+    action?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    details?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["adminAuditLog"]>
+
+  export type AdminAuditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    adminId?: boolean
+    action?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    details?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["adminAuditLog"]>
+
+  export type AdminAuditLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    adminId?: boolean
+    action?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    details?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["adminAuditLog"]>
+
+  export type AdminAuditLogSelectScalar = {
+    id?: boolean
+    adminId?: boolean
+    action?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    details?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+  }
+
+  export type AdminAuditLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "adminId" | "action" | "targetType" | "targetId" | "details" | "ipAddress" | "userAgent" | "createdAt", ExtArgs["result"]["adminAuditLog"]>
+  export type AdminAuditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AdminAuditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AdminAuditLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $AdminAuditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AdminAuditLog"
+    objects: {
+      admin: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      adminId: string
+      action: $Enums.AuditAction
+      targetType: string
+      targetId: string
+      details: string
+      ipAddress: string | null
+      userAgent: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["adminAuditLog"]>
+    composites: {}
+  }
+
+  type AdminAuditLogGetPayload<S extends boolean | null | undefined | AdminAuditLogDefaultArgs> = $Result.GetResult<Prisma.$AdminAuditLogPayload, S>
+
+  type AdminAuditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AdminAuditLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AdminAuditLogCountAggregateInputType | true
+    }
+
+  export interface AdminAuditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AdminAuditLog'], meta: { name: 'AdminAuditLog' } }
+    /**
+     * Find zero or one AdminAuditLog that matches the filter.
+     * @param {AdminAuditLogFindUniqueArgs} args - Arguments to find a AdminAuditLog
+     * @example
+     * // Get one AdminAuditLog
+     * const adminAuditLog = await prisma.adminAuditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AdminAuditLogFindUniqueArgs>(args: SelectSubset<T, AdminAuditLogFindUniqueArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AdminAuditLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AdminAuditLogFindUniqueOrThrowArgs} args - Arguments to find a AdminAuditLog
+     * @example
+     * // Get one AdminAuditLog
+     * const adminAuditLog = await prisma.adminAuditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AdminAuditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, AdminAuditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AdminAuditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminAuditLogFindFirstArgs} args - Arguments to find a AdminAuditLog
+     * @example
+     * // Get one AdminAuditLog
+     * const adminAuditLog = await prisma.adminAuditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AdminAuditLogFindFirstArgs>(args?: SelectSubset<T, AdminAuditLogFindFirstArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AdminAuditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminAuditLogFindFirstOrThrowArgs} args - Arguments to find a AdminAuditLog
+     * @example
+     * // Get one AdminAuditLog
+     * const adminAuditLog = await prisma.adminAuditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AdminAuditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, AdminAuditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AdminAuditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminAuditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AdminAuditLogs
+     * const adminAuditLogs = await prisma.adminAuditLog.findMany()
+     * 
+     * // Get first 10 AdminAuditLogs
+     * const adminAuditLogs = await prisma.adminAuditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const adminAuditLogWithIdOnly = await prisma.adminAuditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AdminAuditLogFindManyArgs>(args?: SelectSubset<T, AdminAuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AdminAuditLog.
+     * @param {AdminAuditLogCreateArgs} args - Arguments to create a AdminAuditLog.
+     * @example
+     * // Create one AdminAuditLog
+     * const AdminAuditLog = await prisma.adminAuditLog.create({
+     *   data: {
+     *     // ... data to create a AdminAuditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends AdminAuditLogCreateArgs>(args: SelectSubset<T, AdminAuditLogCreateArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AdminAuditLogs.
+     * @param {AdminAuditLogCreateManyArgs} args - Arguments to create many AdminAuditLogs.
+     * @example
+     * // Create many AdminAuditLogs
+     * const adminAuditLog = await prisma.adminAuditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AdminAuditLogCreateManyArgs>(args?: SelectSubset<T, AdminAuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AdminAuditLogs and returns the data saved in the database.
+     * @param {AdminAuditLogCreateManyAndReturnArgs} args - Arguments to create many AdminAuditLogs.
+     * @example
+     * // Create many AdminAuditLogs
+     * const adminAuditLog = await prisma.adminAuditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AdminAuditLogs and only return the `id`
+     * const adminAuditLogWithIdOnly = await prisma.adminAuditLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AdminAuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, AdminAuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AdminAuditLog.
+     * @param {AdminAuditLogDeleteArgs} args - Arguments to delete one AdminAuditLog.
+     * @example
+     * // Delete one AdminAuditLog
+     * const AdminAuditLog = await prisma.adminAuditLog.delete({
+     *   where: {
+     *     // ... filter to delete one AdminAuditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AdminAuditLogDeleteArgs>(args: SelectSubset<T, AdminAuditLogDeleteArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AdminAuditLog.
+     * @param {AdminAuditLogUpdateArgs} args - Arguments to update one AdminAuditLog.
+     * @example
+     * // Update one AdminAuditLog
+     * const adminAuditLog = await prisma.adminAuditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AdminAuditLogUpdateArgs>(args: SelectSubset<T, AdminAuditLogUpdateArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AdminAuditLogs.
+     * @param {AdminAuditLogDeleteManyArgs} args - Arguments to filter AdminAuditLogs to delete.
+     * @example
+     * // Delete a few AdminAuditLogs
+     * const { count } = await prisma.adminAuditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AdminAuditLogDeleteManyArgs>(args?: SelectSubset<T, AdminAuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AdminAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminAuditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AdminAuditLogs
+     * const adminAuditLog = await prisma.adminAuditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AdminAuditLogUpdateManyArgs>(args: SelectSubset<T, AdminAuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AdminAuditLogs and returns the data updated in the database.
+     * @param {AdminAuditLogUpdateManyAndReturnArgs} args - Arguments to update many AdminAuditLogs.
+     * @example
+     * // Update many AdminAuditLogs
+     * const adminAuditLog = await prisma.adminAuditLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AdminAuditLogs and only return the `id`
+     * const adminAuditLogWithIdOnly = await prisma.adminAuditLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AdminAuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, AdminAuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AdminAuditLog.
+     * @param {AdminAuditLogUpsertArgs} args - Arguments to update or create a AdminAuditLog.
+     * @example
+     * // Update or create a AdminAuditLog
+     * const adminAuditLog = await prisma.adminAuditLog.upsert({
+     *   create: {
+     *     // ... data to create a AdminAuditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AdminAuditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AdminAuditLogUpsertArgs>(args: SelectSubset<T, AdminAuditLogUpsertArgs<ExtArgs>>): Prisma__AdminAuditLogClient<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AdminAuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminAuditLogCountArgs} args - Arguments to filter AdminAuditLogs to count.
+     * @example
+     * // Count the number of AdminAuditLogs
+     * const count = await prisma.adminAuditLog.count({
+     *   where: {
+     *     // ... the filter for the AdminAuditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AdminAuditLogCountArgs>(
+      args?: Subset<T, AdminAuditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AdminAuditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AdminAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminAuditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AdminAuditLogAggregateArgs>(args: Subset<T, AdminAuditLogAggregateArgs>): Prisma.PrismaPromise<GetAdminAuditLogAggregateType<T>>
+
+    /**
+     * Group by AdminAuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminAuditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AdminAuditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AdminAuditLogGroupByArgs['orderBy'] }
+        : { orderBy?: AdminAuditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AdminAuditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAdminAuditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AdminAuditLog model
+   */
+  readonly fields: AdminAuditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AdminAuditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AdminAuditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    admin<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AdminAuditLog model
+   */
+  interface AdminAuditLogFieldRefs {
+    readonly id: FieldRef<"AdminAuditLog", 'String'>
+    readonly adminId: FieldRef<"AdminAuditLog", 'String'>
+    readonly action: FieldRef<"AdminAuditLog", 'AuditAction'>
+    readonly targetType: FieldRef<"AdminAuditLog", 'String'>
+    readonly targetId: FieldRef<"AdminAuditLog", 'String'>
+    readonly details: FieldRef<"AdminAuditLog", 'String'>
+    readonly ipAddress: FieldRef<"AdminAuditLog", 'String'>
+    readonly userAgent: FieldRef<"AdminAuditLog", 'String'>
+    readonly createdAt: FieldRef<"AdminAuditLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AdminAuditLog findUnique
+   */
+  export type AdminAuditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminAuditLog to fetch.
+     */
+    where: AdminAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AdminAuditLog findUniqueOrThrow
+   */
+  export type AdminAuditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminAuditLog to fetch.
+     */
+    where: AdminAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AdminAuditLog findFirst
+   */
+  export type AdminAuditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminAuditLog to fetch.
+     */
+    where?: AdminAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminAuditLogs to fetch.
+     */
+    orderBy?: AdminAuditLogOrderByWithRelationInput | AdminAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AdminAuditLogs.
+     */
+    cursor?: AdminAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AdminAuditLogs.
+     */
+    distinct?: AdminAuditLogScalarFieldEnum | AdminAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AdminAuditLog findFirstOrThrow
+   */
+  export type AdminAuditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminAuditLog to fetch.
+     */
+    where?: AdminAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminAuditLogs to fetch.
+     */
+    orderBy?: AdminAuditLogOrderByWithRelationInput | AdminAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AdminAuditLogs.
+     */
+    cursor?: AdminAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AdminAuditLogs.
+     */
+    distinct?: AdminAuditLogScalarFieldEnum | AdminAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AdminAuditLog findMany
+   */
+  export type AdminAuditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminAuditLogs to fetch.
+     */
+    where?: AdminAuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminAuditLogs to fetch.
+     */
+    orderBy?: AdminAuditLogOrderByWithRelationInput | AdminAuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AdminAuditLogs.
+     */
+    cursor?: AdminAuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminAuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminAuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AdminAuditLogs.
+     */
+    distinct?: AdminAuditLogScalarFieldEnum | AdminAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AdminAuditLog create
+   */
+  export type AdminAuditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AdminAuditLog.
+     */
+    data: XOR<AdminAuditLogCreateInput, AdminAuditLogUncheckedCreateInput>
+  }
+
+  /**
+   * AdminAuditLog createMany
+   */
+  export type AdminAuditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AdminAuditLogs.
+     */
+    data: AdminAuditLogCreateManyInput | AdminAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AdminAuditLog createManyAndReturn
+   */
+  export type AdminAuditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many AdminAuditLogs.
+     */
+    data: AdminAuditLogCreateManyInput | AdminAuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AdminAuditLog update
+   */
+  export type AdminAuditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AdminAuditLog.
+     */
+    data: XOR<AdminAuditLogUpdateInput, AdminAuditLogUncheckedUpdateInput>
+    /**
+     * Choose, which AdminAuditLog to update.
+     */
+    where: AdminAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AdminAuditLog updateMany
+   */
+  export type AdminAuditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AdminAuditLogs.
+     */
+    data: XOR<AdminAuditLogUpdateManyMutationInput, AdminAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AdminAuditLogs to update
+     */
+    where?: AdminAuditLogWhereInput
+    /**
+     * Limit how many AdminAuditLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AdminAuditLog updateManyAndReturn
+   */
+  export type AdminAuditLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to update AdminAuditLogs.
+     */
+    data: XOR<AdminAuditLogUpdateManyMutationInput, AdminAuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AdminAuditLogs to update
+     */
+    where?: AdminAuditLogWhereInput
+    /**
+     * Limit how many AdminAuditLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AdminAuditLog upsert
+   */
+  export type AdminAuditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AdminAuditLog to update in case it exists.
+     */
+    where: AdminAuditLogWhereUniqueInput
+    /**
+     * In case the AdminAuditLog found by the `where` argument doesn't exist, create a new AdminAuditLog with this data.
+     */
+    create: XOR<AdminAuditLogCreateInput, AdminAuditLogUncheckedCreateInput>
+    /**
+     * In case the AdminAuditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AdminAuditLogUpdateInput, AdminAuditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * AdminAuditLog delete
+   */
+  export type AdminAuditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    /**
+     * Filter which AdminAuditLog to delete.
+     */
+    where: AdminAuditLogWhereUniqueInput
+  }
+
+  /**
+   * AdminAuditLog deleteMany
+   */
+  export type AdminAuditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AdminAuditLogs to delete
+     */
+    where?: AdminAuditLogWhereInput
+    /**
+     * Limit how many AdminAuditLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AdminAuditLog without action
+   */
+  export type AdminAuditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model User
    */
 
@@ -1905,6 +3720,8 @@ export namespace Prisma {
     image: string | null
     address: string | null
     phone: string | null
+    assignedArea: string | null
+    isAvailable: boolean | null
     isBlocked: boolean | null
     isDeleted: boolean | null
     blockedReason: string | null
@@ -1916,6 +3733,9 @@ export namespace Prisma {
     passwordChangedAt: Date | null
     failedLoginAttempts: number | null
     lockedUntil: Date | null
+    agentVerificationStatus: $Enums.AgentVerificationStatus | null
+    verifiedAt: Date | null
+    verifiedById: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1929,6 +3749,8 @@ export namespace Prisma {
     image: string | null
     address: string | null
     phone: string | null
+    assignedArea: string | null
+    isAvailable: boolean | null
     isBlocked: boolean | null
     isDeleted: boolean | null
     blockedReason: string | null
@@ -1940,6 +3762,9 @@ export namespace Prisma {
     passwordChangedAt: Date | null
     failedLoginAttempts: number | null
     lockedUntil: Date | null
+    agentVerificationStatus: $Enums.AgentVerificationStatus | null
+    verifiedAt: Date | null
+    verifiedById: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1953,6 +3778,8 @@ export namespace Prisma {
     image: number
     address: number
     phone: number
+    assignedArea: number
+    isAvailable: number
     isBlocked: number
     isDeleted: number
     blockedReason: number
@@ -1964,6 +3791,9 @@ export namespace Prisma {
     passwordChangedAt: number
     failedLoginAttempts: number
     lockedUntil: number
+    agentVerificationStatus: number
+    verifiedAt: number
+    verifiedById: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1987,6 +3817,8 @@ export namespace Prisma {
     image?: true
     address?: true
     phone?: true
+    assignedArea?: true
+    isAvailable?: true
     isBlocked?: true
     isDeleted?: true
     blockedReason?: true
@@ -1998,6 +3830,9 @@ export namespace Prisma {
     passwordChangedAt?: true
     failedLoginAttempts?: true
     lockedUntil?: true
+    agentVerificationStatus?: true
+    verifiedAt?: true
+    verifiedById?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2011,6 +3846,8 @@ export namespace Prisma {
     image?: true
     address?: true
     phone?: true
+    assignedArea?: true
+    isAvailable?: true
     isBlocked?: true
     isDeleted?: true
     blockedReason?: true
@@ -2022,6 +3859,9 @@ export namespace Prisma {
     passwordChangedAt?: true
     failedLoginAttempts?: true
     lockedUntil?: true
+    agentVerificationStatus?: true
+    verifiedAt?: true
+    verifiedById?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2035,6 +3875,8 @@ export namespace Prisma {
     image?: true
     address?: true
     phone?: true
+    assignedArea?: true
+    isAvailable?: true
     isBlocked?: true
     isDeleted?: true
     blockedReason?: true
@@ -2046,6 +3888,9 @@ export namespace Prisma {
     passwordChangedAt?: true
     failedLoginAttempts?: true
     lockedUntil?: true
+    agentVerificationStatus?: true
+    verifiedAt?: true
+    verifiedById?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2146,6 +3991,8 @@ export namespace Prisma {
     image: string | null
     address: string | null
     phone: string | null
+    assignedArea: string | null
+    isAvailable: boolean
     isBlocked: boolean
     isDeleted: boolean
     blockedReason: string | null
@@ -2157,6 +4004,9 @@ export namespace Prisma {
     passwordChangedAt: Date | null
     failedLoginAttempts: number
     lockedUntil: Date | null
+    agentVerificationStatus: $Enums.AgentVerificationStatus
+    verifiedAt: Date | null
+    verifiedById: string | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2189,6 +4039,8 @@ export namespace Prisma {
     image?: boolean
     address?: boolean
     phone?: boolean
+    assignedArea?: boolean
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: boolean
@@ -2200,13 +4052,26 @@ export namespace Prisma {
     passwordChangedAt?: boolean
     failedLoginAttempts?: boolean
     lockedUntil?: boolean
+    agentVerificationStatus?: boolean
+    verifiedAt?: boolean
+    verifiedById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     phoneVerifications?: boolean | User$phoneVerificationsArgs<ExtArgs>
+    agentShipments?: boolean | User$agentShipmentsArgs<ExtArgs>
+    customerShipments?: boolean | User$customerShipmentsArgs<ExtArgs>
+    assignedShipments?: boolean | User$assignedShipmentsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
-    shipments?: boolean | User$shipmentsArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
+    statusLogs?: boolean | User$statusLogsArgs<ExtArgs>
+    agentCorridors?: boolean | User$agentCorridorsArgs<ExtArgs>
+    agentCredentials?: boolean | User$agentCredentialsArgs<ExtArgs>
+    verifiedCredentials?: boolean | User$verifiedCredentialsArgs<ExtArgs>
+    adminAuditLogs?: boolean | User$adminAuditLogsArgs<ExtArgs>
+    locationsCreated?: boolean | User$locationsCreatedArgs<ExtArgs>
+    locationsUpdated?: boolean | User$locationsUpdatedArgs<ExtArgs>
+    locationsDeleted?: boolean | User$locationsDeletedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2219,6 +4084,8 @@ export namespace Prisma {
     image?: boolean
     address?: boolean
     phone?: boolean
+    assignedArea?: boolean
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: boolean
@@ -2230,6 +4097,9 @@ export namespace Prisma {
     passwordChangedAt?: boolean
     failedLoginAttempts?: boolean
     lockedUntil?: boolean
+    agentVerificationStatus?: boolean
+    verifiedAt?: boolean
+    verifiedById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2243,6 +4113,8 @@ export namespace Prisma {
     image?: boolean
     address?: boolean
     phone?: boolean
+    assignedArea?: boolean
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: boolean
@@ -2254,6 +4126,9 @@ export namespace Prisma {
     passwordChangedAt?: boolean
     failedLoginAttempts?: boolean
     lockedUntil?: boolean
+    agentVerificationStatus?: boolean
+    verifiedAt?: boolean
+    verifiedById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2267,6 +4142,8 @@ export namespace Prisma {
     image?: boolean
     address?: boolean
     phone?: boolean
+    assignedArea?: boolean
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: boolean
@@ -2278,17 +4155,30 @@ export namespace Prisma {
     passwordChangedAt?: boolean
     failedLoginAttempts?: boolean
     lockedUntil?: boolean
+    agentVerificationStatus?: boolean
+    verifiedAt?: boolean
+    verifiedById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "emailVerified" | "image" | "address" | "phone" | "isBlocked" | "isDeleted" | "blockedReason" | "blockedAt" | "deletedAt" | "twoFactorEnabled" | "lastLoginAt" | "lastLoginIp" | "passwordChangedAt" | "failedLoginAttempts" | "lockedUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "role" | "emailVerified" | "image" | "address" | "phone" | "assignedArea" | "isAvailable" | "isBlocked" | "isDeleted" | "blockedReason" | "blockedAt" | "deletedAt" | "twoFactorEnabled" | "lastLoginAt" | "lastLoginIp" | "passwordChangedAt" | "failedLoginAttempts" | "lockedUntil" | "agentVerificationStatus" | "verifiedAt" | "verifiedById" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     phoneVerifications?: boolean | User$phoneVerificationsArgs<ExtArgs>
+    agentShipments?: boolean | User$agentShipmentsArgs<ExtArgs>
+    customerShipments?: boolean | User$customerShipmentsArgs<ExtArgs>
+    assignedShipments?: boolean | User$assignedShipmentsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
-    shipments?: boolean | User$shipmentsArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
+    statusLogs?: boolean | User$statusLogsArgs<ExtArgs>
+    agentCorridors?: boolean | User$agentCorridorsArgs<ExtArgs>
+    agentCredentials?: boolean | User$agentCredentialsArgs<ExtArgs>
+    verifiedCredentials?: boolean | User$verifiedCredentialsArgs<ExtArgs>
+    adminAuditLogs?: boolean | User$adminAuditLogsArgs<ExtArgs>
+    locationsCreated?: boolean | User$locationsCreatedArgs<ExtArgs>
+    locationsUpdated?: boolean | User$locationsUpdatedArgs<ExtArgs>
+    locationsDeleted?: boolean | User$locationsDeletedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2298,10 +4188,20 @@ export namespace Prisma {
     name: "User"
     objects: {
       phoneVerifications: Prisma.$PhoneVerificationPayload<ExtArgs>[]
+      agentShipments: Prisma.$ShipmentPayload<ExtArgs>[]
+      customerShipments: Prisma.$ShipmentPayload<ExtArgs>[]
+      assignedShipments: Prisma.$ShipmentPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
-      shipments: Prisma.$ShipmentPayload<ExtArgs>[]
       chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
+      statusLogs: Prisma.$StatusLogPayload<ExtArgs>[]
+      agentCorridors: Prisma.$AgentCorridorPayload<ExtArgs>[]
+      agentCredentials: Prisma.$AgentCredentialPayload<ExtArgs>[]
+      verifiedCredentials: Prisma.$AgentCredentialPayload<ExtArgs>[]
+      adminAuditLogs: Prisma.$AdminAuditLogPayload<ExtArgs>[]
+      locationsCreated: Prisma.$LocationPayload<ExtArgs>[]
+      locationsUpdated: Prisma.$LocationPayload<ExtArgs>[]
+      locationsDeleted: Prisma.$LocationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2312,6 +4212,8 @@ export namespace Prisma {
       image: string | null
       address: string | null
       phone: string | null
+      assignedArea: string | null
+      isAvailable: boolean
       isBlocked: boolean
       isDeleted: boolean
       blockedReason: string | null
@@ -2323,6 +4225,9 @@ export namespace Prisma {
       passwordChangedAt: Date | null
       failedLoginAttempts: number
       lockedUntil: Date | null
+      agentVerificationStatus: $Enums.AgentVerificationStatus
+      verifiedAt: Date | null
+      verifiedById: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2720,10 +4625,20 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     phoneVerifications<T extends User$phoneVerificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$phoneVerificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhoneVerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    agentShipments<T extends User$agentShipmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$agentShipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    customerShipments<T extends User$customerShipmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$customerShipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    assignedShipments<T extends User$assignedShipmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedShipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    shipments<T extends User$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     chatSessions<T extends User$chatSessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    statusLogs<T extends User$statusLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$statusLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    agentCorridors<T extends User$agentCorridorsArgs<ExtArgs> = {}>(args?: Subset<T, User$agentCorridorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    agentCredentials<T extends User$agentCredentialsArgs<ExtArgs> = {}>(args?: Subset<T, User$agentCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    verifiedCredentials<T extends User$verifiedCredentialsArgs<ExtArgs> = {}>(args?: Subset<T, User$verifiedCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    adminAuditLogs<T extends User$adminAuditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$adminAuditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    locationsCreated<T extends User$locationsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$locationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    locationsUpdated<T extends User$locationsUpdatedArgs<ExtArgs> = {}>(args?: Subset<T, User$locationsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    locationsDeleted<T extends User$locationsDeletedArgs<ExtArgs> = {}>(args?: Subset<T, User$locationsDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2761,6 +4676,8 @@ export namespace Prisma {
     readonly image: FieldRef<"User", 'String'>
     readonly address: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
+    readonly assignedArea: FieldRef<"User", 'String'>
+    readonly isAvailable: FieldRef<"User", 'Boolean'>
     readonly isBlocked: FieldRef<"User", 'Boolean'>
     readonly isDeleted: FieldRef<"User", 'Boolean'>
     readonly blockedReason: FieldRef<"User", 'String'>
@@ -2772,6 +4689,9 @@ export namespace Prisma {
     readonly passwordChangedAt: FieldRef<"User", 'DateTime'>
     readonly failedLoginAttempts: FieldRef<"User", 'Int'>
     readonly lockedUntil: FieldRef<"User", 'DateTime'>
+    readonly agentVerificationStatus: FieldRef<"User", 'AgentVerificationStatus'>
+    readonly verifiedAt: FieldRef<"User", 'DateTime'>
+    readonly verifiedById: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -3191,6 +5111,78 @@ export namespace Prisma {
   }
 
   /**
+   * User.agentShipments
+   */
+  export type User$agentShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
+    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
+    cursor?: ShipmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.customerShipments
+   */
+  export type User$customerShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
+    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
+    cursor?: ShipmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.assignedShipments
+   */
+  export type User$assignedShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
+    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
+    cursor?: ShipmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
    * User.sessions
    */
   export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3239,30 +5231,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.shipments
-   */
-  export type User$shipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Shipment
-     */
-    select?: ShipmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Shipment
-     */
-    omit?: ShipmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ShipmentInclude<ExtArgs> | null
-    where?: ShipmentWhereInput
-    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
-    cursor?: ShipmentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
-  }
-
-  /**
    * User.chatSessions
    */
   export type User$chatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3284,6 +5252,198 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChatSessionScalarFieldEnum | ChatSessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.statusLogs
+   */
+  export type User$statusLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusLog
+     */
+    select?: StatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusLog
+     */
+    omit?: StatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusLogInclude<ExtArgs> | null
+    where?: StatusLogWhereInput
+    orderBy?: StatusLogOrderByWithRelationInput | StatusLogOrderByWithRelationInput[]
+    cursor?: StatusLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StatusLogScalarFieldEnum | StatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * User.agentCorridors
+   */
+  export type User$agentCorridorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    where?: AgentCorridorWhereInput
+    orderBy?: AgentCorridorOrderByWithRelationInput | AgentCorridorOrderByWithRelationInput[]
+    cursor?: AgentCorridorWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AgentCorridorScalarFieldEnum | AgentCorridorScalarFieldEnum[]
+  }
+
+  /**
+   * User.agentCredentials
+   */
+  export type User$agentCredentialsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    where?: AgentCredentialWhereInput
+    orderBy?: AgentCredentialOrderByWithRelationInput | AgentCredentialOrderByWithRelationInput[]
+    cursor?: AgentCredentialWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AgentCredentialScalarFieldEnum | AgentCredentialScalarFieldEnum[]
+  }
+
+  /**
+   * User.verifiedCredentials
+   */
+  export type User$verifiedCredentialsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    where?: AgentCredentialWhereInput
+    orderBy?: AgentCredentialOrderByWithRelationInput | AgentCredentialOrderByWithRelationInput[]
+    cursor?: AgentCredentialWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AgentCredentialScalarFieldEnum | AgentCredentialScalarFieldEnum[]
+  }
+
+  /**
+   * User.adminAuditLogs
+   */
+  export type User$adminAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminAuditLog
+     */
+    select?: AdminAuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminAuditLog
+     */
+    omit?: AdminAuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminAuditLogInclude<ExtArgs> | null
+    where?: AdminAuditLogWhereInput
+    orderBy?: AdminAuditLogOrderByWithRelationInput | AdminAuditLogOrderByWithRelationInput[]
+    cursor?: AdminAuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AdminAuditLogScalarFieldEnum | AdminAuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * User.locationsCreated
+   */
+  export type User$locationsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    cursor?: LocationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * User.locationsUpdated
+   */
+  export type User$locationsUpdatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    cursor?: LocationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * User.locationsDeleted
+   */
+  export type User$locationsDeletedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    cursor?: LocationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
   }
 
   /**
@@ -9809,6 +11969,3814 @@ export namespace Prisma {
 
 
   /**
+   * Model AgentCredential
+   */
+
+  export type AggregateAgentCredential = {
+    _count: AgentCredentialCountAggregateOutputType | null
+    _min: AgentCredentialMinAggregateOutputType | null
+    _max: AgentCredentialMaxAggregateOutputType | null
+  }
+
+  export type AgentCredentialMinAggregateOutputType = {
+    id: string | null
+    agentId: string | null
+    type: $Enums.CredentialType | null
+    documentNumber: string | null
+    cloudinaryPublicId: string | null
+    documentUrl: string | null
+    issuingAuthority: string | null
+    issueDate: Date | null
+    expiryDate: Date | null
+    status: $Enums.CredentialStatus | null
+    rejectionReason: string | null
+    verifiedById: string | null
+    verifiedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AgentCredentialMaxAggregateOutputType = {
+    id: string | null
+    agentId: string | null
+    type: $Enums.CredentialType | null
+    documentNumber: string | null
+    cloudinaryPublicId: string | null
+    documentUrl: string | null
+    issuingAuthority: string | null
+    issueDate: Date | null
+    expiryDate: Date | null
+    status: $Enums.CredentialStatus | null
+    rejectionReason: string | null
+    verifiedById: string | null
+    verifiedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AgentCredentialCountAggregateOutputType = {
+    id: number
+    agentId: number
+    type: number
+    documentNumber: number
+    cloudinaryPublicId: number
+    documentUrl: number
+    issuingAuthority: number
+    issueDate: number
+    expiryDate: number
+    status: number
+    rejectionReason: number
+    verifiedById: number
+    verifiedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AgentCredentialMinAggregateInputType = {
+    id?: true
+    agentId?: true
+    type?: true
+    documentNumber?: true
+    cloudinaryPublicId?: true
+    documentUrl?: true
+    issuingAuthority?: true
+    issueDate?: true
+    expiryDate?: true
+    status?: true
+    rejectionReason?: true
+    verifiedById?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AgentCredentialMaxAggregateInputType = {
+    id?: true
+    agentId?: true
+    type?: true
+    documentNumber?: true
+    cloudinaryPublicId?: true
+    documentUrl?: true
+    issuingAuthority?: true
+    issueDate?: true
+    expiryDate?: true
+    status?: true
+    rejectionReason?: true
+    verifiedById?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AgentCredentialCountAggregateInputType = {
+    id?: true
+    agentId?: true
+    type?: true
+    documentNumber?: true
+    cloudinaryPublicId?: true
+    documentUrl?: true
+    issuingAuthority?: true
+    issueDate?: true
+    expiryDate?: true
+    status?: true
+    rejectionReason?: true
+    verifiedById?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AgentCredentialAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AgentCredential to aggregate.
+     */
+    where?: AgentCredentialWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCredentials to fetch.
+     */
+    orderBy?: AgentCredentialOrderByWithRelationInput | AgentCredentialOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AgentCredentialWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCredentials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCredentials.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AgentCredentials
+    **/
+    _count?: true | AgentCredentialCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AgentCredentialMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AgentCredentialMaxAggregateInputType
+  }
+
+  export type GetAgentCredentialAggregateType<T extends AgentCredentialAggregateArgs> = {
+        [P in keyof T & keyof AggregateAgentCredential]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAgentCredential[P]>
+      : GetScalarType<T[P], AggregateAgentCredential[P]>
+  }
+
+
+
+
+  export type AgentCredentialGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AgentCredentialWhereInput
+    orderBy?: AgentCredentialOrderByWithAggregationInput | AgentCredentialOrderByWithAggregationInput[]
+    by: AgentCredentialScalarFieldEnum[] | AgentCredentialScalarFieldEnum
+    having?: AgentCredentialScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AgentCredentialCountAggregateInputType | true
+    _min?: AgentCredentialMinAggregateInputType
+    _max?: AgentCredentialMaxAggregateInputType
+  }
+
+  export type AgentCredentialGroupByOutputType = {
+    id: string
+    agentId: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority: string | null
+    issueDate: Date | null
+    expiryDate: Date | null
+    status: $Enums.CredentialStatus
+    rejectionReason: string | null
+    verifiedById: string | null
+    verifiedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: AgentCredentialCountAggregateOutputType | null
+    _min: AgentCredentialMinAggregateOutputType | null
+    _max: AgentCredentialMaxAggregateOutputType | null
+  }
+
+  type GetAgentCredentialGroupByPayload<T extends AgentCredentialGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AgentCredentialGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AgentCredentialGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AgentCredentialGroupByOutputType[P]>
+            : GetScalarType<T[P], AgentCredentialGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AgentCredentialSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    agentId?: boolean
+    type?: boolean
+    documentNumber?: boolean
+    cloudinaryPublicId?: boolean
+    documentUrl?: boolean
+    issuingAuthority?: boolean
+    issueDate?: boolean
+    expiryDate?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    verifiedById?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    verifiedBy?: boolean | AgentCredential$verifiedByArgs<ExtArgs>
+  }, ExtArgs["result"]["agentCredential"]>
+
+  export type AgentCredentialSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    agentId?: boolean
+    type?: boolean
+    documentNumber?: boolean
+    cloudinaryPublicId?: boolean
+    documentUrl?: boolean
+    issuingAuthority?: boolean
+    issueDate?: boolean
+    expiryDate?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    verifiedById?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    verifiedBy?: boolean | AgentCredential$verifiedByArgs<ExtArgs>
+  }, ExtArgs["result"]["agentCredential"]>
+
+  export type AgentCredentialSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    agentId?: boolean
+    type?: boolean
+    documentNumber?: boolean
+    cloudinaryPublicId?: boolean
+    documentUrl?: boolean
+    issuingAuthority?: boolean
+    issueDate?: boolean
+    expiryDate?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    verifiedById?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    verifiedBy?: boolean | AgentCredential$verifiedByArgs<ExtArgs>
+  }, ExtArgs["result"]["agentCredential"]>
+
+  export type AgentCredentialSelectScalar = {
+    id?: boolean
+    agentId?: boolean
+    type?: boolean
+    documentNumber?: boolean
+    cloudinaryPublicId?: boolean
+    documentUrl?: boolean
+    issuingAuthority?: boolean
+    issueDate?: boolean
+    expiryDate?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    verifiedById?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AgentCredentialOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "agentId" | "type" | "documentNumber" | "cloudinaryPublicId" | "documentUrl" | "issuingAuthority" | "issueDate" | "expiryDate" | "status" | "rejectionReason" | "verifiedById" | "verifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["agentCredential"]>
+  export type AgentCredentialInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    verifiedBy?: boolean | AgentCredential$verifiedByArgs<ExtArgs>
+  }
+  export type AgentCredentialIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    verifiedBy?: boolean | AgentCredential$verifiedByArgs<ExtArgs>
+  }
+  export type AgentCredentialIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    verifiedBy?: boolean | AgentCredential$verifiedByArgs<ExtArgs>
+  }
+
+  export type $AgentCredentialPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AgentCredential"
+    objects: {
+      agent: Prisma.$UserPayload<ExtArgs>
+      verifiedBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      agentId: string
+      type: $Enums.CredentialType
+      documentNumber: string
+      cloudinaryPublicId: string
+      documentUrl: string
+      issuingAuthority: string | null
+      issueDate: Date | null
+      expiryDate: Date | null
+      status: $Enums.CredentialStatus
+      rejectionReason: string | null
+      verifiedById: string | null
+      verifiedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["agentCredential"]>
+    composites: {}
+  }
+
+  type AgentCredentialGetPayload<S extends boolean | null | undefined | AgentCredentialDefaultArgs> = $Result.GetResult<Prisma.$AgentCredentialPayload, S>
+
+  type AgentCredentialCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AgentCredentialFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AgentCredentialCountAggregateInputType | true
+    }
+
+  export interface AgentCredentialDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AgentCredential'], meta: { name: 'AgentCredential' } }
+    /**
+     * Find zero or one AgentCredential that matches the filter.
+     * @param {AgentCredentialFindUniqueArgs} args - Arguments to find a AgentCredential
+     * @example
+     * // Get one AgentCredential
+     * const agentCredential = await prisma.agentCredential.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AgentCredentialFindUniqueArgs>(args: SelectSubset<T, AgentCredentialFindUniqueArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AgentCredential that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AgentCredentialFindUniqueOrThrowArgs} args - Arguments to find a AgentCredential
+     * @example
+     * // Get one AgentCredential
+     * const agentCredential = await prisma.agentCredential.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AgentCredentialFindUniqueOrThrowArgs>(args: SelectSubset<T, AgentCredentialFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AgentCredential that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCredentialFindFirstArgs} args - Arguments to find a AgentCredential
+     * @example
+     * // Get one AgentCredential
+     * const agentCredential = await prisma.agentCredential.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AgentCredentialFindFirstArgs>(args?: SelectSubset<T, AgentCredentialFindFirstArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AgentCredential that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCredentialFindFirstOrThrowArgs} args - Arguments to find a AgentCredential
+     * @example
+     * // Get one AgentCredential
+     * const agentCredential = await prisma.agentCredential.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AgentCredentialFindFirstOrThrowArgs>(args?: SelectSubset<T, AgentCredentialFindFirstOrThrowArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AgentCredentials that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCredentialFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AgentCredentials
+     * const agentCredentials = await prisma.agentCredential.findMany()
+     * 
+     * // Get first 10 AgentCredentials
+     * const agentCredentials = await prisma.agentCredential.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const agentCredentialWithIdOnly = await prisma.agentCredential.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AgentCredentialFindManyArgs>(args?: SelectSubset<T, AgentCredentialFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AgentCredential.
+     * @param {AgentCredentialCreateArgs} args - Arguments to create a AgentCredential.
+     * @example
+     * // Create one AgentCredential
+     * const AgentCredential = await prisma.agentCredential.create({
+     *   data: {
+     *     // ... data to create a AgentCredential
+     *   }
+     * })
+     * 
+     */
+    create<T extends AgentCredentialCreateArgs>(args: SelectSubset<T, AgentCredentialCreateArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AgentCredentials.
+     * @param {AgentCredentialCreateManyArgs} args - Arguments to create many AgentCredentials.
+     * @example
+     * // Create many AgentCredentials
+     * const agentCredential = await prisma.agentCredential.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AgentCredentialCreateManyArgs>(args?: SelectSubset<T, AgentCredentialCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AgentCredentials and returns the data saved in the database.
+     * @param {AgentCredentialCreateManyAndReturnArgs} args - Arguments to create many AgentCredentials.
+     * @example
+     * // Create many AgentCredentials
+     * const agentCredential = await prisma.agentCredential.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AgentCredentials and only return the `id`
+     * const agentCredentialWithIdOnly = await prisma.agentCredential.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AgentCredentialCreateManyAndReturnArgs>(args?: SelectSubset<T, AgentCredentialCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AgentCredential.
+     * @param {AgentCredentialDeleteArgs} args - Arguments to delete one AgentCredential.
+     * @example
+     * // Delete one AgentCredential
+     * const AgentCredential = await prisma.agentCredential.delete({
+     *   where: {
+     *     // ... filter to delete one AgentCredential
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AgentCredentialDeleteArgs>(args: SelectSubset<T, AgentCredentialDeleteArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AgentCredential.
+     * @param {AgentCredentialUpdateArgs} args - Arguments to update one AgentCredential.
+     * @example
+     * // Update one AgentCredential
+     * const agentCredential = await prisma.agentCredential.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AgentCredentialUpdateArgs>(args: SelectSubset<T, AgentCredentialUpdateArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AgentCredentials.
+     * @param {AgentCredentialDeleteManyArgs} args - Arguments to filter AgentCredentials to delete.
+     * @example
+     * // Delete a few AgentCredentials
+     * const { count } = await prisma.agentCredential.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AgentCredentialDeleteManyArgs>(args?: SelectSubset<T, AgentCredentialDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AgentCredentials.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCredentialUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AgentCredentials
+     * const agentCredential = await prisma.agentCredential.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AgentCredentialUpdateManyArgs>(args: SelectSubset<T, AgentCredentialUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AgentCredentials and returns the data updated in the database.
+     * @param {AgentCredentialUpdateManyAndReturnArgs} args - Arguments to update many AgentCredentials.
+     * @example
+     * // Update many AgentCredentials
+     * const agentCredential = await prisma.agentCredential.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AgentCredentials and only return the `id`
+     * const agentCredentialWithIdOnly = await prisma.agentCredential.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AgentCredentialUpdateManyAndReturnArgs>(args: SelectSubset<T, AgentCredentialUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AgentCredential.
+     * @param {AgentCredentialUpsertArgs} args - Arguments to update or create a AgentCredential.
+     * @example
+     * // Update or create a AgentCredential
+     * const agentCredential = await prisma.agentCredential.upsert({
+     *   create: {
+     *     // ... data to create a AgentCredential
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AgentCredential we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AgentCredentialUpsertArgs>(args: SelectSubset<T, AgentCredentialUpsertArgs<ExtArgs>>): Prisma__AgentCredentialClient<$Result.GetResult<Prisma.$AgentCredentialPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AgentCredentials.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCredentialCountArgs} args - Arguments to filter AgentCredentials to count.
+     * @example
+     * // Count the number of AgentCredentials
+     * const count = await prisma.agentCredential.count({
+     *   where: {
+     *     // ... the filter for the AgentCredentials we want to count
+     *   }
+     * })
+    **/
+    count<T extends AgentCredentialCountArgs>(
+      args?: Subset<T, AgentCredentialCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AgentCredentialCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AgentCredential.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCredentialAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AgentCredentialAggregateArgs>(args: Subset<T, AgentCredentialAggregateArgs>): Prisma.PrismaPromise<GetAgentCredentialAggregateType<T>>
+
+    /**
+     * Group by AgentCredential.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCredentialGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AgentCredentialGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AgentCredentialGroupByArgs['orderBy'] }
+        : { orderBy?: AgentCredentialGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AgentCredentialGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAgentCredentialGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AgentCredential model
+   */
+  readonly fields: AgentCredentialFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AgentCredential.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AgentCredentialClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    agent<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    verifiedBy<T extends AgentCredential$verifiedByArgs<ExtArgs> = {}>(args?: Subset<T, AgentCredential$verifiedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AgentCredential model
+   */
+  interface AgentCredentialFieldRefs {
+    readonly id: FieldRef<"AgentCredential", 'String'>
+    readonly agentId: FieldRef<"AgentCredential", 'String'>
+    readonly type: FieldRef<"AgentCredential", 'CredentialType'>
+    readonly documentNumber: FieldRef<"AgentCredential", 'String'>
+    readonly cloudinaryPublicId: FieldRef<"AgentCredential", 'String'>
+    readonly documentUrl: FieldRef<"AgentCredential", 'String'>
+    readonly issuingAuthority: FieldRef<"AgentCredential", 'String'>
+    readonly issueDate: FieldRef<"AgentCredential", 'DateTime'>
+    readonly expiryDate: FieldRef<"AgentCredential", 'DateTime'>
+    readonly status: FieldRef<"AgentCredential", 'CredentialStatus'>
+    readonly rejectionReason: FieldRef<"AgentCredential", 'String'>
+    readonly verifiedById: FieldRef<"AgentCredential", 'String'>
+    readonly verifiedAt: FieldRef<"AgentCredential", 'DateTime'>
+    readonly createdAt: FieldRef<"AgentCredential", 'DateTime'>
+    readonly updatedAt: FieldRef<"AgentCredential", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AgentCredential findUnique
+   */
+  export type AgentCredentialFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCredential to fetch.
+     */
+    where: AgentCredentialWhereUniqueInput
+  }
+
+  /**
+   * AgentCredential findUniqueOrThrow
+   */
+  export type AgentCredentialFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCredential to fetch.
+     */
+    where: AgentCredentialWhereUniqueInput
+  }
+
+  /**
+   * AgentCredential findFirst
+   */
+  export type AgentCredentialFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCredential to fetch.
+     */
+    where?: AgentCredentialWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCredentials to fetch.
+     */
+    orderBy?: AgentCredentialOrderByWithRelationInput | AgentCredentialOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AgentCredentials.
+     */
+    cursor?: AgentCredentialWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCredentials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCredentials.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AgentCredentials.
+     */
+    distinct?: AgentCredentialScalarFieldEnum | AgentCredentialScalarFieldEnum[]
+  }
+
+  /**
+   * AgentCredential findFirstOrThrow
+   */
+  export type AgentCredentialFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCredential to fetch.
+     */
+    where?: AgentCredentialWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCredentials to fetch.
+     */
+    orderBy?: AgentCredentialOrderByWithRelationInput | AgentCredentialOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AgentCredentials.
+     */
+    cursor?: AgentCredentialWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCredentials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCredentials.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AgentCredentials.
+     */
+    distinct?: AgentCredentialScalarFieldEnum | AgentCredentialScalarFieldEnum[]
+  }
+
+  /**
+   * AgentCredential findMany
+   */
+  export type AgentCredentialFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCredentials to fetch.
+     */
+    where?: AgentCredentialWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCredentials to fetch.
+     */
+    orderBy?: AgentCredentialOrderByWithRelationInput | AgentCredentialOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AgentCredentials.
+     */
+    cursor?: AgentCredentialWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCredentials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCredentials.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AgentCredentials.
+     */
+    distinct?: AgentCredentialScalarFieldEnum | AgentCredentialScalarFieldEnum[]
+  }
+
+  /**
+   * AgentCredential create
+   */
+  export type AgentCredentialCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AgentCredential.
+     */
+    data: XOR<AgentCredentialCreateInput, AgentCredentialUncheckedCreateInput>
+  }
+
+  /**
+   * AgentCredential createMany
+   */
+  export type AgentCredentialCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AgentCredentials.
+     */
+    data: AgentCredentialCreateManyInput | AgentCredentialCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AgentCredential createManyAndReturn
+   */
+  export type AgentCredentialCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * The data used to create many AgentCredentials.
+     */
+    data: AgentCredentialCreateManyInput | AgentCredentialCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AgentCredential update
+   */
+  export type AgentCredentialUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AgentCredential.
+     */
+    data: XOR<AgentCredentialUpdateInput, AgentCredentialUncheckedUpdateInput>
+    /**
+     * Choose, which AgentCredential to update.
+     */
+    where: AgentCredentialWhereUniqueInput
+  }
+
+  /**
+   * AgentCredential updateMany
+   */
+  export type AgentCredentialUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AgentCredentials.
+     */
+    data: XOR<AgentCredentialUpdateManyMutationInput, AgentCredentialUncheckedUpdateManyInput>
+    /**
+     * Filter which AgentCredentials to update
+     */
+    where?: AgentCredentialWhereInput
+    /**
+     * Limit how many AgentCredentials to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AgentCredential updateManyAndReturn
+   */
+  export type AgentCredentialUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * The data used to update AgentCredentials.
+     */
+    data: XOR<AgentCredentialUpdateManyMutationInput, AgentCredentialUncheckedUpdateManyInput>
+    /**
+     * Filter which AgentCredentials to update
+     */
+    where?: AgentCredentialWhereInput
+    /**
+     * Limit how many AgentCredentials to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AgentCredential upsert
+   */
+  export type AgentCredentialUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AgentCredential to update in case it exists.
+     */
+    where: AgentCredentialWhereUniqueInput
+    /**
+     * In case the AgentCredential found by the `where` argument doesn't exist, create a new AgentCredential with this data.
+     */
+    create: XOR<AgentCredentialCreateInput, AgentCredentialUncheckedCreateInput>
+    /**
+     * In case the AgentCredential was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AgentCredentialUpdateInput, AgentCredentialUncheckedUpdateInput>
+  }
+
+  /**
+   * AgentCredential delete
+   */
+  export type AgentCredentialDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+    /**
+     * Filter which AgentCredential to delete.
+     */
+    where: AgentCredentialWhereUniqueInput
+  }
+
+  /**
+   * AgentCredential deleteMany
+   */
+  export type AgentCredentialDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AgentCredentials to delete
+     */
+    where?: AgentCredentialWhereInput
+    /**
+     * Limit how many AgentCredentials to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AgentCredential.verifiedBy
+   */
+  export type AgentCredential$verifiedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * AgentCredential without action
+   */
+  export type AgentCredentialDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCredential
+     */
+    select?: AgentCredentialSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCredential
+     */
+    omit?: AgentCredentialOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCredentialInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Location
+   */
+
+  export type AggregateLocation = {
+    _count: LocationCountAggregateOutputType | null
+    _avg: LocationAvgAggregateOutputType | null
+    _sum: LocationSumAggregateOutputType | null
+    _min: LocationMinAggregateOutputType | null
+    _max: LocationMaxAggregateOutputType | null
+  }
+
+  export type LocationAvgAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type LocationSumAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type LocationMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    code: string | null
+    country: string | null
+    countryCode: string | null
+    city: string | null
+    region: string | null
+    latitude: number | null
+    longitude: number | null
+    type: $Enums.LocationType | null
+    isBlocked: boolean | null
+    blockedReason: string | null
+    isDeleted: boolean | null
+    deletedAt: Date | null
+    createdById: string | null
+    updatedById: string | null
+    deletedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LocationMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    code: string | null
+    country: string | null
+    countryCode: string | null
+    city: string | null
+    region: string | null
+    latitude: number | null
+    longitude: number | null
+    type: $Enums.LocationType | null
+    isBlocked: boolean | null
+    blockedReason: string | null
+    isDeleted: boolean | null
+    deletedAt: Date | null
+    createdById: string | null
+    updatedById: string | null
+    deletedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LocationCountAggregateOutputType = {
+    id: number
+    name: number
+    code: number
+    country: number
+    countryCode: number
+    city: number
+    region: number
+    latitude: number
+    longitude: number
+    type: number
+    isBlocked: number
+    blockedReason: number
+    isDeleted: number
+    deletedAt: number
+    createdById: number
+    updatedById: number
+    deletedById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type LocationAvgAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type LocationSumAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type LocationMinAggregateInputType = {
+    id?: true
+    name?: true
+    code?: true
+    country?: true
+    countryCode?: true
+    city?: true
+    region?: true
+    latitude?: true
+    longitude?: true
+    type?: true
+    isBlocked?: true
+    blockedReason?: true
+    isDeleted?: true
+    deletedAt?: true
+    createdById?: true
+    updatedById?: true
+    deletedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LocationMaxAggregateInputType = {
+    id?: true
+    name?: true
+    code?: true
+    country?: true
+    countryCode?: true
+    city?: true
+    region?: true
+    latitude?: true
+    longitude?: true
+    type?: true
+    isBlocked?: true
+    blockedReason?: true
+    isDeleted?: true
+    deletedAt?: true
+    createdById?: true
+    updatedById?: true
+    deletedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LocationCountAggregateInputType = {
+    id?: true
+    name?: true
+    code?: true
+    country?: true
+    countryCode?: true
+    city?: true
+    region?: true
+    latitude?: true
+    longitude?: true
+    type?: true
+    isBlocked?: true
+    blockedReason?: true
+    isDeleted?: true
+    deletedAt?: true
+    createdById?: true
+    updatedById?: true
+    deletedById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type LocationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Location to aggregate.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Locations
+    **/
+    _count?: true | LocationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LocationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LocationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LocationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LocationMaxAggregateInputType
+  }
+
+  export type GetLocationAggregateType<T extends LocationAggregateArgs> = {
+        [P in keyof T & keyof AggregateLocation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLocation[P]>
+      : GetScalarType<T[P], AggregateLocation[P]>
+  }
+
+
+
+
+  export type LocationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LocationWhereInput
+    orderBy?: LocationOrderByWithAggregationInput | LocationOrderByWithAggregationInput[]
+    by: LocationScalarFieldEnum[] | LocationScalarFieldEnum
+    having?: LocationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LocationCountAggregateInputType | true
+    _avg?: LocationAvgAggregateInputType
+    _sum?: LocationSumAggregateInputType
+    _min?: LocationMinAggregateInputType
+    _max?: LocationMaxAggregateInputType
+  }
+
+  export type LocationGroupByOutputType = {
+    id: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type: $Enums.LocationType
+    isBlocked: boolean
+    blockedReason: string | null
+    isDeleted: boolean
+    deletedAt: Date | null
+    createdById: string | null
+    updatedById: string | null
+    deletedById: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: LocationCountAggregateOutputType | null
+    _avg: LocationAvgAggregateOutputType | null
+    _sum: LocationSumAggregateOutputType | null
+    _min: LocationMinAggregateOutputType | null
+    _max: LocationMaxAggregateOutputType | null
+  }
+
+  type GetLocationGroupByPayload<T extends LocationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LocationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LocationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LocationGroupByOutputType[P]>
+            : GetScalarType<T[P], LocationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LocationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    code?: boolean
+    country?: boolean
+    countryCode?: boolean
+    city?: boolean
+    region?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    type?: boolean
+    isBlocked?: boolean
+    blockedReason?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+    deletedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | Location$createdByArgs<ExtArgs>
+    updatedBy?: boolean | Location$updatedByArgs<ExtArgs>
+    deletedBy?: boolean | Location$deletedByArgs<ExtArgs>
+    originCorridors?: boolean | Location$originCorridorsArgs<ExtArgs>
+    destinationCorridors?: boolean | Location$destinationCorridorsArgs<ExtArgs>
+    originShipments?: boolean | Location$originShipmentsArgs<ExtArgs>
+    destinationShipments?: boolean | Location$destinationShipmentsArgs<ExtArgs>
+    _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["location"]>
+
+  export type LocationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    code?: boolean
+    country?: boolean
+    countryCode?: boolean
+    city?: boolean
+    region?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    type?: boolean
+    isBlocked?: boolean
+    blockedReason?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+    deletedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | Location$createdByArgs<ExtArgs>
+    updatedBy?: boolean | Location$updatedByArgs<ExtArgs>
+    deletedBy?: boolean | Location$deletedByArgs<ExtArgs>
+  }, ExtArgs["result"]["location"]>
+
+  export type LocationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    code?: boolean
+    country?: boolean
+    countryCode?: boolean
+    city?: boolean
+    region?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    type?: boolean
+    isBlocked?: boolean
+    blockedReason?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+    deletedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | Location$createdByArgs<ExtArgs>
+    updatedBy?: boolean | Location$updatedByArgs<ExtArgs>
+    deletedBy?: boolean | Location$deletedByArgs<ExtArgs>
+  }, ExtArgs["result"]["location"]>
+
+  export type LocationSelectScalar = {
+    id?: boolean
+    name?: boolean
+    code?: boolean
+    country?: boolean
+    countryCode?: boolean
+    city?: boolean
+    region?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    type?: boolean
+    isBlocked?: boolean
+    blockedReason?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
+    createdById?: boolean
+    updatedById?: boolean
+    deletedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type LocationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "code" | "country" | "countryCode" | "city" | "region" | "latitude" | "longitude" | "type" | "isBlocked" | "blockedReason" | "isDeleted" | "deletedAt" | "createdById" | "updatedById" | "deletedById" | "createdAt" | "updatedAt", ExtArgs["result"]["location"]>
+  export type LocationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Location$createdByArgs<ExtArgs>
+    updatedBy?: boolean | Location$updatedByArgs<ExtArgs>
+    deletedBy?: boolean | Location$deletedByArgs<ExtArgs>
+    originCorridors?: boolean | Location$originCorridorsArgs<ExtArgs>
+    destinationCorridors?: boolean | Location$destinationCorridorsArgs<ExtArgs>
+    originShipments?: boolean | Location$originShipmentsArgs<ExtArgs>
+    destinationShipments?: boolean | Location$destinationShipmentsArgs<ExtArgs>
+    _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type LocationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Location$createdByArgs<ExtArgs>
+    updatedBy?: boolean | Location$updatedByArgs<ExtArgs>
+    deletedBy?: boolean | Location$deletedByArgs<ExtArgs>
+  }
+  export type LocationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Location$createdByArgs<ExtArgs>
+    updatedBy?: boolean | Location$updatedByArgs<ExtArgs>
+    deletedBy?: boolean | Location$deletedByArgs<ExtArgs>
+  }
+
+  export type $LocationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Location"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs> | null
+      updatedBy: Prisma.$UserPayload<ExtArgs> | null
+      deletedBy: Prisma.$UserPayload<ExtArgs> | null
+      originCorridors: Prisma.$AgentCorridorPayload<ExtArgs>[]
+      destinationCorridors: Prisma.$AgentCorridorPayload<ExtArgs>[]
+      originShipments: Prisma.$ShipmentPayload<ExtArgs>[]
+      destinationShipments: Prisma.$ShipmentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      code: string
+      country: string
+      countryCode: string
+      city: string
+      region: string
+      latitude: number
+      longitude: number
+      type: $Enums.LocationType
+      isBlocked: boolean
+      blockedReason: string | null
+      isDeleted: boolean
+      deletedAt: Date | null
+      createdById: string | null
+      updatedById: string | null
+      deletedById: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["location"]>
+    composites: {}
+  }
+
+  type LocationGetPayload<S extends boolean | null | undefined | LocationDefaultArgs> = $Result.GetResult<Prisma.$LocationPayload, S>
+
+  type LocationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LocationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LocationCountAggregateInputType | true
+    }
+
+  export interface LocationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Location'], meta: { name: 'Location' } }
+    /**
+     * Find zero or one Location that matches the filter.
+     * @param {LocationFindUniqueArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LocationFindUniqueArgs>(args: SelectSubset<T, LocationFindUniqueArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Location that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LocationFindUniqueOrThrowArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LocationFindUniqueOrThrowArgs>(args: SelectSubset<T, LocationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Location that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationFindFirstArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LocationFindFirstArgs>(args?: SelectSubset<T, LocationFindFirstArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Location that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationFindFirstOrThrowArgs} args - Arguments to find a Location
+     * @example
+     * // Get one Location
+     * const location = await prisma.location.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LocationFindFirstOrThrowArgs>(args?: SelectSubset<T, LocationFindFirstOrThrowArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Locations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Locations
+     * const locations = await prisma.location.findMany()
+     * 
+     * // Get first 10 Locations
+     * const locations = await prisma.location.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const locationWithIdOnly = await prisma.location.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LocationFindManyArgs>(args?: SelectSubset<T, LocationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Location.
+     * @param {LocationCreateArgs} args - Arguments to create a Location.
+     * @example
+     * // Create one Location
+     * const Location = await prisma.location.create({
+     *   data: {
+     *     // ... data to create a Location
+     *   }
+     * })
+     * 
+     */
+    create<T extends LocationCreateArgs>(args: SelectSubset<T, LocationCreateArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Locations.
+     * @param {LocationCreateManyArgs} args - Arguments to create many Locations.
+     * @example
+     * // Create many Locations
+     * const location = await prisma.location.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LocationCreateManyArgs>(args?: SelectSubset<T, LocationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Locations and returns the data saved in the database.
+     * @param {LocationCreateManyAndReturnArgs} args - Arguments to create many Locations.
+     * @example
+     * // Create many Locations
+     * const location = await prisma.location.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Locations and only return the `id`
+     * const locationWithIdOnly = await prisma.location.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LocationCreateManyAndReturnArgs>(args?: SelectSubset<T, LocationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Location.
+     * @param {LocationDeleteArgs} args - Arguments to delete one Location.
+     * @example
+     * // Delete one Location
+     * const Location = await prisma.location.delete({
+     *   where: {
+     *     // ... filter to delete one Location
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LocationDeleteArgs>(args: SelectSubset<T, LocationDeleteArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Location.
+     * @param {LocationUpdateArgs} args - Arguments to update one Location.
+     * @example
+     * // Update one Location
+     * const location = await prisma.location.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LocationUpdateArgs>(args: SelectSubset<T, LocationUpdateArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Locations.
+     * @param {LocationDeleteManyArgs} args - Arguments to filter Locations to delete.
+     * @example
+     * // Delete a few Locations
+     * const { count } = await prisma.location.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LocationDeleteManyArgs>(args?: SelectSubset<T, LocationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Locations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Locations
+     * const location = await prisma.location.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LocationUpdateManyArgs>(args: SelectSubset<T, LocationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Locations and returns the data updated in the database.
+     * @param {LocationUpdateManyAndReturnArgs} args - Arguments to update many Locations.
+     * @example
+     * // Update many Locations
+     * const location = await prisma.location.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Locations and only return the `id`
+     * const locationWithIdOnly = await prisma.location.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LocationUpdateManyAndReturnArgs>(args: SelectSubset<T, LocationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Location.
+     * @param {LocationUpsertArgs} args - Arguments to update or create a Location.
+     * @example
+     * // Update or create a Location
+     * const location = await prisma.location.upsert({
+     *   create: {
+     *     // ... data to create a Location
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Location we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LocationUpsertArgs>(args: SelectSubset<T, LocationUpsertArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Locations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationCountArgs} args - Arguments to filter Locations to count.
+     * @example
+     * // Count the number of Locations
+     * const count = await prisma.location.count({
+     *   where: {
+     *     // ... the filter for the Locations we want to count
+     *   }
+     * })
+    **/
+    count<T extends LocationCountArgs>(
+      args?: Subset<T, LocationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LocationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Location.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LocationAggregateArgs>(args: Subset<T, LocationAggregateArgs>): Prisma.PrismaPromise<GetLocationAggregateType<T>>
+
+    /**
+     * Group by Location.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LocationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LocationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LocationGroupByArgs['orderBy'] }
+        : { orderBy?: LocationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LocationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLocationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Location model
+   */
+  readonly fields: LocationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Location.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LocationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends Location$createdByArgs<ExtArgs> = {}>(args?: Subset<T, Location$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    updatedBy<T extends Location$updatedByArgs<ExtArgs> = {}>(args?: Subset<T, Location$updatedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    deletedBy<T extends Location$deletedByArgs<ExtArgs> = {}>(args?: Subset<T, Location$deletedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    originCorridors<T extends Location$originCorridorsArgs<ExtArgs> = {}>(args?: Subset<T, Location$originCorridorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    destinationCorridors<T extends Location$destinationCorridorsArgs<ExtArgs> = {}>(args?: Subset<T, Location$destinationCorridorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    originShipments<T extends Location$originShipmentsArgs<ExtArgs> = {}>(args?: Subset<T, Location$originShipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    destinationShipments<T extends Location$destinationShipmentsArgs<ExtArgs> = {}>(args?: Subset<T, Location$destinationShipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Location model
+   */
+  interface LocationFieldRefs {
+    readonly id: FieldRef<"Location", 'String'>
+    readonly name: FieldRef<"Location", 'String'>
+    readonly code: FieldRef<"Location", 'String'>
+    readonly country: FieldRef<"Location", 'String'>
+    readonly countryCode: FieldRef<"Location", 'String'>
+    readonly city: FieldRef<"Location", 'String'>
+    readonly region: FieldRef<"Location", 'String'>
+    readonly latitude: FieldRef<"Location", 'Float'>
+    readonly longitude: FieldRef<"Location", 'Float'>
+    readonly type: FieldRef<"Location", 'LocationType'>
+    readonly isBlocked: FieldRef<"Location", 'Boolean'>
+    readonly blockedReason: FieldRef<"Location", 'String'>
+    readonly isDeleted: FieldRef<"Location", 'Boolean'>
+    readonly deletedAt: FieldRef<"Location", 'DateTime'>
+    readonly createdById: FieldRef<"Location", 'String'>
+    readonly updatedById: FieldRef<"Location", 'String'>
+    readonly deletedById: FieldRef<"Location", 'String'>
+    readonly createdAt: FieldRef<"Location", 'DateTime'>
+    readonly updatedAt: FieldRef<"Location", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Location findUnique
+   */
+  export type LocationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location findUniqueOrThrow
+   */
+  export type LocationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location findFirst
+   */
+  export type LocationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Locations.
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Locations.
+     */
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * Location findFirstOrThrow
+   */
+  export type LocationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Location to fetch.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Locations.
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Locations.
+     */
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * Location findMany
+   */
+  export type LocationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter, which Locations to fetch.
+     */
+    where?: LocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Locations to fetch.
+     */
+    orderBy?: LocationOrderByWithRelationInput | LocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Locations.
+     */
+    cursor?: LocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Locations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Locations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Locations.
+     */
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
+  }
+
+  /**
+   * Location create
+   */
+  export type LocationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Location.
+     */
+    data: XOR<LocationCreateInput, LocationUncheckedCreateInput>
+  }
+
+  /**
+   * Location createMany
+   */
+  export type LocationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Locations.
+     */
+    data: LocationCreateManyInput | LocationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Location createManyAndReturn
+   */
+  export type LocationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * The data used to create many Locations.
+     */
+    data: LocationCreateManyInput | LocationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Location update
+   */
+  export type LocationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Location.
+     */
+    data: XOR<LocationUpdateInput, LocationUncheckedUpdateInput>
+    /**
+     * Choose, which Location to update.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location updateMany
+   */
+  export type LocationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Locations.
+     */
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyInput>
+    /**
+     * Filter which Locations to update
+     */
+    where?: LocationWhereInput
+    /**
+     * Limit how many Locations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Location updateManyAndReturn
+   */
+  export type LocationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * The data used to update Locations.
+     */
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyInput>
+    /**
+     * Filter which Locations to update
+     */
+    where?: LocationWhereInput
+    /**
+     * Limit how many Locations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Location upsert
+   */
+  export type LocationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Location to update in case it exists.
+     */
+    where: LocationWhereUniqueInput
+    /**
+     * In case the Location found by the `where` argument doesn't exist, create a new Location with this data.
+     */
+    create: XOR<LocationCreateInput, LocationUncheckedCreateInput>
+    /**
+     * In case the Location was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LocationUpdateInput, LocationUncheckedUpdateInput>
+  }
+
+  /**
+   * Location delete
+   */
+  export type LocationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    /**
+     * Filter which Location to delete.
+     */
+    where: LocationWhereUniqueInput
+  }
+
+  /**
+   * Location deleteMany
+   */
+  export type LocationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Locations to delete
+     */
+    where?: LocationWhereInput
+    /**
+     * Limit how many Locations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Location.createdBy
+   */
+  export type Location$createdByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Location.updatedBy
+   */
+  export type Location$updatedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Location.deletedBy
+   */
+  export type Location$deletedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Location.originCorridors
+   */
+  export type Location$originCorridorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    where?: AgentCorridorWhereInput
+    orderBy?: AgentCorridorOrderByWithRelationInput | AgentCorridorOrderByWithRelationInput[]
+    cursor?: AgentCorridorWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AgentCorridorScalarFieldEnum | AgentCorridorScalarFieldEnum[]
+  }
+
+  /**
+   * Location.destinationCorridors
+   */
+  export type Location$destinationCorridorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    where?: AgentCorridorWhereInput
+    orderBy?: AgentCorridorOrderByWithRelationInput | AgentCorridorOrderByWithRelationInput[]
+    cursor?: AgentCorridorWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AgentCorridorScalarFieldEnum | AgentCorridorScalarFieldEnum[]
+  }
+
+  /**
+   * Location.originShipments
+   */
+  export type Location$originShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
+    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
+    cursor?: ShipmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
+   * Location.destinationShipments
+   */
+  export type Location$destinationShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
+    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
+    cursor?: ShipmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
+   * Location without action
+   */
+  export type LocationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AgentCorridor
+   */
+
+  export type AggregateAgentCorridor = {
+    _count: AgentCorridorCountAggregateOutputType | null
+    _min: AgentCorridorMinAggregateOutputType | null
+    _max: AgentCorridorMaxAggregateOutputType | null
+  }
+
+  export type AgentCorridorMinAggregateOutputType = {
+    id: string | null
+    agentId: string | null
+    originPortId: string | null
+    destinationPortId: string | null
+    originText: string | null
+    destinationText: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type AgentCorridorMaxAggregateOutputType = {
+    id: string | null
+    agentId: string | null
+    originPortId: string | null
+    destinationPortId: string | null
+    originText: string | null
+    destinationText: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type AgentCorridorCountAggregateOutputType = {
+    id: number
+    agentId: number
+    originPortId: number
+    destinationPortId: number
+    originText: number
+    destinationText: number
+    isActive: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AgentCorridorMinAggregateInputType = {
+    id?: true
+    agentId?: true
+    originPortId?: true
+    destinationPortId?: true
+    originText?: true
+    destinationText?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type AgentCorridorMaxAggregateInputType = {
+    id?: true
+    agentId?: true
+    originPortId?: true
+    destinationPortId?: true
+    originText?: true
+    destinationText?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type AgentCorridorCountAggregateInputType = {
+    id?: true
+    agentId?: true
+    originPortId?: true
+    destinationPortId?: true
+    originText?: true
+    destinationText?: true
+    isActive?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AgentCorridorAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AgentCorridor to aggregate.
+     */
+    where?: AgentCorridorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCorridors to fetch.
+     */
+    orderBy?: AgentCorridorOrderByWithRelationInput | AgentCorridorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AgentCorridorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCorridors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCorridors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AgentCorridors
+    **/
+    _count?: true | AgentCorridorCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AgentCorridorMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AgentCorridorMaxAggregateInputType
+  }
+
+  export type GetAgentCorridorAggregateType<T extends AgentCorridorAggregateArgs> = {
+        [P in keyof T & keyof AggregateAgentCorridor]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAgentCorridor[P]>
+      : GetScalarType<T[P], AggregateAgentCorridor[P]>
+  }
+
+
+
+
+  export type AgentCorridorGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AgentCorridorWhereInput
+    orderBy?: AgentCorridorOrderByWithAggregationInput | AgentCorridorOrderByWithAggregationInput[]
+    by: AgentCorridorScalarFieldEnum[] | AgentCorridorScalarFieldEnum
+    having?: AgentCorridorScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AgentCorridorCountAggregateInputType | true
+    _min?: AgentCorridorMinAggregateInputType
+    _max?: AgentCorridorMaxAggregateInputType
+  }
+
+  export type AgentCorridorGroupByOutputType = {
+    id: string
+    agentId: string
+    originPortId: string
+    destinationPortId: string
+    originText: string
+    destinationText: string
+    isActive: boolean
+    createdAt: Date
+    _count: AgentCorridorCountAggregateOutputType | null
+    _min: AgentCorridorMinAggregateOutputType | null
+    _max: AgentCorridorMaxAggregateOutputType | null
+  }
+
+  type GetAgentCorridorGroupByPayload<T extends AgentCorridorGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AgentCorridorGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AgentCorridorGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AgentCorridorGroupByOutputType[P]>
+            : GetScalarType<T[P], AgentCorridorGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AgentCorridorSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    agentId?: boolean
+    originPortId?: boolean
+    destinationPortId?: boolean
+    originText?: boolean
+    destinationText?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    originPort?: boolean | LocationDefaultArgs<ExtArgs>
+    destinationPort?: boolean | LocationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["agentCorridor"]>
+
+  export type AgentCorridorSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    agentId?: boolean
+    originPortId?: boolean
+    destinationPortId?: boolean
+    originText?: boolean
+    destinationText?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    originPort?: boolean | LocationDefaultArgs<ExtArgs>
+    destinationPort?: boolean | LocationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["agentCorridor"]>
+
+  export type AgentCorridorSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    agentId?: boolean
+    originPortId?: boolean
+    destinationPortId?: boolean
+    originText?: boolean
+    destinationText?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    originPort?: boolean | LocationDefaultArgs<ExtArgs>
+    destinationPort?: boolean | LocationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["agentCorridor"]>
+
+  export type AgentCorridorSelectScalar = {
+    id?: boolean
+    agentId?: boolean
+    originPortId?: boolean
+    destinationPortId?: boolean
+    originText?: boolean
+    destinationText?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }
+
+  export type AgentCorridorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "agentId" | "originPortId" | "destinationPortId" | "originText" | "destinationText" | "isActive" | "createdAt", ExtArgs["result"]["agentCorridor"]>
+  export type AgentCorridorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    originPort?: boolean | LocationDefaultArgs<ExtArgs>
+    destinationPort?: boolean | LocationDefaultArgs<ExtArgs>
+  }
+  export type AgentCorridorIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    originPort?: boolean | LocationDefaultArgs<ExtArgs>
+    destinationPort?: boolean | LocationDefaultArgs<ExtArgs>
+  }
+  export type AgentCorridorIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    agent?: boolean | UserDefaultArgs<ExtArgs>
+    originPort?: boolean | LocationDefaultArgs<ExtArgs>
+    destinationPort?: boolean | LocationDefaultArgs<ExtArgs>
+  }
+
+  export type $AgentCorridorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AgentCorridor"
+    objects: {
+      agent: Prisma.$UserPayload<ExtArgs>
+      originPort: Prisma.$LocationPayload<ExtArgs>
+      destinationPort: Prisma.$LocationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      agentId: string
+      originPortId: string
+      destinationPortId: string
+      originText: string
+      destinationText: string
+      isActive: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["agentCorridor"]>
+    composites: {}
+  }
+
+  type AgentCorridorGetPayload<S extends boolean | null | undefined | AgentCorridorDefaultArgs> = $Result.GetResult<Prisma.$AgentCorridorPayload, S>
+
+  type AgentCorridorCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AgentCorridorFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AgentCorridorCountAggregateInputType | true
+    }
+
+  export interface AgentCorridorDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AgentCorridor'], meta: { name: 'AgentCorridor' } }
+    /**
+     * Find zero or one AgentCorridor that matches the filter.
+     * @param {AgentCorridorFindUniqueArgs} args - Arguments to find a AgentCorridor
+     * @example
+     * // Get one AgentCorridor
+     * const agentCorridor = await prisma.agentCorridor.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AgentCorridorFindUniqueArgs>(args: SelectSubset<T, AgentCorridorFindUniqueArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AgentCorridor that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AgentCorridorFindUniqueOrThrowArgs} args - Arguments to find a AgentCorridor
+     * @example
+     * // Get one AgentCorridor
+     * const agentCorridor = await prisma.agentCorridor.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AgentCorridorFindUniqueOrThrowArgs>(args: SelectSubset<T, AgentCorridorFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AgentCorridor that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCorridorFindFirstArgs} args - Arguments to find a AgentCorridor
+     * @example
+     * // Get one AgentCorridor
+     * const agentCorridor = await prisma.agentCorridor.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AgentCorridorFindFirstArgs>(args?: SelectSubset<T, AgentCorridorFindFirstArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AgentCorridor that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCorridorFindFirstOrThrowArgs} args - Arguments to find a AgentCorridor
+     * @example
+     * // Get one AgentCorridor
+     * const agentCorridor = await prisma.agentCorridor.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AgentCorridorFindFirstOrThrowArgs>(args?: SelectSubset<T, AgentCorridorFindFirstOrThrowArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AgentCorridors that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCorridorFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AgentCorridors
+     * const agentCorridors = await prisma.agentCorridor.findMany()
+     * 
+     * // Get first 10 AgentCorridors
+     * const agentCorridors = await prisma.agentCorridor.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const agentCorridorWithIdOnly = await prisma.agentCorridor.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AgentCorridorFindManyArgs>(args?: SelectSubset<T, AgentCorridorFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AgentCorridor.
+     * @param {AgentCorridorCreateArgs} args - Arguments to create a AgentCorridor.
+     * @example
+     * // Create one AgentCorridor
+     * const AgentCorridor = await prisma.agentCorridor.create({
+     *   data: {
+     *     // ... data to create a AgentCorridor
+     *   }
+     * })
+     * 
+     */
+    create<T extends AgentCorridorCreateArgs>(args: SelectSubset<T, AgentCorridorCreateArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AgentCorridors.
+     * @param {AgentCorridorCreateManyArgs} args - Arguments to create many AgentCorridors.
+     * @example
+     * // Create many AgentCorridors
+     * const agentCorridor = await prisma.agentCorridor.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AgentCorridorCreateManyArgs>(args?: SelectSubset<T, AgentCorridorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AgentCorridors and returns the data saved in the database.
+     * @param {AgentCorridorCreateManyAndReturnArgs} args - Arguments to create many AgentCorridors.
+     * @example
+     * // Create many AgentCorridors
+     * const agentCorridor = await prisma.agentCorridor.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AgentCorridors and only return the `id`
+     * const agentCorridorWithIdOnly = await prisma.agentCorridor.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AgentCorridorCreateManyAndReturnArgs>(args?: SelectSubset<T, AgentCorridorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AgentCorridor.
+     * @param {AgentCorridorDeleteArgs} args - Arguments to delete one AgentCorridor.
+     * @example
+     * // Delete one AgentCorridor
+     * const AgentCorridor = await prisma.agentCorridor.delete({
+     *   where: {
+     *     // ... filter to delete one AgentCorridor
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AgentCorridorDeleteArgs>(args: SelectSubset<T, AgentCorridorDeleteArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AgentCorridor.
+     * @param {AgentCorridorUpdateArgs} args - Arguments to update one AgentCorridor.
+     * @example
+     * // Update one AgentCorridor
+     * const agentCorridor = await prisma.agentCorridor.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AgentCorridorUpdateArgs>(args: SelectSubset<T, AgentCorridorUpdateArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AgentCorridors.
+     * @param {AgentCorridorDeleteManyArgs} args - Arguments to filter AgentCorridors to delete.
+     * @example
+     * // Delete a few AgentCorridors
+     * const { count } = await prisma.agentCorridor.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AgentCorridorDeleteManyArgs>(args?: SelectSubset<T, AgentCorridorDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AgentCorridors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCorridorUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AgentCorridors
+     * const agentCorridor = await prisma.agentCorridor.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AgentCorridorUpdateManyArgs>(args: SelectSubset<T, AgentCorridorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AgentCorridors and returns the data updated in the database.
+     * @param {AgentCorridorUpdateManyAndReturnArgs} args - Arguments to update many AgentCorridors.
+     * @example
+     * // Update many AgentCorridors
+     * const agentCorridor = await prisma.agentCorridor.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AgentCorridors and only return the `id`
+     * const agentCorridorWithIdOnly = await prisma.agentCorridor.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AgentCorridorUpdateManyAndReturnArgs>(args: SelectSubset<T, AgentCorridorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AgentCorridor.
+     * @param {AgentCorridorUpsertArgs} args - Arguments to update or create a AgentCorridor.
+     * @example
+     * // Update or create a AgentCorridor
+     * const agentCorridor = await prisma.agentCorridor.upsert({
+     *   create: {
+     *     // ... data to create a AgentCorridor
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AgentCorridor we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AgentCorridorUpsertArgs>(args: SelectSubset<T, AgentCorridorUpsertArgs<ExtArgs>>): Prisma__AgentCorridorClient<$Result.GetResult<Prisma.$AgentCorridorPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AgentCorridors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCorridorCountArgs} args - Arguments to filter AgentCorridors to count.
+     * @example
+     * // Count the number of AgentCorridors
+     * const count = await prisma.agentCorridor.count({
+     *   where: {
+     *     // ... the filter for the AgentCorridors we want to count
+     *   }
+     * })
+    **/
+    count<T extends AgentCorridorCountArgs>(
+      args?: Subset<T, AgentCorridorCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AgentCorridorCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AgentCorridor.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCorridorAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AgentCorridorAggregateArgs>(args: Subset<T, AgentCorridorAggregateArgs>): Prisma.PrismaPromise<GetAgentCorridorAggregateType<T>>
+
+    /**
+     * Group by AgentCorridor.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AgentCorridorGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AgentCorridorGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AgentCorridorGroupByArgs['orderBy'] }
+        : { orderBy?: AgentCorridorGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AgentCorridorGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAgentCorridorGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AgentCorridor model
+   */
+  readonly fields: AgentCorridorFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AgentCorridor.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AgentCorridorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    agent<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    originPort<T extends LocationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LocationDefaultArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    destinationPort<T extends LocationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LocationDefaultArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AgentCorridor model
+   */
+  interface AgentCorridorFieldRefs {
+    readonly id: FieldRef<"AgentCorridor", 'String'>
+    readonly agentId: FieldRef<"AgentCorridor", 'String'>
+    readonly originPortId: FieldRef<"AgentCorridor", 'String'>
+    readonly destinationPortId: FieldRef<"AgentCorridor", 'String'>
+    readonly originText: FieldRef<"AgentCorridor", 'String'>
+    readonly destinationText: FieldRef<"AgentCorridor", 'String'>
+    readonly isActive: FieldRef<"AgentCorridor", 'Boolean'>
+    readonly createdAt: FieldRef<"AgentCorridor", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AgentCorridor findUnique
+   */
+  export type AgentCorridorFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCorridor to fetch.
+     */
+    where: AgentCorridorWhereUniqueInput
+  }
+
+  /**
+   * AgentCorridor findUniqueOrThrow
+   */
+  export type AgentCorridorFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCorridor to fetch.
+     */
+    where: AgentCorridorWhereUniqueInput
+  }
+
+  /**
+   * AgentCorridor findFirst
+   */
+  export type AgentCorridorFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCorridor to fetch.
+     */
+    where?: AgentCorridorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCorridors to fetch.
+     */
+    orderBy?: AgentCorridorOrderByWithRelationInput | AgentCorridorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AgentCorridors.
+     */
+    cursor?: AgentCorridorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCorridors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCorridors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AgentCorridors.
+     */
+    distinct?: AgentCorridorScalarFieldEnum | AgentCorridorScalarFieldEnum[]
+  }
+
+  /**
+   * AgentCorridor findFirstOrThrow
+   */
+  export type AgentCorridorFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCorridor to fetch.
+     */
+    where?: AgentCorridorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCorridors to fetch.
+     */
+    orderBy?: AgentCorridorOrderByWithRelationInput | AgentCorridorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AgentCorridors.
+     */
+    cursor?: AgentCorridorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCorridors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCorridors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AgentCorridors.
+     */
+    distinct?: AgentCorridorScalarFieldEnum | AgentCorridorScalarFieldEnum[]
+  }
+
+  /**
+   * AgentCorridor findMany
+   */
+  export type AgentCorridorFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * Filter, which AgentCorridors to fetch.
+     */
+    where?: AgentCorridorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AgentCorridors to fetch.
+     */
+    orderBy?: AgentCorridorOrderByWithRelationInput | AgentCorridorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AgentCorridors.
+     */
+    cursor?: AgentCorridorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AgentCorridors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AgentCorridors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AgentCorridors.
+     */
+    distinct?: AgentCorridorScalarFieldEnum | AgentCorridorScalarFieldEnum[]
+  }
+
+  /**
+   * AgentCorridor create
+   */
+  export type AgentCorridorCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AgentCorridor.
+     */
+    data: XOR<AgentCorridorCreateInput, AgentCorridorUncheckedCreateInput>
+  }
+
+  /**
+   * AgentCorridor createMany
+   */
+  export type AgentCorridorCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AgentCorridors.
+     */
+    data: AgentCorridorCreateManyInput | AgentCorridorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AgentCorridor createManyAndReturn
+   */
+  export type AgentCorridorCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * The data used to create many AgentCorridors.
+     */
+    data: AgentCorridorCreateManyInput | AgentCorridorCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AgentCorridor update
+   */
+  export type AgentCorridorUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AgentCorridor.
+     */
+    data: XOR<AgentCorridorUpdateInput, AgentCorridorUncheckedUpdateInput>
+    /**
+     * Choose, which AgentCorridor to update.
+     */
+    where: AgentCorridorWhereUniqueInput
+  }
+
+  /**
+   * AgentCorridor updateMany
+   */
+  export type AgentCorridorUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AgentCorridors.
+     */
+    data: XOR<AgentCorridorUpdateManyMutationInput, AgentCorridorUncheckedUpdateManyInput>
+    /**
+     * Filter which AgentCorridors to update
+     */
+    where?: AgentCorridorWhereInput
+    /**
+     * Limit how many AgentCorridors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AgentCorridor updateManyAndReturn
+   */
+  export type AgentCorridorUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * The data used to update AgentCorridors.
+     */
+    data: XOR<AgentCorridorUpdateManyMutationInput, AgentCorridorUncheckedUpdateManyInput>
+    /**
+     * Filter which AgentCorridors to update
+     */
+    where?: AgentCorridorWhereInput
+    /**
+     * Limit how many AgentCorridors to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AgentCorridor upsert
+   */
+  export type AgentCorridorUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AgentCorridor to update in case it exists.
+     */
+    where: AgentCorridorWhereUniqueInput
+    /**
+     * In case the AgentCorridor found by the `where` argument doesn't exist, create a new AgentCorridor with this data.
+     */
+    create: XOR<AgentCorridorCreateInput, AgentCorridorUncheckedCreateInput>
+    /**
+     * In case the AgentCorridor was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AgentCorridorUpdateInput, AgentCorridorUncheckedUpdateInput>
+  }
+
+  /**
+   * AgentCorridor delete
+   */
+  export type AgentCorridorDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+    /**
+     * Filter which AgentCorridor to delete.
+     */
+    where: AgentCorridorWhereUniqueInput
+  }
+
+  /**
+   * AgentCorridor deleteMany
+   */
+  export type AgentCorridorDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AgentCorridors to delete
+     */
+    where?: AgentCorridorWhereInput
+    /**
+     * Limit how many AgentCorridors to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AgentCorridor without action
+   */
+  export type AgentCorridorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AgentCorridor
+     */
+    select?: AgentCorridorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AgentCorridor
+     */
+    omit?: AgentCorridorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AgentCorridorInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model PhoneVerification
    */
 
@@ -10958,22 +16926,35 @@ export namespace Prisma {
 
   export type ShipmentAvgAggregateOutputType = {
     weight: number | null
+    declaredCargoValue: number | null
   }
 
   export type ShipmentSumAggregateOutputType = {
     weight: number | null
+    declaredCargoValue: number | null
   }
 
   export type ShipmentMinAggregateOutputType = {
     id: string | null
     trackingId: string | null
     userId: string | null
+    agentId: string | null
+    assignedById: string | null
+    assignedAt: Date | null
     origin: string | null
     destination: string | null
+    originLocationId: string | null
+    destinationLocationId: string | null
     weight: number | null
+    declaredCargoValue: number | null
     description: string | null
     status: $Enums.ShipmentStatus | null
     estimatedDate: Date | null
+    acceptedAt: Date | null
+    paymentStatus: $Enums.PaymentStatus | null
+    stripePaymentIntentId: string | null
+    stripeRefundId: string | null
+    paidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     updateBy: string | null
@@ -10983,12 +16964,23 @@ export namespace Prisma {
     id: string | null
     trackingId: string | null
     userId: string | null
+    agentId: string | null
+    assignedById: string | null
+    assignedAt: Date | null
     origin: string | null
     destination: string | null
+    originLocationId: string | null
+    destinationLocationId: string | null
     weight: number | null
+    declaredCargoValue: number | null
     description: string | null
     status: $Enums.ShipmentStatus | null
     estimatedDate: Date | null
+    acceptedAt: Date | null
+    paymentStatus: $Enums.PaymentStatus | null
+    stripePaymentIntentId: string | null
+    stripeRefundId: string | null
+    paidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     updateBy: string | null
@@ -10998,12 +16990,23 @@ export namespace Prisma {
     id: number
     trackingId: number
     userId: number
+    agentId: number
+    assignedById: number
+    assignedAt: number
     origin: number
     destination: number
+    originLocationId: number
+    destinationLocationId: number
     weight: number
+    declaredCargoValue: number
     description: number
     status: number
     estimatedDate: number
+    acceptedAt: number
+    paymentStatus: number
+    stripePaymentIntentId: number
+    stripeRefundId: number
+    paidAt: number
     createdAt: number
     updatedAt: number
     updateBy: number
@@ -11013,22 +17016,35 @@ export namespace Prisma {
 
   export type ShipmentAvgAggregateInputType = {
     weight?: true
+    declaredCargoValue?: true
   }
 
   export type ShipmentSumAggregateInputType = {
     weight?: true
+    declaredCargoValue?: true
   }
 
   export type ShipmentMinAggregateInputType = {
     id?: true
     trackingId?: true
     userId?: true
+    agentId?: true
+    assignedById?: true
+    assignedAt?: true
     origin?: true
     destination?: true
+    originLocationId?: true
+    destinationLocationId?: true
     weight?: true
+    declaredCargoValue?: true
     description?: true
     status?: true
     estimatedDate?: true
+    acceptedAt?: true
+    paymentStatus?: true
+    stripePaymentIntentId?: true
+    stripeRefundId?: true
+    paidAt?: true
     createdAt?: true
     updatedAt?: true
     updateBy?: true
@@ -11038,12 +17054,23 @@ export namespace Prisma {
     id?: true
     trackingId?: true
     userId?: true
+    agentId?: true
+    assignedById?: true
+    assignedAt?: true
     origin?: true
     destination?: true
+    originLocationId?: true
+    destinationLocationId?: true
     weight?: true
+    declaredCargoValue?: true
     description?: true
     status?: true
     estimatedDate?: true
+    acceptedAt?: true
+    paymentStatus?: true
+    stripePaymentIntentId?: true
+    stripeRefundId?: true
+    paidAt?: true
     createdAt?: true
     updatedAt?: true
     updateBy?: true
@@ -11053,12 +17080,23 @@ export namespace Prisma {
     id?: true
     trackingId?: true
     userId?: true
+    agentId?: true
+    assignedById?: true
+    assignedAt?: true
     origin?: true
     destination?: true
+    originLocationId?: true
+    destinationLocationId?: true
     weight?: true
+    declaredCargoValue?: true
     description?: true
     status?: true
     estimatedDate?: true
+    acceptedAt?: true
+    paymentStatus?: true
+    stripePaymentIntentId?: true
+    stripeRefundId?: true
+    paidAt?: true
     createdAt?: true
     updatedAt?: true
     updateBy?: true
@@ -11155,12 +17193,23 @@ export namespace Prisma {
     id: string
     trackingId: string
     userId: string
+    agentId: string | null
+    assignedById: string | null
+    assignedAt: Date | null
     origin: string
     destination: string
+    originLocationId: string | null
+    destinationLocationId: string | null
     weight: number
+    declaredCargoValue: number
     description: string | null
     status: $Enums.ShipmentStatus
     estimatedDate: Date | null
+    acceptedAt: Date | null
+    paymentStatus: $Enums.PaymentStatus
+    stripePaymentIntentId: string | null
+    stripeRefundId: string | null
+    paidAt: Date | null
     createdAt: Date
     updatedAt: Date
     updateBy: string | null
@@ -11189,16 +17238,32 @@ export namespace Prisma {
     id?: boolean
     trackingId?: boolean
     userId?: boolean
+    agentId?: boolean
+    assignedById?: boolean
+    assignedAt?: boolean
     origin?: boolean
     destination?: boolean
+    originLocationId?: boolean
+    destinationLocationId?: boolean
     weight?: boolean
+    declaredCargoValue?: boolean
     description?: boolean
     status?: boolean
     estimatedDate?: boolean
+    acceptedAt?: boolean
+    paymentStatus?: boolean
+    stripePaymentIntentId?: boolean
+    stripeRefundId?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     updateBy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    agent?: boolean | Shipment$agentArgs<ExtArgs>
+    assignedBy?: boolean | Shipment$assignedByArgs<ExtArgs>
+    originLocation?: boolean | Shipment$originLocationArgs<ExtArgs>
+    destinationLocation?: boolean | Shipment$destinationLocationArgs<ExtArgs>
+    cost?: boolean | Shipment$costArgs<ExtArgs>
     statusLogs?: boolean | Shipment$statusLogsArgs<ExtArgs>
     _count?: boolean | ShipmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shipment"]>
@@ -11207,78 +17272,148 @@ export namespace Prisma {
     id?: boolean
     trackingId?: boolean
     userId?: boolean
+    agentId?: boolean
+    assignedById?: boolean
+    assignedAt?: boolean
     origin?: boolean
     destination?: boolean
+    originLocationId?: boolean
+    destinationLocationId?: boolean
     weight?: boolean
+    declaredCargoValue?: boolean
     description?: boolean
     status?: boolean
     estimatedDate?: boolean
+    acceptedAt?: boolean
+    paymentStatus?: boolean
+    stripePaymentIntentId?: boolean
+    stripeRefundId?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     updateBy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    agent?: boolean | Shipment$agentArgs<ExtArgs>
+    assignedBy?: boolean | Shipment$assignedByArgs<ExtArgs>
+    originLocation?: boolean | Shipment$originLocationArgs<ExtArgs>
+    destinationLocation?: boolean | Shipment$destinationLocationArgs<ExtArgs>
   }, ExtArgs["result"]["shipment"]>
 
   export type ShipmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     trackingId?: boolean
     userId?: boolean
+    agentId?: boolean
+    assignedById?: boolean
+    assignedAt?: boolean
     origin?: boolean
     destination?: boolean
+    originLocationId?: boolean
+    destinationLocationId?: boolean
     weight?: boolean
+    declaredCargoValue?: boolean
     description?: boolean
     status?: boolean
     estimatedDate?: boolean
+    acceptedAt?: boolean
+    paymentStatus?: boolean
+    stripePaymentIntentId?: boolean
+    stripeRefundId?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     updateBy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    agent?: boolean | Shipment$agentArgs<ExtArgs>
+    assignedBy?: boolean | Shipment$assignedByArgs<ExtArgs>
+    originLocation?: boolean | Shipment$originLocationArgs<ExtArgs>
+    destinationLocation?: boolean | Shipment$destinationLocationArgs<ExtArgs>
   }, ExtArgs["result"]["shipment"]>
 
   export type ShipmentSelectScalar = {
     id?: boolean
     trackingId?: boolean
     userId?: boolean
+    agentId?: boolean
+    assignedById?: boolean
+    assignedAt?: boolean
     origin?: boolean
     destination?: boolean
+    originLocationId?: boolean
+    destinationLocationId?: boolean
     weight?: boolean
+    declaredCargoValue?: boolean
     description?: boolean
     status?: boolean
     estimatedDate?: boolean
+    acceptedAt?: boolean
+    paymentStatus?: boolean
+    stripePaymentIntentId?: boolean
+    stripeRefundId?: boolean
+    paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     updateBy?: boolean
   }
 
-  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trackingId" | "userId" | "origin" | "destination" | "weight" | "description" | "status" | "estimatedDate" | "createdAt" | "updatedAt" | "updateBy", ExtArgs["result"]["shipment"]>
+  export type ShipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trackingId" | "userId" | "agentId" | "assignedById" | "assignedAt" | "origin" | "destination" | "originLocationId" | "destinationLocationId" | "weight" | "declaredCargoValue" | "description" | "status" | "estimatedDate" | "acceptedAt" | "paymentStatus" | "stripePaymentIntentId" | "stripeRefundId" | "paidAt" | "createdAt" | "updatedAt" | "updateBy", ExtArgs["result"]["shipment"]>
   export type ShipmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    agent?: boolean | Shipment$agentArgs<ExtArgs>
+    assignedBy?: boolean | Shipment$assignedByArgs<ExtArgs>
+    originLocation?: boolean | Shipment$originLocationArgs<ExtArgs>
+    destinationLocation?: boolean | Shipment$destinationLocationArgs<ExtArgs>
+    cost?: boolean | Shipment$costArgs<ExtArgs>
     statusLogs?: boolean | Shipment$statusLogsArgs<ExtArgs>
     _count?: boolean | ShipmentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShipmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    agent?: boolean | Shipment$agentArgs<ExtArgs>
+    assignedBy?: boolean | Shipment$assignedByArgs<ExtArgs>
+    originLocation?: boolean | Shipment$originLocationArgs<ExtArgs>
+    destinationLocation?: boolean | Shipment$destinationLocationArgs<ExtArgs>
   }
   export type ShipmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    agent?: boolean | Shipment$agentArgs<ExtArgs>
+    assignedBy?: boolean | Shipment$assignedByArgs<ExtArgs>
+    originLocation?: boolean | Shipment$originLocationArgs<ExtArgs>
+    destinationLocation?: boolean | Shipment$destinationLocationArgs<ExtArgs>
   }
 
   export type $ShipmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Shipment"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      agent: Prisma.$UserPayload<ExtArgs> | null
+      assignedBy: Prisma.$UserPayload<ExtArgs> | null
+      originLocation: Prisma.$LocationPayload<ExtArgs> | null
+      destinationLocation: Prisma.$LocationPayload<ExtArgs> | null
+      cost: Prisma.$ShipmentCostPayload<ExtArgs> | null
       statusLogs: Prisma.$StatusLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       trackingId: string
       userId: string
+      agentId: string | null
+      assignedById: string | null
+      assignedAt: Date | null
       origin: string
       destination: string
+      originLocationId: string | null
+      destinationLocationId: string | null
       weight: number
+      declaredCargoValue: number
       description: string | null
       status: $Enums.ShipmentStatus
       estimatedDate: Date | null
+      acceptedAt: Date | null
+      paymentStatus: $Enums.PaymentStatus
+      stripePaymentIntentId: string | null
+      stripeRefundId: string | null
+      paidAt: Date | null
       createdAt: Date
       updatedAt: Date
       updateBy: string | null
@@ -11677,6 +17812,11 @@ export namespace Prisma {
   export interface Prisma__ShipmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    agent<T extends Shipment$agentArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$agentArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    assignedBy<T extends Shipment$assignedByArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$assignedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    originLocation<T extends Shipment$originLocationArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$originLocationArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    destinationLocation<T extends Shipment$destinationLocationArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$destinationLocationArgs<ExtArgs>>): Prisma__LocationClient<$Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    cost<T extends Shipment$costArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$costArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     statusLogs<T extends Shipment$statusLogsArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$statusLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -11710,12 +17850,23 @@ export namespace Prisma {
     readonly id: FieldRef<"Shipment", 'String'>
     readonly trackingId: FieldRef<"Shipment", 'String'>
     readonly userId: FieldRef<"Shipment", 'String'>
+    readonly agentId: FieldRef<"Shipment", 'String'>
+    readonly assignedById: FieldRef<"Shipment", 'String'>
+    readonly assignedAt: FieldRef<"Shipment", 'DateTime'>
     readonly origin: FieldRef<"Shipment", 'String'>
     readonly destination: FieldRef<"Shipment", 'String'>
+    readonly originLocationId: FieldRef<"Shipment", 'String'>
+    readonly destinationLocationId: FieldRef<"Shipment", 'String'>
     readonly weight: FieldRef<"Shipment", 'Float'>
+    readonly declaredCargoValue: FieldRef<"Shipment", 'Float'>
     readonly description: FieldRef<"Shipment", 'String'>
     readonly status: FieldRef<"Shipment", 'ShipmentStatus'>
     readonly estimatedDate: FieldRef<"Shipment", 'DateTime'>
+    readonly acceptedAt: FieldRef<"Shipment", 'DateTime'>
+    readonly paymentStatus: FieldRef<"Shipment", 'PaymentStatus'>
+    readonly stripePaymentIntentId: FieldRef<"Shipment", 'String'>
+    readonly stripeRefundId: FieldRef<"Shipment", 'String'>
+    readonly paidAt: FieldRef<"Shipment", 'DateTime'>
     readonly createdAt: FieldRef<"Shipment", 'DateTime'>
     readonly updatedAt: FieldRef<"Shipment", 'DateTime'>
     readonly updateBy: FieldRef<"Shipment", 'String'>
@@ -12120,6 +18271,101 @@ export namespace Prisma {
   }
 
   /**
+   * Shipment.agent
+   */
+  export type Shipment$agentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Shipment.assignedBy
+   */
+  export type Shipment$assignedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Shipment.originLocation
+   */
+  export type Shipment$originLocationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
+  }
+
+  /**
+   * Shipment.destinationLocation
+   */
+  export type Shipment$destinationLocationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Location
+     */
+    select?: LocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Location
+     */
+    omit?: LocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LocationInclude<ExtArgs> | null
+    where?: LocationWhereInput
+  }
+
+  /**
+   * Shipment.cost
+   */
+  export type Shipment$costArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    where?: ShipmentCostWhereInput
+  }
+
+  /**
    * Shipment.statusLogs
    */
   export type Shipment$statusLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12159,6 +18405,1388 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ShipmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ShipmentCost
+   */
+
+  export type AggregateShipmentCost = {
+    _count: ShipmentCostCountAggregateOutputType | null
+    _avg: ShipmentCostAvgAggregateOutputType | null
+    _sum: ShipmentCostSumAggregateOutputType | null
+    _min: ShipmentCostMinAggregateOutputType | null
+    _max: ShipmentCostMaxAggregateOutputType | null
+  }
+
+  export type ShipmentCostAvgAggregateOutputType = {
+    originHandling: number | null
+    oceanFreight: number | null
+    bafSurcharge: number | null
+    thcOrigin: number | null
+    thcDestination: number | null
+    transshipmentFee: number | null
+    customsClearance: number | null
+    customsDuty: number | null
+    vat: number | null
+    destinationHandling: number | null
+    cargoInsurance: number | null
+    lastMileDelivery: number | null
+    agencyFee: number | null
+    platformFee: number | null
+    totalCost: number | null
+    exchangeRate: number | null
+    convertedTotal: number | null
+  }
+
+  export type ShipmentCostSumAggregateOutputType = {
+    originHandling: number | null
+    oceanFreight: number | null
+    bafSurcharge: number | null
+    thcOrigin: number | null
+    thcDestination: number | null
+    transshipmentFee: number | null
+    customsClearance: number | null
+    customsDuty: number | null
+    vat: number | null
+    destinationHandling: number | null
+    cargoInsurance: number | null
+    lastMileDelivery: number | null
+    agencyFee: number | null
+    platformFee: number | null
+    totalCost: number | null
+    exchangeRate: number | null
+    convertedTotal: number | null
+  }
+
+  export type ShipmentCostMinAggregateOutputType = {
+    id: string | null
+    shipmentId: string | null
+    originHandling: number | null
+    oceanFreight: number | null
+    bafSurcharge: number | null
+    thcOrigin: number | null
+    thcDestination: number | null
+    transshipmentFee: number | null
+    customsClearance: number | null
+    customsDuty: number | null
+    vat: number | null
+    destinationHandling: number | null
+    cargoInsurance: number | null
+    lastMileDelivery: number | null
+    agencyFee: number | null
+    platformFee: number | null
+    totalCost: number | null
+    currency: string | null
+    exchangeRate: number | null
+    convertedTotal: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ShipmentCostMaxAggregateOutputType = {
+    id: string | null
+    shipmentId: string | null
+    originHandling: number | null
+    oceanFreight: number | null
+    bafSurcharge: number | null
+    thcOrigin: number | null
+    thcDestination: number | null
+    transshipmentFee: number | null
+    customsClearance: number | null
+    customsDuty: number | null
+    vat: number | null
+    destinationHandling: number | null
+    cargoInsurance: number | null
+    lastMileDelivery: number | null
+    agencyFee: number | null
+    platformFee: number | null
+    totalCost: number | null
+    currency: string | null
+    exchangeRate: number | null
+    convertedTotal: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ShipmentCostCountAggregateOutputType = {
+    id: number
+    shipmentId: number
+    originHandling: number
+    oceanFreight: number
+    bafSurcharge: number
+    thcOrigin: number
+    thcDestination: number
+    transshipmentFee: number
+    customsClearance: number
+    customsDuty: number
+    vat: number
+    destinationHandling: number
+    cargoInsurance: number
+    lastMileDelivery: number
+    agencyFee: number
+    platformFee: number
+    totalCost: number
+    currency: number
+    exchangeRate: number
+    convertedTotal: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ShipmentCostAvgAggregateInputType = {
+    originHandling?: true
+    oceanFreight?: true
+    bafSurcharge?: true
+    thcOrigin?: true
+    thcDestination?: true
+    transshipmentFee?: true
+    customsClearance?: true
+    customsDuty?: true
+    vat?: true
+    destinationHandling?: true
+    cargoInsurance?: true
+    lastMileDelivery?: true
+    agencyFee?: true
+    platformFee?: true
+    totalCost?: true
+    exchangeRate?: true
+    convertedTotal?: true
+  }
+
+  export type ShipmentCostSumAggregateInputType = {
+    originHandling?: true
+    oceanFreight?: true
+    bafSurcharge?: true
+    thcOrigin?: true
+    thcDestination?: true
+    transshipmentFee?: true
+    customsClearance?: true
+    customsDuty?: true
+    vat?: true
+    destinationHandling?: true
+    cargoInsurance?: true
+    lastMileDelivery?: true
+    agencyFee?: true
+    platformFee?: true
+    totalCost?: true
+    exchangeRate?: true
+    convertedTotal?: true
+  }
+
+  export type ShipmentCostMinAggregateInputType = {
+    id?: true
+    shipmentId?: true
+    originHandling?: true
+    oceanFreight?: true
+    bafSurcharge?: true
+    thcOrigin?: true
+    thcDestination?: true
+    transshipmentFee?: true
+    customsClearance?: true
+    customsDuty?: true
+    vat?: true
+    destinationHandling?: true
+    cargoInsurance?: true
+    lastMileDelivery?: true
+    agencyFee?: true
+    platformFee?: true
+    totalCost?: true
+    currency?: true
+    exchangeRate?: true
+    convertedTotal?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ShipmentCostMaxAggregateInputType = {
+    id?: true
+    shipmentId?: true
+    originHandling?: true
+    oceanFreight?: true
+    bafSurcharge?: true
+    thcOrigin?: true
+    thcDestination?: true
+    transshipmentFee?: true
+    customsClearance?: true
+    customsDuty?: true
+    vat?: true
+    destinationHandling?: true
+    cargoInsurance?: true
+    lastMileDelivery?: true
+    agencyFee?: true
+    platformFee?: true
+    totalCost?: true
+    currency?: true
+    exchangeRate?: true
+    convertedTotal?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ShipmentCostCountAggregateInputType = {
+    id?: true
+    shipmentId?: true
+    originHandling?: true
+    oceanFreight?: true
+    bafSurcharge?: true
+    thcOrigin?: true
+    thcDestination?: true
+    transshipmentFee?: true
+    customsClearance?: true
+    customsDuty?: true
+    vat?: true
+    destinationHandling?: true
+    cargoInsurance?: true
+    lastMileDelivery?: true
+    agencyFee?: true
+    platformFee?: true
+    totalCost?: true
+    currency?: true
+    exchangeRate?: true
+    convertedTotal?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ShipmentCostAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShipmentCost to aggregate.
+     */
+    where?: ShipmentCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShipmentCosts to fetch.
+     */
+    orderBy?: ShipmentCostOrderByWithRelationInput | ShipmentCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ShipmentCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShipmentCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShipmentCosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ShipmentCosts
+    **/
+    _count?: true | ShipmentCostCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ShipmentCostAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ShipmentCostSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ShipmentCostMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ShipmentCostMaxAggregateInputType
+  }
+
+  export type GetShipmentCostAggregateType<T extends ShipmentCostAggregateArgs> = {
+        [P in keyof T & keyof AggregateShipmentCost]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateShipmentCost[P]>
+      : GetScalarType<T[P], AggregateShipmentCost[P]>
+  }
+
+
+
+
+  export type ShipmentCostGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShipmentCostWhereInput
+    orderBy?: ShipmentCostOrderByWithAggregationInput | ShipmentCostOrderByWithAggregationInput[]
+    by: ShipmentCostScalarFieldEnum[] | ShipmentCostScalarFieldEnum
+    having?: ShipmentCostScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ShipmentCostCountAggregateInputType | true
+    _avg?: ShipmentCostAvgAggregateInputType
+    _sum?: ShipmentCostSumAggregateInputType
+    _min?: ShipmentCostMinAggregateInputType
+    _max?: ShipmentCostMaxAggregateInputType
+  }
+
+  export type ShipmentCostGroupByOutputType = {
+    id: string
+    shipmentId: string
+    originHandling: number
+    oceanFreight: number
+    bafSurcharge: number
+    thcOrigin: number
+    thcDestination: number
+    transshipmentFee: number
+    customsClearance: number
+    customsDuty: number
+    vat: number
+    destinationHandling: number
+    cargoInsurance: number
+    lastMileDelivery: number
+    agencyFee: number
+    platformFee: number
+    totalCost: number
+    currency: string
+    exchangeRate: number
+    convertedTotal: number
+    createdAt: Date
+    updatedAt: Date
+    _count: ShipmentCostCountAggregateOutputType | null
+    _avg: ShipmentCostAvgAggregateOutputType | null
+    _sum: ShipmentCostSumAggregateOutputType | null
+    _min: ShipmentCostMinAggregateOutputType | null
+    _max: ShipmentCostMaxAggregateOutputType | null
+  }
+
+  type GetShipmentCostGroupByPayload<T extends ShipmentCostGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ShipmentCostGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ShipmentCostGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ShipmentCostGroupByOutputType[P]>
+            : GetScalarType<T[P], ShipmentCostGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ShipmentCostSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shipmentId?: boolean
+    originHandling?: boolean
+    oceanFreight?: boolean
+    bafSurcharge?: boolean
+    thcOrigin?: boolean
+    thcDestination?: boolean
+    transshipmentFee?: boolean
+    customsClearance?: boolean
+    customsDuty?: boolean
+    vat?: boolean
+    destinationHandling?: boolean
+    cargoInsurance?: boolean
+    lastMileDelivery?: boolean
+    agencyFee?: boolean
+    platformFee?: boolean
+    totalCost?: boolean
+    currency?: boolean
+    exchangeRate?: boolean
+    convertedTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shipmentCost"]>
+
+  export type ShipmentCostSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shipmentId?: boolean
+    originHandling?: boolean
+    oceanFreight?: boolean
+    bafSurcharge?: boolean
+    thcOrigin?: boolean
+    thcDestination?: boolean
+    transshipmentFee?: boolean
+    customsClearance?: boolean
+    customsDuty?: boolean
+    vat?: boolean
+    destinationHandling?: boolean
+    cargoInsurance?: boolean
+    lastMileDelivery?: boolean
+    agencyFee?: boolean
+    platformFee?: boolean
+    totalCost?: boolean
+    currency?: boolean
+    exchangeRate?: boolean
+    convertedTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shipmentCost"]>
+
+  export type ShipmentCostSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shipmentId?: boolean
+    originHandling?: boolean
+    oceanFreight?: boolean
+    bafSurcharge?: boolean
+    thcOrigin?: boolean
+    thcDestination?: boolean
+    transshipmentFee?: boolean
+    customsClearance?: boolean
+    customsDuty?: boolean
+    vat?: boolean
+    destinationHandling?: boolean
+    cargoInsurance?: boolean
+    lastMileDelivery?: boolean
+    agencyFee?: boolean
+    platformFee?: boolean
+    totalCost?: boolean
+    currency?: boolean
+    exchangeRate?: boolean
+    convertedTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shipmentCost"]>
+
+  export type ShipmentCostSelectScalar = {
+    id?: boolean
+    shipmentId?: boolean
+    originHandling?: boolean
+    oceanFreight?: boolean
+    bafSurcharge?: boolean
+    thcOrigin?: boolean
+    thcDestination?: boolean
+    transshipmentFee?: boolean
+    customsClearance?: boolean
+    customsDuty?: boolean
+    vat?: boolean
+    destinationHandling?: boolean
+    cargoInsurance?: boolean
+    lastMileDelivery?: boolean
+    agencyFee?: boolean
+    platformFee?: boolean
+    totalCost?: boolean
+    currency?: boolean
+    exchangeRate?: boolean
+    convertedTotal?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ShipmentCostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "originHandling" | "oceanFreight" | "bafSurcharge" | "thcOrigin" | "thcDestination" | "transshipmentFee" | "customsClearance" | "customsDuty" | "vat" | "destinationHandling" | "cargoInsurance" | "lastMileDelivery" | "agencyFee" | "platformFee" | "totalCost" | "currency" | "exchangeRate" | "convertedTotal" | "createdAt" | "updatedAt", ExtArgs["result"]["shipmentCost"]>
+  export type ShipmentCostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+  }
+  export type ShipmentCostIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+  }
+  export type ShipmentCostIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+  }
+
+  export type $ShipmentCostPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ShipmentCost"
+    objects: {
+      shipment: Prisma.$ShipmentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      shipmentId: string
+      originHandling: number
+      oceanFreight: number
+      bafSurcharge: number
+      thcOrigin: number
+      thcDestination: number
+      transshipmentFee: number
+      customsClearance: number
+      customsDuty: number
+      vat: number
+      destinationHandling: number
+      cargoInsurance: number
+      lastMileDelivery: number
+      agencyFee: number
+      platformFee: number
+      totalCost: number
+      currency: string
+      exchangeRate: number
+      convertedTotal: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["shipmentCost"]>
+    composites: {}
+  }
+
+  type ShipmentCostGetPayload<S extends boolean | null | undefined | ShipmentCostDefaultArgs> = $Result.GetResult<Prisma.$ShipmentCostPayload, S>
+
+  type ShipmentCostCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ShipmentCostFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ShipmentCostCountAggregateInputType | true
+    }
+
+  export interface ShipmentCostDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ShipmentCost'], meta: { name: 'ShipmentCost' } }
+    /**
+     * Find zero or one ShipmentCost that matches the filter.
+     * @param {ShipmentCostFindUniqueArgs} args - Arguments to find a ShipmentCost
+     * @example
+     * // Get one ShipmentCost
+     * const shipmentCost = await prisma.shipmentCost.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ShipmentCostFindUniqueArgs>(args: SelectSubset<T, ShipmentCostFindUniqueArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ShipmentCost that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ShipmentCostFindUniqueOrThrowArgs} args - Arguments to find a ShipmentCost
+     * @example
+     * // Get one ShipmentCost
+     * const shipmentCost = await prisma.shipmentCost.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ShipmentCostFindUniqueOrThrowArgs>(args: SelectSubset<T, ShipmentCostFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShipmentCost that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShipmentCostFindFirstArgs} args - Arguments to find a ShipmentCost
+     * @example
+     * // Get one ShipmentCost
+     * const shipmentCost = await prisma.shipmentCost.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ShipmentCostFindFirstArgs>(args?: SelectSubset<T, ShipmentCostFindFirstArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShipmentCost that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShipmentCostFindFirstOrThrowArgs} args - Arguments to find a ShipmentCost
+     * @example
+     * // Get one ShipmentCost
+     * const shipmentCost = await prisma.shipmentCost.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ShipmentCostFindFirstOrThrowArgs>(args?: SelectSubset<T, ShipmentCostFindFirstOrThrowArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ShipmentCosts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShipmentCostFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ShipmentCosts
+     * const shipmentCosts = await prisma.shipmentCost.findMany()
+     * 
+     * // Get first 10 ShipmentCosts
+     * const shipmentCosts = await prisma.shipmentCost.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const shipmentCostWithIdOnly = await prisma.shipmentCost.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ShipmentCostFindManyArgs>(args?: SelectSubset<T, ShipmentCostFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ShipmentCost.
+     * @param {ShipmentCostCreateArgs} args - Arguments to create a ShipmentCost.
+     * @example
+     * // Create one ShipmentCost
+     * const ShipmentCost = await prisma.shipmentCost.create({
+     *   data: {
+     *     // ... data to create a ShipmentCost
+     *   }
+     * })
+     * 
+     */
+    create<T extends ShipmentCostCreateArgs>(args: SelectSubset<T, ShipmentCostCreateArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ShipmentCosts.
+     * @param {ShipmentCostCreateManyArgs} args - Arguments to create many ShipmentCosts.
+     * @example
+     * // Create many ShipmentCosts
+     * const shipmentCost = await prisma.shipmentCost.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ShipmentCostCreateManyArgs>(args?: SelectSubset<T, ShipmentCostCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ShipmentCosts and returns the data saved in the database.
+     * @param {ShipmentCostCreateManyAndReturnArgs} args - Arguments to create many ShipmentCosts.
+     * @example
+     * // Create many ShipmentCosts
+     * const shipmentCost = await prisma.shipmentCost.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ShipmentCosts and only return the `id`
+     * const shipmentCostWithIdOnly = await prisma.shipmentCost.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ShipmentCostCreateManyAndReturnArgs>(args?: SelectSubset<T, ShipmentCostCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ShipmentCost.
+     * @param {ShipmentCostDeleteArgs} args - Arguments to delete one ShipmentCost.
+     * @example
+     * // Delete one ShipmentCost
+     * const ShipmentCost = await prisma.shipmentCost.delete({
+     *   where: {
+     *     // ... filter to delete one ShipmentCost
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ShipmentCostDeleteArgs>(args: SelectSubset<T, ShipmentCostDeleteArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ShipmentCost.
+     * @param {ShipmentCostUpdateArgs} args - Arguments to update one ShipmentCost.
+     * @example
+     * // Update one ShipmentCost
+     * const shipmentCost = await prisma.shipmentCost.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ShipmentCostUpdateArgs>(args: SelectSubset<T, ShipmentCostUpdateArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ShipmentCosts.
+     * @param {ShipmentCostDeleteManyArgs} args - Arguments to filter ShipmentCosts to delete.
+     * @example
+     * // Delete a few ShipmentCosts
+     * const { count } = await prisma.shipmentCost.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ShipmentCostDeleteManyArgs>(args?: SelectSubset<T, ShipmentCostDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShipmentCosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShipmentCostUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ShipmentCosts
+     * const shipmentCost = await prisma.shipmentCost.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ShipmentCostUpdateManyArgs>(args: SelectSubset<T, ShipmentCostUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShipmentCosts and returns the data updated in the database.
+     * @param {ShipmentCostUpdateManyAndReturnArgs} args - Arguments to update many ShipmentCosts.
+     * @example
+     * // Update many ShipmentCosts
+     * const shipmentCost = await prisma.shipmentCost.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ShipmentCosts and only return the `id`
+     * const shipmentCostWithIdOnly = await prisma.shipmentCost.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ShipmentCostUpdateManyAndReturnArgs>(args: SelectSubset<T, ShipmentCostUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ShipmentCost.
+     * @param {ShipmentCostUpsertArgs} args - Arguments to update or create a ShipmentCost.
+     * @example
+     * // Update or create a ShipmentCost
+     * const shipmentCost = await prisma.shipmentCost.upsert({
+     *   create: {
+     *     // ... data to create a ShipmentCost
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ShipmentCost we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ShipmentCostUpsertArgs>(args: SelectSubset<T, ShipmentCostUpsertArgs<ExtArgs>>): Prisma__ShipmentCostClient<$Result.GetResult<Prisma.$ShipmentCostPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ShipmentCosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShipmentCostCountArgs} args - Arguments to filter ShipmentCosts to count.
+     * @example
+     * // Count the number of ShipmentCosts
+     * const count = await prisma.shipmentCost.count({
+     *   where: {
+     *     // ... the filter for the ShipmentCosts we want to count
+     *   }
+     * })
+    **/
+    count<T extends ShipmentCostCountArgs>(
+      args?: Subset<T, ShipmentCostCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ShipmentCostCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ShipmentCost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShipmentCostAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ShipmentCostAggregateArgs>(args: Subset<T, ShipmentCostAggregateArgs>): Prisma.PrismaPromise<GetShipmentCostAggregateType<T>>
+
+    /**
+     * Group by ShipmentCost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShipmentCostGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ShipmentCostGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ShipmentCostGroupByArgs['orderBy'] }
+        : { orderBy?: ShipmentCostGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ShipmentCostGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetShipmentCostGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ShipmentCost model
+   */
+  readonly fields: ShipmentCostFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ShipmentCost.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ShipmentCostClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    shipment<T extends ShipmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShipmentDefaultArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ShipmentCost model
+   */
+  interface ShipmentCostFieldRefs {
+    readonly id: FieldRef<"ShipmentCost", 'String'>
+    readonly shipmentId: FieldRef<"ShipmentCost", 'String'>
+    readonly originHandling: FieldRef<"ShipmentCost", 'Float'>
+    readonly oceanFreight: FieldRef<"ShipmentCost", 'Float'>
+    readonly bafSurcharge: FieldRef<"ShipmentCost", 'Float'>
+    readonly thcOrigin: FieldRef<"ShipmentCost", 'Float'>
+    readonly thcDestination: FieldRef<"ShipmentCost", 'Float'>
+    readonly transshipmentFee: FieldRef<"ShipmentCost", 'Float'>
+    readonly customsClearance: FieldRef<"ShipmentCost", 'Float'>
+    readonly customsDuty: FieldRef<"ShipmentCost", 'Float'>
+    readonly vat: FieldRef<"ShipmentCost", 'Float'>
+    readonly destinationHandling: FieldRef<"ShipmentCost", 'Float'>
+    readonly cargoInsurance: FieldRef<"ShipmentCost", 'Float'>
+    readonly lastMileDelivery: FieldRef<"ShipmentCost", 'Float'>
+    readonly agencyFee: FieldRef<"ShipmentCost", 'Float'>
+    readonly platformFee: FieldRef<"ShipmentCost", 'Float'>
+    readonly totalCost: FieldRef<"ShipmentCost", 'Float'>
+    readonly currency: FieldRef<"ShipmentCost", 'String'>
+    readonly exchangeRate: FieldRef<"ShipmentCost", 'Float'>
+    readonly convertedTotal: FieldRef<"ShipmentCost", 'Float'>
+    readonly createdAt: FieldRef<"ShipmentCost", 'DateTime'>
+    readonly updatedAt: FieldRef<"ShipmentCost", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ShipmentCost findUnique
+   */
+  export type ShipmentCostFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * Filter, which ShipmentCost to fetch.
+     */
+    where: ShipmentCostWhereUniqueInput
+  }
+
+  /**
+   * ShipmentCost findUniqueOrThrow
+   */
+  export type ShipmentCostFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * Filter, which ShipmentCost to fetch.
+     */
+    where: ShipmentCostWhereUniqueInput
+  }
+
+  /**
+   * ShipmentCost findFirst
+   */
+  export type ShipmentCostFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * Filter, which ShipmentCost to fetch.
+     */
+    where?: ShipmentCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShipmentCosts to fetch.
+     */
+    orderBy?: ShipmentCostOrderByWithRelationInput | ShipmentCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShipmentCosts.
+     */
+    cursor?: ShipmentCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShipmentCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShipmentCosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShipmentCosts.
+     */
+    distinct?: ShipmentCostScalarFieldEnum | ShipmentCostScalarFieldEnum[]
+  }
+
+  /**
+   * ShipmentCost findFirstOrThrow
+   */
+  export type ShipmentCostFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * Filter, which ShipmentCost to fetch.
+     */
+    where?: ShipmentCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShipmentCosts to fetch.
+     */
+    orderBy?: ShipmentCostOrderByWithRelationInput | ShipmentCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShipmentCosts.
+     */
+    cursor?: ShipmentCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShipmentCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShipmentCosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShipmentCosts.
+     */
+    distinct?: ShipmentCostScalarFieldEnum | ShipmentCostScalarFieldEnum[]
+  }
+
+  /**
+   * ShipmentCost findMany
+   */
+  export type ShipmentCostFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * Filter, which ShipmentCosts to fetch.
+     */
+    where?: ShipmentCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShipmentCosts to fetch.
+     */
+    orderBy?: ShipmentCostOrderByWithRelationInput | ShipmentCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ShipmentCosts.
+     */
+    cursor?: ShipmentCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShipmentCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShipmentCosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShipmentCosts.
+     */
+    distinct?: ShipmentCostScalarFieldEnum | ShipmentCostScalarFieldEnum[]
+  }
+
+  /**
+   * ShipmentCost create
+   */
+  export type ShipmentCostCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ShipmentCost.
+     */
+    data: XOR<ShipmentCostCreateInput, ShipmentCostUncheckedCreateInput>
+  }
+
+  /**
+   * ShipmentCost createMany
+   */
+  export type ShipmentCostCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ShipmentCosts.
+     */
+    data: ShipmentCostCreateManyInput | ShipmentCostCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ShipmentCost createManyAndReturn
+   */
+  export type ShipmentCostCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * The data used to create many ShipmentCosts.
+     */
+    data: ShipmentCostCreateManyInput | ShipmentCostCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShipmentCost update
+   */
+  export type ShipmentCostUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ShipmentCost.
+     */
+    data: XOR<ShipmentCostUpdateInput, ShipmentCostUncheckedUpdateInput>
+    /**
+     * Choose, which ShipmentCost to update.
+     */
+    where: ShipmentCostWhereUniqueInput
+  }
+
+  /**
+   * ShipmentCost updateMany
+   */
+  export type ShipmentCostUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ShipmentCosts.
+     */
+    data: XOR<ShipmentCostUpdateManyMutationInput, ShipmentCostUncheckedUpdateManyInput>
+    /**
+     * Filter which ShipmentCosts to update
+     */
+    where?: ShipmentCostWhereInput
+    /**
+     * Limit how many ShipmentCosts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShipmentCost updateManyAndReturn
+   */
+  export type ShipmentCostUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * The data used to update ShipmentCosts.
+     */
+    data: XOR<ShipmentCostUpdateManyMutationInput, ShipmentCostUncheckedUpdateManyInput>
+    /**
+     * Filter which ShipmentCosts to update
+     */
+    where?: ShipmentCostWhereInput
+    /**
+     * Limit how many ShipmentCosts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShipmentCost upsert
+   */
+  export type ShipmentCostUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ShipmentCost to update in case it exists.
+     */
+    where: ShipmentCostWhereUniqueInput
+    /**
+     * In case the ShipmentCost found by the `where` argument doesn't exist, create a new ShipmentCost with this data.
+     */
+    create: XOR<ShipmentCostCreateInput, ShipmentCostUncheckedCreateInput>
+    /**
+     * In case the ShipmentCost was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ShipmentCostUpdateInput, ShipmentCostUncheckedUpdateInput>
+  }
+
+  /**
+   * ShipmentCost delete
+   */
+  export type ShipmentCostDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
+    /**
+     * Filter which ShipmentCost to delete.
+     */
+    where: ShipmentCostWhereUniqueInput
+  }
+
+  /**
+   * ShipmentCost deleteMany
+   */
+  export type ShipmentCostDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShipmentCosts to delete
+     */
+    where?: ShipmentCostWhereInput
+    /**
+     * Limit how many ShipmentCosts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShipmentCost without action
+   */
+  export type ShipmentCostDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShipmentCost
+     */
+    select?: ShipmentCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShipmentCost
+     */
+    omit?: ShipmentCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentCostInclude<ExtArgs> | null
   }
 
 
@@ -12343,6 +19971,7 @@ export namespace Prisma {
     updateBy?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    updatedByUser?: boolean | StatusLog$updatedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["statusLog"]>
 
   export type StatusLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12354,6 +19983,7 @@ export namespace Prisma {
     updateBy?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    updatedByUser?: boolean | StatusLog$updatedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["statusLog"]>
 
   export type StatusLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12365,6 +19995,7 @@ export namespace Prisma {
     updateBy?: boolean
     createdAt?: boolean
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    updatedByUser?: boolean | StatusLog$updatedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["statusLog"]>
 
   export type StatusLogSelectScalar = {
@@ -12380,18 +20011,22 @@ export namespace Prisma {
   export type StatusLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "status" | "location" | "note" | "updateBy" | "createdAt", ExtArgs["result"]["statusLog"]>
   export type StatusLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    updatedByUser?: boolean | StatusLog$updatedByUserArgs<ExtArgs>
   }
   export type StatusLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    updatedByUser?: boolean | StatusLog$updatedByUserArgs<ExtArgs>
   }
   export type StatusLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
+    updatedByUser?: boolean | StatusLog$updatedByUserArgs<ExtArgs>
   }
 
   export type $StatusLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "StatusLog"
     objects: {
       shipment: Prisma.$ShipmentPayload<ExtArgs>
+      updatedByUser: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12796,6 +20431,7 @@ export namespace Prisma {
   export interface Prisma__StatusLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     shipment<T extends ShipmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShipmentDefaultArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    updatedByUser<T extends StatusLog$updatedByUserArgs<ExtArgs> = {}>(args?: Subset<T, StatusLog$updatedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13233,6 +20869,25 @@ export namespace Prisma {
   }
 
   /**
+   * StatusLog.updatedByUser
+   */
+  export type StatusLog$updatedByUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * StatusLog without action
    */
   export type StatusLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13265,6 +20920,21 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+  export const AdminAuditLogScalarFieldEnum: {
+    id: 'id',
+    adminId: 'adminId',
+    action: 'action',
+    targetType: 'targetType',
+    targetId: 'targetId',
+    details: 'details',
+    ipAddress: 'ipAddress',
+    userAgent: 'userAgent',
+    createdAt: 'createdAt'
+  };
+
+  export type AdminAuditLogScalarFieldEnum = (typeof AdminAuditLogScalarFieldEnum)[keyof typeof AdminAuditLogScalarFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     email: 'email',
@@ -13274,6 +20944,8 @@ export namespace Prisma {
     image: 'image',
     address: 'address',
     phone: 'phone',
+    assignedArea: 'assignedArea',
+    isAvailable: 'isAvailable',
     isBlocked: 'isBlocked',
     isDeleted: 'isDeleted',
     blockedReason: 'blockedReason',
@@ -13285,6 +20957,9 @@ export namespace Prisma {
     passwordChangedAt: 'passwordChangedAt',
     failedLoginAttempts: 'failedLoginAttempts',
     lockedUntil: 'lockedUntil',
+    agentVerificationStatus: 'agentVerificationStatus',
+    verifiedAt: 'verifiedAt',
+    verifiedById: 'verifiedById',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -13375,6 +21050,66 @@ export namespace Prisma {
   export type KnowledgeChunkScalarFieldEnum = (typeof KnowledgeChunkScalarFieldEnum)[keyof typeof KnowledgeChunkScalarFieldEnum]
 
 
+  export const AgentCredentialScalarFieldEnum: {
+    id: 'id',
+    agentId: 'agentId',
+    type: 'type',
+    documentNumber: 'documentNumber',
+    cloudinaryPublicId: 'cloudinaryPublicId',
+    documentUrl: 'documentUrl',
+    issuingAuthority: 'issuingAuthority',
+    issueDate: 'issueDate',
+    expiryDate: 'expiryDate',
+    status: 'status',
+    rejectionReason: 'rejectionReason',
+    verifiedById: 'verifiedById',
+    verifiedAt: 'verifiedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AgentCredentialScalarFieldEnum = (typeof AgentCredentialScalarFieldEnum)[keyof typeof AgentCredentialScalarFieldEnum]
+
+
+  export const LocationScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    code: 'code',
+    country: 'country',
+    countryCode: 'countryCode',
+    city: 'city',
+    region: 'region',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    type: 'type',
+    isBlocked: 'isBlocked',
+    blockedReason: 'blockedReason',
+    isDeleted: 'isDeleted',
+    deletedAt: 'deletedAt',
+    createdById: 'createdById',
+    updatedById: 'updatedById',
+    deletedById: 'deletedById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum]
+
+
+  export const AgentCorridorScalarFieldEnum: {
+    id: 'id',
+    agentId: 'agentId',
+    originPortId: 'originPortId',
+    destinationPortId: 'destinationPortId',
+    originText: 'originText',
+    destinationText: 'destinationText',
+    isActive: 'isActive',
+    createdAt: 'createdAt'
+  };
+
+  export type AgentCorridorScalarFieldEnum = (typeof AgentCorridorScalarFieldEnum)[keyof typeof AgentCorridorScalarFieldEnum]
+
+
   export const PhoneVerificationScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -13393,18 +21128,57 @@ export namespace Prisma {
     id: 'id',
     trackingId: 'trackingId',
     userId: 'userId',
+    agentId: 'agentId',
+    assignedById: 'assignedById',
+    assignedAt: 'assignedAt',
     origin: 'origin',
     destination: 'destination',
+    originLocationId: 'originLocationId',
+    destinationLocationId: 'destinationLocationId',
     weight: 'weight',
+    declaredCargoValue: 'declaredCargoValue',
     description: 'description',
     status: 'status',
     estimatedDate: 'estimatedDate',
+    acceptedAt: 'acceptedAt',
+    paymentStatus: 'paymentStatus',
+    stripePaymentIntentId: 'stripePaymentIntentId',
+    stripeRefundId: 'stripeRefundId',
+    paidAt: 'paidAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     updateBy: 'updateBy'
   };
 
   export type ShipmentScalarFieldEnum = (typeof ShipmentScalarFieldEnum)[keyof typeof ShipmentScalarFieldEnum]
+
+
+  export const ShipmentCostScalarFieldEnum: {
+    id: 'id',
+    shipmentId: 'shipmentId',
+    originHandling: 'originHandling',
+    oceanFreight: 'oceanFreight',
+    bafSurcharge: 'bafSurcharge',
+    thcOrigin: 'thcOrigin',
+    thcDestination: 'thcDestination',
+    transshipmentFee: 'transshipmentFee',
+    customsClearance: 'customsClearance',
+    customsDuty: 'customsDuty',
+    vat: 'vat',
+    destinationHandling: 'destinationHandling',
+    cargoInsurance: 'cargoInsurance',
+    lastMileDelivery: 'lastMileDelivery',
+    agencyFee: 'agencyFee',
+    platformFee: 'platformFee',
+    totalCost: 'totalCost',
+    currency: 'currency',
+    exchangeRate: 'exchangeRate',
+    convertedTotal: 'convertedTotal',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ShipmentCostScalarFieldEnum = (typeof ShipmentCostScalarFieldEnum)[keyof typeof ShipmentCostScalarFieldEnum]
 
 
   export const StatusLogScalarFieldEnum: {
@@ -13464,6 +21238,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'AuditAction'
+   */
+  export type EnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuditAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'AuditAction[]'
+   */
+  export type ListEnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuditAction[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime'
+   */
+  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime[]'
+   */
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Role'
    */
   export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
@@ -13485,20 +21287,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'DateTime'
-   */
-  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-  /**
-   * Reference to a field of type 'DateTime[]'
-   */
-  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -13509,6 +21297,48 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AgentVerificationStatus'
+   */
+  export type EnumAgentVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AgentVerificationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'AgentVerificationStatus[]'
+   */
+  export type ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AgentVerificationStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CredentialType'
+   */
+  export type EnumCredentialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CredentialType'>
+    
+
+
+  /**
+   * Reference to a field of type 'CredentialType[]'
+   */
+  export type ListEnumCredentialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CredentialType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CredentialStatus'
+   */
+  export type EnumCredentialStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CredentialStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CredentialStatus[]'
+   */
+  export type ListEnumCredentialStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CredentialStatus[]'>
     
 
 
@@ -13527,6 +21357,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'LocationType'
+   */
+  export type EnumLocationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LocationType'>
+    
+
+
+  /**
+   * Reference to a field of type 'LocationType[]'
+   */
+  export type ListEnumLocationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LocationType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ShipmentStatus'
    */
   export type EnumShipmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShipmentStatus'>
@@ -13538,10 +21382,99 @@ export namespace Prisma {
    */
   export type ListEnumShipmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShipmentStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'PaymentStatus'
+   */
+  export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentStatus[]'
+   */
+  export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
+    
   /**
    * Deep Input Types
    */
 
+
+  export type AdminAuditLogWhereInput = {
+    AND?: AdminAuditLogWhereInput | AdminAuditLogWhereInput[]
+    OR?: AdminAuditLogWhereInput[]
+    NOT?: AdminAuditLogWhereInput | AdminAuditLogWhereInput[]
+    id?: StringFilter<"AdminAuditLog"> | string
+    adminId?: StringFilter<"AdminAuditLog"> | string
+    action?: EnumAuditActionFilter<"AdminAuditLog"> | $Enums.AuditAction
+    targetType?: StringFilter<"AdminAuditLog"> | string
+    targetId?: StringFilter<"AdminAuditLog"> | string
+    details?: StringFilter<"AdminAuditLog"> | string
+    ipAddress?: StringNullableFilter<"AdminAuditLog"> | string | null
+    userAgent?: StringNullableFilter<"AdminAuditLog"> | string | null
+    createdAt?: DateTimeFilter<"AdminAuditLog"> | Date | string
+    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type AdminAuditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    action?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    details?: SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    admin?: UserOrderByWithRelationInput
+  }
+
+  export type AdminAuditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AdminAuditLogWhereInput | AdminAuditLogWhereInput[]
+    OR?: AdminAuditLogWhereInput[]
+    NOT?: AdminAuditLogWhereInput | AdminAuditLogWhereInput[]
+    adminId?: StringFilter<"AdminAuditLog"> | string
+    action?: EnumAuditActionFilter<"AdminAuditLog"> | $Enums.AuditAction
+    targetType?: StringFilter<"AdminAuditLog"> | string
+    targetId?: StringFilter<"AdminAuditLog"> | string
+    details?: StringFilter<"AdminAuditLog"> | string
+    ipAddress?: StringNullableFilter<"AdminAuditLog"> | string | null
+    userAgent?: StringNullableFilter<"AdminAuditLog"> | string | null
+    createdAt?: DateTimeFilter<"AdminAuditLog"> | Date | string
+    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type AdminAuditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    action?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    details?: SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: AdminAuditLogCountOrderByAggregateInput
+    _max?: AdminAuditLogMaxOrderByAggregateInput
+    _min?: AdminAuditLogMinOrderByAggregateInput
+  }
+
+  export type AdminAuditLogScalarWhereWithAggregatesInput = {
+    AND?: AdminAuditLogScalarWhereWithAggregatesInput | AdminAuditLogScalarWhereWithAggregatesInput[]
+    OR?: AdminAuditLogScalarWhereWithAggregatesInput[]
+    NOT?: AdminAuditLogScalarWhereWithAggregatesInput | AdminAuditLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AdminAuditLog"> | string
+    adminId?: StringWithAggregatesFilter<"AdminAuditLog"> | string
+    action?: EnumAuditActionWithAggregatesFilter<"AdminAuditLog"> | $Enums.AuditAction
+    targetType?: StringWithAggregatesFilter<"AdminAuditLog"> | string
+    targetId?: StringWithAggregatesFilter<"AdminAuditLog"> | string
+    details?: StringWithAggregatesFilter<"AdminAuditLog"> | string
+    ipAddress?: StringNullableWithAggregatesFilter<"AdminAuditLog"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"AdminAuditLog"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AdminAuditLog"> | Date | string
+  }
 
   export type UserWhereInput = {
     AND?: UserWhereInput | UserWhereInput[]
@@ -13555,6 +21488,8 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
     phone?: StringNullableFilter<"User"> | string | null
+    assignedArea?: StringNullableFilter<"User"> | string | null
+    isAvailable?: BoolFilter<"User"> | boolean
     isBlocked?: BoolFilter<"User"> | boolean
     isDeleted?: BoolFilter<"User"> | boolean
     blockedReason?: StringNullableFilter<"User"> | string | null
@@ -13566,13 +21501,26 @@ export namespace Prisma {
     passwordChangedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     failedLoginAttempts?: IntFilter<"User"> | number
     lockedUntil?: DateTimeNullableFilter<"User"> | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFilter<"User"> | $Enums.AgentVerificationStatus
+    verifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    verifiedById?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     phoneVerifications?: PhoneVerificationListRelationFilter
+    agentShipments?: ShipmentListRelationFilter
+    customerShipments?: ShipmentListRelationFilter
+    assignedShipments?: ShipmentListRelationFilter
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
-    shipments?: ShipmentListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
+    statusLogs?: StatusLogListRelationFilter
+    agentCorridors?: AgentCorridorListRelationFilter
+    agentCredentials?: AgentCredentialListRelationFilter
+    verifiedCredentials?: AgentCredentialListRelationFilter
+    adminAuditLogs?: AdminAuditLogListRelationFilter
+    locationsCreated?: LocationListRelationFilter
+    locationsUpdated?: LocationListRelationFilter
+    locationsDeleted?: LocationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -13584,6 +21532,8 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
+    assignedArea?: SortOrderInput | SortOrder
+    isAvailable?: SortOrder
     isBlocked?: SortOrder
     isDeleted?: SortOrder
     blockedReason?: SortOrderInput | SortOrder
@@ -13595,13 +21545,26 @@ export namespace Prisma {
     passwordChangedAt?: SortOrderInput | SortOrder
     failedLoginAttempts?: SortOrder
     lockedUntil?: SortOrderInput | SortOrder
+    agentVerificationStatus?: SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    verifiedById?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     phoneVerifications?: PhoneVerificationOrderByRelationAggregateInput
+    agentShipments?: ShipmentOrderByRelationAggregateInput
+    customerShipments?: ShipmentOrderByRelationAggregateInput
+    assignedShipments?: ShipmentOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
-    shipments?: ShipmentOrderByRelationAggregateInput
     chatSessions?: ChatSessionOrderByRelationAggregateInput
+    statusLogs?: StatusLogOrderByRelationAggregateInput
+    agentCorridors?: AgentCorridorOrderByRelationAggregateInput
+    agentCredentials?: AgentCredentialOrderByRelationAggregateInput
+    verifiedCredentials?: AgentCredentialOrderByRelationAggregateInput
+    adminAuditLogs?: AdminAuditLogOrderByRelationAggregateInput
+    locationsCreated?: LocationOrderByRelationAggregateInput
+    locationsUpdated?: LocationOrderByRelationAggregateInput
+    locationsDeleted?: LocationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -13616,6 +21579,8 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     address?: StringNullableFilter<"User"> | string | null
     phone?: StringNullableFilter<"User"> | string | null
+    assignedArea?: StringNullableFilter<"User"> | string | null
+    isAvailable?: BoolFilter<"User"> | boolean
     isBlocked?: BoolFilter<"User"> | boolean
     isDeleted?: BoolFilter<"User"> | boolean
     blockedReason?: StringNullableFilter<"User"> | string | null
@@ -13627,13 +21592,26 @@ export namespace Prisma {
     passwordChangedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     failedLoginAttempts?: IntFilter<"User"> | number
     lockedUntil?: DateTimeNullableFilter<"User"> | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFilter<"User"> | $Enums.AgentVerificationStatus
+    verifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    verifiedById?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     phoneVerifications?: PhoneVerificationListRelationFilter
+    agentShipments?: ShipmentListRelationFilter
+    customerShipments?: ShipmentListRelationFilter
+    assignedShipments?: ShipmentListRelationFilter
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
-    shipments?: ShipmentListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
+    statusLogs?: StatusLogListRelationFilter
+    agentCorridors?: AgentCorridorListRelationFilter
+    agentCredentials?: AgentCredentialListRelationFilter
+    verifiedCredentials?: AgentCredentialListRelationFilter
+    adminAuditLogs?: AdminAuditLogListRelationFilter
+    locationsCreated?: LocationListRelationFilter
+    locationsUpdated?: LocationListRelationFilter
+    locationsDeleted?: LocationListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -13645,6 +21623,8 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
+    assignedArea?: SortOrderInput | SortOrder
+    isAvailable?: SortOrder
     isBlocked?: SortOrder
     isDeleted?: SortOrder
     blockedReason?: SortOrderInput | SortOrder
@@ -13656,6 +21636,9 @@ export namespace Prisma {
     passwordChangedAt?: SortOrderInput | SortOrder
     failedLoginAttempts?: SortOrder
     lockedUntil?: SortOrderInput | SortOrder
+    agentVerificationStatus?: SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    verifiedById?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -13677,6 +21660,8 @@ export namespace Prisma {
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     address?: StringNullableWithAggregatesFilter<"User"> | string | null
     phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    assignedArea?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isAvailable?: BoolWithAggregatesFilter<"User"> | boolean
     isBlocked?: BoolWithAggregatesFilter<"User"> | boolean
     isDeleted?: BoolWithAggregatesFilter<"User"> | boolean
     blockedReason?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -13688,6 +21673,9 @@ export namespace Prisma {
     passwordChangedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     failedLoginAttempts?: IntWithAggregatesFilter<"User"> | number
     lockedUntil?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusWithAggregatesFilter<"User"> | $Enums.AgentVerificationStatus
+    verifiedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    verifiedById?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -14104,6 +22092,337 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"KnowledgeChunk"> | Date | string
   }
 
+  export type AgentCredentialWhereInput = {
+    AND?: AgentCredentialWhereInput | AgentCredentialWhereInput[]
+    OR?: AgentCredentialWhereInput[]
+    NOT?: AgentCredentialWhereInput | AgentCredentialWhereInput[]
+    id?: StringFilter<"AgentCredential"> | string
+    agentId?: StringFilter<"AgentCredential"> | string
+    type?: EnumCredentialTypeFilter<"AgentCredential"> | $Enums.CredentialType
+    documentNumber?: StringFilter<"AgentCredential"> | string
+    cloudinaryPublicId?: StringFilter<"AgentCredential"> | string
+    documentUrl?: StringFilter<"AgentCredential"> | string
+    issuingAuthority?: StringNullableFilter<"AgentCredential"> | string | null
+    issueDate?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    expiryDate?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    status?: EnumCredentialStatusFilter<"AgentCredential"> | $Enums.CredentialStatus
+    rejectionReason?: StringNullableFilter<"AgentCredential"> | string | null
+    verifiedById?: StringNullableFilter<"AgentCredential"> | string | null
+    verifiedAt?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    createdAt?: DateTimeFilter<"AgentCredential"> | Date | string
+    updatedAt?: DateTimeFilter<"AgentCredential"> | Date | string
+    agent?: XOR<UserScalarRelationFilter, UserWhereInput>
+    verifiedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type AgentCredentialOrderByWithRelationInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    type?: SortOrder
+    documentNumber?: SortOrder
+    cloudinaryPublicId?: SortOrder
+    documentUrl?: SortOrder
+    issuingAuthority?: SortOrderInput | SortOrder
+    issueDate?: SortOrderInput | SortOrder
+    expiryDate?: SortOrderInput | SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    verifiedById?: SortOrderInput | SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    agent?: UserOrderByWithRelationInput
+    verifiedBy?: UserOrderByWithRelationInput
+  }
+
+  export type AgentCredentialWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    agentId_type?: AgentCredentialAgentIdTypeCompoundUniqueInput
+    AND?: AgentCredentialWhereInput | AgentCredentialWhereInput[]
+    OR?: AgentCredentialWhereInput[]
+    NOT?: AgentCredentialWhereInput | AgentCredentialWhereInput[]
+    agentId?: StringFilter<"AgentCredential"> | string
+    type?: EnumCredentialTypeFilter<"AgentCredential"> | $Enums.CredentialType
+    documentNumber?: StringFilter<"AgentCredential"> | string
+    cloudinaryPublicId?: StringFilter<"AgentCredential"> | string
+    documentUrl?: StringFilter<"AgentCredential"> | string
+    issuingAuthority?: StringNullableFilter<"AgentCredential"> | string | null
+    issueDate?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    expiryDate?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    status?: EnumCredentialStatusFilter<"AgentCredential"> | $Enums.CredentialStatus
+    rejectionReason?: StringNullableFilter<"AgentCredential"> | string | null
+    verifiedById?: StringNullableFilter<"AgentCredential"> | string | null
+    verifiedAt?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    createdAt?: DateTimeFilter<"AgentCredential"> | Date | string
+    updatedAt?: DateTimeFilter<"AgentCredential"> | Date | string
+    agent?: XOR<UserScalarRelationFilter, UserWhereInput>
+    verifiedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "agentId_type">
+
+  export type AgentCredentialOrderByWithAggregationInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    type?: SortOrder
+    documentNumber?: SortOrder
+    cloudinaryPublicId?: SortOrder
+    documentUrl?: SortOrder
+    issuingAuthority?: SortOrderInput | SortOrder
+    issueDate?: SortOrderInput | SortOrder
+    expiryDate?: SortOrderInput | SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    verifiedById?: SortOrderInput | SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AgentCredentialCountOrderByAggregateInput
+    _max?: AgentCredentialMaxOrderByAggregateInput
+    _min?: AgentCredentialMinOrderByAggregateInput
+  }
+
+  export type AgentCredentialScalarWhereWithAggregatesInput = {
+    AND?: AgentCredentialScalarWhereWithAggregatesInput | AgentCredentialScalarWhereWithAggregatesInput[]
+    OR?: AgentCredentialScalarWhereWithAggregatesInput[]
+    NOT?: AgentCredentialScalarWhereWithAggregatesInput | AgentCredentialScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AgentCredential"> | string
+    agentId?: StringWithAggregatesFilter<"AgentCredential"> | string
+    type?: EnumCredentialTypeWithAggregatesFilter<"AgentCredential"> | $Enums.CredentialType
+    documentNumber?: StringWithAggregatesFilter<"AgentCredential"> | string
+    cloudinaryPublicId?: StringWithAggregatesFilter<"AgentCredential"> | string
+    documentUrl?: StringWithAggregatesFilter<"AgentCredential"> | string
+    issuingAuthority?: StringNullableWithAggregatesFilter<"AgentCredential"> | string | null
+    issueDate?: DateTimeNullableWithAggregatesFilter<"AgentCredential"> | Date | string | null
+    expiryDate?: DateTimeNullableWithAggregatesFilter<"AgentCredential"> | Date | string | null
+    status?: EnumCredentialStatusWithAggregatesFilter<"AgentCredential"> | $Enums.CredentialStatus
+    rejectionReason?: StringNullableWithAggregatesFilter<"AgentCredential"> | string | null
+    verifiedById?: StringNullableWithAggregatesFilter<"AgentCredential"> | string | null
+    verifiedAt?: DateTimeNullableWithAggregatesFilter<"AgentCredential"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AgentCredential"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AgentCredential"> | Date | string
+  }
+
+  export type LocationWhereInput = {
+    AND?: LocationWhereInput | LocationWhereInput[]
+    OR?: LocationWhereInput[]
+    NOT?: LocationWhereInput | LocationWhereInput[]
+    id?: StringFilter<"Location"> | string
+    name?: StringFilter<"Location"> | string
+    code?: StringFilter<"Location"> | string
+    country?: StringFilter<"Location"> | string
+    countryCode?: StringFilter<"Location"> | string
+    city?: StringFilter<"Location"> | string
+    region?: StringFilter<"Location"> | string
+    latitude?: FloatFilter<"Location"> | number
+    longitude?: FloatFilter<"Location"> | number
+    type?: EnumLocationTypeFilter<"Location"> | $Enums.LocationType
+    isBlocked?: BoolFilter<"Location"> | boolean
+    blockedReason?: StringNullableFilter<"Location"> | string | null
+    isDeleted?: BoolFilter<"Location"> | boolean
+    deletedAt?: DateTimeNullableFilter<"Location"> | Date | string | null
+    createdById?: StringNullableFilter<"Location"> | string | null
+    updatedById?: StringNullableFilter<"Location"> | string | null
+    deletedById?: StringNullableFilter<"Location"> | string | null
+    createdAt?: DateTimeFilter<"Location"> | Date | string
+    updatedAt?: DateTimeFilter<"Location"> | Date | string
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    deletedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    originCorridors?: AgentCorridorListRelationFilter
+    destinationCorridors?: AgentCorridorListRelationFilter
+    originShipments?: ShipmentListRelationFilter
+    destinationShipments?: ShipmentListRelationFilter
+  }
+
+  export type LocationOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    country?: SortOrder
+    countryCode?: SortOrder
+    city?: SortOrder
+    region?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    type?: SortOrder
+    isBlocked?: SortOrder
+    blockedReason?: SortOrderInput | SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    deletedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+    updatedBy?: UserOrderByWithRelationInput
+    deletedBy?: UserOrderByWithRelationInput
+    originCorridors?: AgentCorridorOrderByRelationAggregateInput
+    destinationCorridors?: AgentCorridorOrderByRelationAggregateInput
+    originShipments?: ShipmentOrderByRelationAggregateInput
+    destinationShipments?: ShipmentOrderByRelationAggregateInput
+  }
+
+  export type LocationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    code?: string
+    AND?: LocationWhereInput | LocationWhereInput[]
+    OR?: LocationWhereInput[]
+    NOT?: LocationWhereInput | LocationWhereInput[]
+    name?: StringFilter<"Location"> | string
+    country?: StringFilter<"Location"> | string
+    countryCode?: StringFilter<"Location"> | string
+    city?: StringFilter<"Location"> | string
+    region?: StringFilter<"Location"> | string
+    latitude?: FloatFilter<"Location"> | number
+    longitude?: FloatFilter<"Location"> | number
+    type?: EnumLocationTypeFilter<"Location"> | $Enums.LocationType
+    isBlocked?: BoolFilter<"Location"> | boolean
+    blockedReason?: StringNullableFilter<"Location"> | string | null
+    isDeleted?: BoolFilter<"Location"> | boolean
+    deletedAt?: DateTimeNullableFilter<"Location"> | Date | string | null
+    createdById?: StringNullableFilter<"Location"> | string | null
+    updatedById?: StringNullableFilter<"Location"> | string | null
+    deletedById?: StringNullableFilter<"Location"> | string | null
+    createdAt?: DateTimeFilter<"Location"> | Date | string
+    updatedAt?: DateTimeFilter<"Location"> | Date | string
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    deletedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    originCorridors?: AgentCorridorListRelationFilter
+    destinationCorridors?: AgentCorridorListRelationFilter
+    originShipments?: ShipmentListRelationFilter
+    destinationShipments?: ShipmentListRelationFilter
+  }, "id" | "code">
+
+  export type LocationOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    country?: SortOrder
+    countryCode?: SortOrder
+    city?: SortOrder
+    region?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    type?: SortOrder
+    isBlocked?: SortOrder
+    blockedReason?: SortOrderInput | SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    deletedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: LocationCountOrderByAggregateInput
+    _avg?: LocationAvgOrderByAggregateInput
+    _max?: LocationMaxOrderByAggregateInput
+    _min?: LocationMinOrderByAggregateInput
+    _sum?: LocationSumOrderByAggregateInput
+  }
+
+  export type LocationScalarWhereWithAggregatesInput = {
+    AND?: LocationScalarWhereWithAggregatesInput | LocationScalarWhereWithAggregatesInput[]
+    OR?: LocationScalarWhereWithAggregatesInput[]
+    NOT?: LocationScalarWhereWithAggregatesInput | LocationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Location"> | string
+    name?: StringWithAggregatesFilter<"Location"> | string
+    code?: StringWithAggregatesFilter<"Location"> | string
+    country?: StringWithAggregatesFilter<"Location"> | string
+    countryCode?: StringWithAggregatesFilter<"Location"> | string
+    city?: StringWithAggregatesFilter<"Location"> | string
+    region?: StringWithAggregatesFilter<"Location"> | string
+    latitude?: FloatWithAggregatesFilter<"Location"> | number
+    longitude?: FloatWithAggregatesFilter<"Location"> | number
+    type?: EnumLocationTypeWithAggregatesFilter<"Location"> | $Enums.LocationType
+    isBlocked?: BoolWithAggregatesFilter<"Location"> | boolean
+    blockedReason?: StringNullableWithAggregatesFilter<"Location"> | string | null
+    isDeleted?: BoolWithAggregatesFilter<"Location"> | boolean
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"Location"> | Date | string | null
+    createdById?: StringNullableWithAggregatesFilter<"Location"> | string | null
+    updatedById?: StringNullableWithAggregatesFilter<"Location"> | string | null
+    deletedById?: StringNullableWithAggregatesFilter<"Location"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Location"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Location"> | Date | string
+  }
+
+  export type AgentCorridorWhereInput = {
+    AND?: AgentCorridorWhereInput | AgentCorridorWhereInput[]
+    OR?: AgentCorridorWhereInput[]
+    NOT?: AgentCorridorWhereInput | AgentCorridorWhereInput[]
+    id?: StringFilter<"AgentCorridor"> | string
+    agentId?: StringFilter<"AgentCorridor"> | string
+    originPortId?: StringFilter<"AgentCorridor"> | string
+    destinationPortId?: StringFilter<"AgentCorridor"> | string
+    originText?: StringFilter<"AgentCorridor"> | string
+    destinationText?: StringFilter<"AgentCorridor"> | string
+    isActive?: BoolFilter<"AgentCorridor"> | boolean
+    createdAt?: DateTimeFilter<"AgentCorridor"> | Date | string
+    agent?: XOR<UserScalarRelationFilter, UserWhereInput>
+    originPort?: XOR<LocationScalarRelationFilter, LocationWhereInput>
+    destinationPort?: XOR<LocationScalarRelationFilter, LocationWhereInput>
+  }
+
+  export type AgentCorridorOrderByWithRelationInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    originPortId?: SortOrder
+    destinationPortId?: SortOrder
+    originText?: SortOrder
+    destinationText?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    agent?: UserOrderByWithRelationInput
+    originPort?: LocationOrderByWithRelationInput
+    destinationPort?: LocationOrderByWithRelationInput
+  }
+
+  export type AgentCorridorWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    agentId_originPortId_destinationPortId?: AgentCorridorAgentIdOriginPortIdDestinationPortIdCompoundUniqueInput
+    AND?: AgentCorridorWhereInput | AgentCorridorWhereInput[]
+    OR?: AgentCorridorWhereInput[]
+    NOT?: AgentCorridorWhereInput | AgentCorridorWhereInput[]
+    agentId?: StringFilter<"AgentCorridor"> | string
+    originPortId?: StringFilter<"AgentCorridor"> | string
+    destinationPortId?: StringFilter<"AgentCorridor"> | string
+    originText?: StringFilter<"AgentCorridor"> | string
+    destinationText?: StringFilter<"AgentCorridor"> | string
+    isActive?: BoolFilter<"AgentCorridor"> | boolean
+    createdAt?: DateTimeFilter<"AgentCorridor"> | Date | string
+    agent?: XOR<UserScalarRelationFilter, UserWhereInput>
+    originPort?: XOR<LocationScalarRelationFilter, LocationWhereInput>
+    destinationPort?: XOR<LocationScalarRelationFilter, LocationWhereInput>
+  }, "id" | "agentId_originPortId_destinationPortId">
+
+  export type AgentCorridorOrderByWithAggregationInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    originPortId?: SortOrder
+    destinationPortId?: SortOrder
+    originText?: SortOrder
+    destinationText?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    _count?: AgentCorridorCountOrderByAggregateInput
+    _max?: AgentCorridorMaxOrderByAggregateInput
+    _min?: AgentCorridorMinOrderByAggregateInput
+  }
+
+  export type AgentCorridorScalarWhereWithAggregatesInput = {
+    AND?: AgentCorridorScalarWhereWithAggregatesInput | AgentCorridorScalarWhereWithAggregatesInput[]
+    OR?: AgentCorridorScalarWhereWithAggregatesInput[]
+    NOT?: AgentCorridorScalarWhereWithAggregatesInput | AgentCorridorScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AgentCorridor"> | string
+    agentId?: StringWithAggregatesFilter<"AgentCorridor"> | string
+    originPortId?: StringWithAggregatesFilter<"AgentCorridor"> | string
+    destinationPortId?: StringWithAggregatesFilter<"AgentCorridor"> | string
+    originText?: StringWithAggregatesFilter<"AgentCorridor"> | string
+    destinationText?: StringWithAggregatesFilter<"AgentCorridor"> | string
+    isActive?: BoolWithAggregatesFilter<"AgentCorridor"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"AgentCorridor"> | Date | string
+  }
+
   export type PhoneVerificationWhereInput = {
     AND?: PhoneVerificationWhereInput | PhoneVerificationWhereInput[]
     OR?: PhoneVerificationWhereInput[]
@@ -14183,16 +22502,32 @@ export namespace Prisma {
     id?: StringFilter<"Shipment"> | string
     trackingId?: StringFilter<"Shipment"> | string
     userId?: StringFilter<"Shipment"> | string
+    agentId?: StringNullableFilter<"Shipment"> | string | null
+    assignedById?: StringNullableFilter<"Shipment"> | string | null
+    assignedAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
+    originLocationId?: StringNullableFilter<"Shipment"> | string | null
+    destinationLocationId?: StringNullableFilter<"Shipment"> | string | null
     weight?: FloatFilter<"Shipment"> | number
+    declaredCargoValue?: FloatFilter<"Shipment"> | number
     description?: StringNullableFilter<"Shipment"> | string | null
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
     estimatedDate?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    acceptedAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    paymentStatus?: EnumPaymentStatusFilter<"Shipment"> | $Enums.PaymentStatus
+    stripePaymentIntentId?: StringNullableFilter<"Shipment"> | string | null
+    stripeRefundId?: StringNullableFilter<"Shipment"> | string | null
+    paidAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     updatedAt?: DateTimeFilter<"Shipment"> | Date | string
     updateBy?: StringNullableFilter<"Shipment"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    agent?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    assignedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    originLocation?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
+    destinationLocation?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
+    cost?: XOR<ShipmentCostNullableScalarRelationFilter, ShipmentCostWhereInput> | null
     statusLogs?: StatusLogListRelationFilter
   }
 
@@ -14200,49 +22535,92 @@ export namespace Prisma {
     id?: SortOrder
     trackingId?: SortOrder
     userId?: SortOrder
+    agentId?: SortOrderInput | SortOrder
+    assignedById?: SortOrderInput | SortOrder
+    assignedAt?: SortOrderInput | SortOrder
     origin?: SortOrder
     destination?: SortOrder
+    originLocationId?: SortOrderInput | SortOrder
+    destinationLocationId?: SortOrderInput | SortOrder
     weight?: SortOrder
+    declaredCargoValue?: SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     estimatedDate?: SortOrderInput | SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    paymentStatus?: SortOrder
+    stripePaymentIntentId?: SortOrderInput | SortOrder
+    stripeRefundId?: SortOrderInput | SortOrder
+    paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updateBy?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
+    agent?: UserOrderByWithRelationInput
+    assignedBy?: UserOrderByWithRelationInput
+    originLocation?: LocationOrderByWithRelationInput
+    destinationLocation?: LocationOrderByWithRelationInput
+    cost?: ShipmentCostOrderByWithRelationInput
     statusLogs?: StatusLogOrderByRelationAggregateInput
   }
 
   export type ShipmentWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     trackingId?: string
+    stripePaymentIntentId?: string
     AND?: ShipmentWhereInput | ShipmentWhereInput[]
     OR?: ShipmentWhereInput[]
     NOT?: ShipmentWhereInput | ShipmentWhereInput[]
     userId?: StringFilter<"Shipment"> | string
+    agentId?: StringNullableFilter<"Shipment"> | string | null
+    assignedById?: StringNullableFilter<"Shipment"> | string | null
+    assignedAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     origin?: StringFilter<"Shipment"> | string
     destination?: StringFilter<"Shipment"> | string
+    originLocationId?: StringNullableFilter<"Shipment"> | string | null
+    destinationLocationId?: StringNullableFilter<"Shipment"> | string | null
     weight?: FloatFilter<"Shipment"> | number
+    declaredCargoValue?: FloatFilter<"Shipment"> | number
     description?: StringNullableFilter<"Shipment"> | string | null
     status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
     estimatedDate?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    acceptedAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    paymentStatus?: EnumPaymentStatusFilter<"Shipment"> | $Enums.PaymentStatus
+    stripeRefundId?: StringNullableFilter<"Shipment"> | string | null
+    paidAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
     createdAt?: DateTimeFilter<"Shipment"> | Date | string
     updatedAt?: DateTimeFilter<"Shipment"> | Date | string
     updateBy?: StringNullableFilter<"Shipment"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    agent?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    assignedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    originLocation?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
+    destinationLocation?: XOR<LocationNullableScalarRelationFilter, LocationWhereInput> | null
+    cost?: XOR<ShipmentCostNullableScalarRelationFilter, ShipmentCostWhereInput> | null
     statusLogs?: StatusLogListRelationFilter
-  }, "id" | "trackingId">
+  }, "id" | "trackingId" | "stripePaymentIntentId">
 
   export type ShipmentOrderByWithAggregationInput = {
     id?: SortOrder
     trackingId?: SortOrder
     userId?: SortOrder
+    agentId?: SortOrderInput | SortOrder
+    assignedById?: SortOrderInput | SortOrder
+    assignedAt?: SortOrderInput | SortOrder
     origin?: SortOrder
     destination?: SortOrder
+    originLocationId?: SortOrderInput | SortOrder
+    destinationLocationId?: SortOrderInput | SortOrder
     weight?: SortOrder
+    declaredCargoValue?: SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     estimatedDate?: SortOrderInput | SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    paymentStatus?: SortOrder
+    stripePaymentIntentId?: SortOrderInput | SortOrder
+    stripeRefundId?: SortOrderInput | SortOrder
+    paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updateBy?: SortOrderInput | SortOrder
@@ -14260,15 +22638,168 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Shipment"> | string
     trackingId?: StringWithAggregatesFilter<"Shipment"> | string
     userId?: StringWithAggregatesFilter<"Shipment"> | string
+    agentId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+    assignedById?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+    assignedAt?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
     origin?: StringWithAggregatesFilter<"Shipment"> | string
     destination?: StringWithAggregatesFilter<"Shipment"> | string
+    originLocationId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+    destinationLocationId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
     weight?: FloatWithAggregatesFilter<"Shipment"> | number
+    declaredCargoValue?: FloatWithAggregatesFilter<"Shipment"> | number
     description?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
     status?: EnumShipmentStatusWithAggregatesFilter<"Shipment"> | $Enums.ShipmentStatus
     estimatedDate?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
+    acceptedAt?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
+    paymentStatus?: EnumPaymentStatusWithAggregatesFilter<"Shipment"> | $Enums.PaymentStatus
+    stripePaymentIntentId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+    stripeRefundId?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+    paidAt?: DateTimeNullableWithAggregatesFilter<"Shipment"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Shipment"> | Date | string
     updateBy?: StringNullableWithAggregatesFilter<"Shipment"> | string | null
+  }
+
+  export type ShipmentCostWhereInput = {
+    AND?: ShipmentCostWhereInput | ShipmentCostWhereInput[]
+    OR?: ShipmentCostWhereInput[]
+    NOT?: ShipmentCostWhereInput | ShipmentCostWhereInput[]
+    id?: StringFilter<"ShipmentCost"> | string
+    shipmentId?: StringFilter<"ShipmentCost"> | string
+    originHandling?: FloatFilter<"ShipmentCost"> | number
+    oceanFreight?: FloatFilter<"ShipmentCost"> | number
+    bafSurcharge?: FloatFilter<"ShipmentCost"> | number
+    thcOrigin?: FloatFilter<"ShipmentCost"> | number
+    thcDestination?: FloatFilter<"ShipmentCost"> | number
+    transshipmentFee?: FloatFilter<"ShipmentCost"> | number
+    customsClearance?: FloatFilter<"ShipmentCost"> | number
+    customsDuty?: FloatFilter<"ShipmentCost"> | number
+    vat?: FloatFilter<"ShipmentCost"> | number
+    destinationHandling?: FloatFilter<"ShipmentCost"> | number
+    cargoInsurance?: FloatFilter<"ShipmentCost"> | number
+    lastMileDelivery?: FloatFilter<"ShipmentCost"> | number
+    agencyFee?: FloatFilter<"ShipmentCost"> | number
+    platformFee?: FloatFilter<"ShipmentCost"> | number
+    totalCost?: FloatFilter<"ShipmentCost"> | number
+    currency?: StringFilter<"ShipmentCost"> | string
+    exchangeRate?: FloatFilter<"ShipmentCost"> | number
+    convertedTotal?: FloatFilter<"ShipmentCost"> | number
+    createdAt?: DateTimeFilter<"ShipmentCost"> | Date | string
+    updatedAt?: DateTimeFilter<"ShipmentCost"> | Date | string
+    shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+  }
+
+  export type ShipmentCostOrderByWithRelationInput = {
+    id?: SortOrder
+    shipmentId?: SortOrder
+    originHandling?: SortOrder
+    oceanFreight?: SortOrder
+    bafSurcharge?: SortOrder
+    thcOrigin?: SortOrder
+    thcDestination?: SortOrder
+    transshipmentFee?: SortOrder
+    customsClearance?: SortOrder
+    customsDuty?: SortOrder
+    vat?: SortOrder
+    destinationHandling?: SortOrder
+    cargoInsurance?: SortOrder
+    lastMileDelivery?: SortOrder
+    agencyFee?: SortOrder
+    platformFee?: SortOrder
+    totalCost?: SortOrder
+    currency?: SortOrder
+    exchangeRate?: SortOrder
+    convertedTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shipment?: ShipmentOrderByWithRelationInput
+  }
+
+  export type ShipmentCostWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    shipmentId?: string
+    AND?: ShipmentCostWhereInput | ShipmentCostWhereInput[]
+    OR?: ShipmentCostWhereInput[]
+    NOT?: ShipmentCostWhereInput | ShipmentCostWhereInput[]
+    originHandling?: FloatFilter<"ShipmentCost"> | number
+    oceanFreight?: FloatFilter<"ShipmentCost"> | number
+    bafSurcharge?: FloatFilter<"ShipmentCost"> | number
+    thcOrigin?: FloatFilter<"ShipmentCost"> | number
+    thcDestination?: FloatFilter<"ShipmentCost"> | number
+    transshipmentFee?: FloatFilter<"ShipmentCost"> | number
+    customsClearance?: FloatFilter<"ShipmentCost"> | number
+    customsDuty?: FloatFilter<"ShipmentCost"> | number
+    vat?: FloatFilter<"ShipmentCost"> | number
+    destinationHandling?: FloatFilter<"ShipmentCost"> | number
+    cargoInsurance?: FloatFilter<"ShipmentCost"> | number
+    lastMileDelivery?: FloatFilter<"ShipmentCost"> | number
+    agencyFee?: FloatFilter<"ShipmentCost"> | number
+    platformFee?: FloatFilter<"ShipmentCost"> | number
+    totalCost?: FloatFilter<"ShipmentCost"> | number
+    currency?: StringFilter<"ShipmentCost"> | string
+    exchangeRate?: FloatFilter<"ShipmentCost"> | number
+    convertedTotal?: FloatFilter<"ShipmentCost"> | number
+    createdAt?: DateTimeFilter<"ShipmentCost"> | Date | string
+    updatedAt?: DateTimeFilter<"ShipmentCost"> | Date | string
+    shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+  }, "id" | "shipmentId">
+
+  export type ShipmentCostOrderByWithAggregationInput = {
+    id?: SortOrder
+    shipmentId?: SortOrder
+    originHandling?: SortOrder
+    oceanFreight?: SortOrder
+    bafSurcharge?: SortOrder
+    thcOrigin?: SortOrder
+    thcDestination?: SortOrder
+    transshipmentFee?: SortOrder
+    customsClearance?: SortOrder
+    customsDuty?: SortOrder
+    vat?: SortOrder
+    destinationHandling?: SortOrder
+    cargoInsurance?: SortOrder
+    lastMileDelivery?: SortOrder
+    agencyFee?: SortOrder
+    platformFee?: SortOrder
+    totalCost?: SortOrder
+    currency?: SortOrder
+    exchangeRate?: SortOrder
+    convertedTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ShipmentCostCountOrderByAggregateInput
+    _avg?: ShipmentCostAvgOrderByAggregateInput
+    _max?: ShipmentCostMaxOrderByAggregateInput
+    _min?: ShipmentCostMinOrderByAggregateInput
+    _sum?: ShipmentCostSumOrderByAggregateInput
+  }
+
+  export type ShipmentCostScalarWhereWithAggregatesInput = {
+    AND?: ShipmentCostScalarWhereWithAggregatesInput | ShipmentCostScalarWhereWithAggregatesInput[]
+    OR?: ShipmentCostScalarWhereWithAggregatesInput[]
+    NOT?: ShipmentCostScalarWhereWithAggregatesInput | ShipmentCostScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ShipmentCost"> | string
+    shipmentId?: StringWithAggregatesFilter<"ShipmentCost"> | string
+    originHandling?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    oceanFreight?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    bafSurcharge?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    thcOrigin?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    thcDestination?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    transshipmentFee?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    customsClearance?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    customsDuty?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    vat?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    destinationHandling?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    cargoInsurance?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    lastMileDelivery?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    agencyFee?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    platformFee?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    totalCost?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    currency?: StringWithAggregatesFilter<"ShipmentCost"> | string
+    exchangeRate?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    convertedTotal?: FloatWithAggregatesFilter<"ShipmentCost"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ShipmentCost"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ShipmentCost"> | Date | string
   }
 
   export type StatusLogWhereInput = {
@@ -14283,6 +22814,7 @@ export namespace Prisma {
     updateBy?: StringNullableFilter<"StatusLog"> | string | null
     createdAt?: DateTimeFilter<"StatusLog"> | Date | string
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+    updatedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type StatusLogOrderByWithRelationInput = {
@@ -14294,6 +22826,7 @@ export namespace Prisma {
     updateBy?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     shipment?: ShipmentOrderByWithRelationInput
+    updatedByUser?: UserOrderByWithRelationInput
   }
 
   export type StatusLogWhereUniqueInput = Prisma.AtLeast<{
@@ -14308,6 +22841,7 @@ export namespace Prisma {
     updateBy?: StringNullableFilter<"StatusLog"> | string | null
     createdAt?: DateTimeFilter<"StatusLog"> | Date | string
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
+    updatedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type StatusLogOrderByWithAggregationInput = {
@@ -14336,6 +22870,89 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"StatusLog"> | Date | string
   }
 
+  export type AdminAuditLogCreateInput = {
+    id?: string
+    action: $Enums.AuditAction
+    targetType: string
+    targetId: string
+    details: string
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    admin: UserCreateNestedOneWithoutAdminAuditLogsInput
+  }
+
+  export type AdminAuditLogUncheckedCreateInput = {
+    id?: string
+    adminId: string
+    action: $Enums.AuditAction
+    targetType: string
+    targetId: string
+    details: string
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AdminAuditLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    targetType?: StringFieldUpdateOperationsInput | string
+    targetId?: StringFieldUpdateOperationsInput | string
+    details?: StringFieldUpdateOperationsInput | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admin?: UserUpdateOneRequiredWithoutAdminAuditLogsNestedInput
+  }
+
+  export type AdminAuditLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    targetType?: StringFieldUpdateOperationsInput | string
+    targetId?: StringFieldUpdateOperationsInput | string
+    details?: StringFieldUpdateOperationsInput | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminAuditLogCreateManyInput = {
+    id?: string
+    adminId: string
+    action: $Enums.AuditAction
+    targetType: string
+    targetId: string
+    details: string
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AdminAuditLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    targetType?: StringFieldUpdateOperationsInput | string
+    targetId?: StringFieldUpdateOperationsInput | string
+    details?: StringFieldUpdateOperationsInput | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminAuditLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    targetType?: StringFieldUpdateOperationsInput | string
+    targetId?: StringFieldUpdateOperationsInput | string
+    details?: StringFieldUpdateOperationsInput | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateInput = {
     id: string
     email: string
@@ -14345,6 +22962,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -14356,13 +22975,26 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
-    shipments?: ShipmentCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -14374,6 +23006,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -14385,13 +23019,26 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserUpdateInput = {
@@ -14403,6 +23050,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14414,13 +23063,26 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -14432,6 +23094,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14443,13 +23107,26 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -14461,6 +23138,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -14472,6 +23151,9 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -14485,6 +23167,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14496,6 +23180,9 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14509,6 +23196,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14520,6 +23209,9 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14979,6 +23671,371 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AgentCredentialCreateInput = {
+    id?: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    agent: UserCreateNestedOneWithoutAgentCredentialsInput
+    verifiedBy?: UserCreateNestedOneWithoutVerifiedCredentialsInput
+  }
+
+  export type AgentCredentialUncheckedCreateInput = {
+    id?: string
+    agentId: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedById?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AgentCredentialUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    agent?: UserUpdateOneRequiredWithoutAgentCredentialsNestedInput
+    verifiedBy?: UserUpdateOneWithoutVerifiedCredentialsNestedInput
+  }
+
+  export type AgentCredentialUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCredentialCreateManyInput = {
+    id?: string
+    agentId: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedById?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AgentCredentialUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCredentialUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LocationCreateInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutLocationsCreatedInput
+    updatedBy?: UserCreateNestedOneWithoutLocationsUpdatedInput
+    deletedBy?: UserCreateNestedOneWithoutLocationsDeletedInput
+    originCorridors?: AgentCorridorCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUncheckedCreateInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutLocationsCreatedNestedInput
+    updatedBy?: UserUpdateOneWithoutLocationsUpdatedNestedInput
+    deletedBy?: UserUpdateOneWithoutLocationsDeletedNestedInput
+    originCorridors?: AgentCorridorUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originCorridors?: AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationCreateManyInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LocationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LocationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorCreateInput = {
+    id?: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    agent: UserCreateNestedOneWithoutAgentCorridorsInput
+    originPort: LocationCreateNestedOneWithoutOriginCorridorsInput
+    destinationPort: LocationCreateNestedOneWithoutDestinationCorridorsInput
+  }
+
+  export type AgentCorridorUncheckedCreateInput = {
+    id?: string
+    agentId: string
+    originPortId: string
+    destinationPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type AgentCorridorUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    agent?: UserUpdateOneRequiredWithoutAgentCorridorsNestedInput
+    originPort?: LocationUpdateOneRequiredWithoutOriginCorridorsNestedInput
+    destinationPort?: LocationUpdateOneRequiredWithoutDestinationCorridorsNestedInput
+  }
+
+  export type AgentCorridorUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    originPortId?: StringFieldUpdateOperationsInput | string
+    destinationPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorCreateManyInput = {
+    id?: string
+    agentId: string
+    originPortId: string
+    destinationPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type AgentCorridorUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    originPortId?: StringFieldUpdateOperationsInput | string
+    destinationPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PhoneVerificationCreateInput = {
     id?: string
     phone: string
@@ -15058,16 +24115,28 @@ export namespace Prisma {
   export type ShipmentCreateInput = {
     id?: string
     trackingId?: string
+    assignedAt?: Date | string | null
     origin: string
     destination: string
     weight: number
+    declaredCargoValue?: number
     description?: string | null
     status?: $Enums.ShipmentStatus
     estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updateBy?: string | null
-    user: UserCreateNestedOneWithoutShipmentsInput
+    user: UserCreateNestedOneWithoutCustomerShipmentsInput
+    agent?: UserCreateNestedOneWithoutAgentShipmentsInput
+    assignedBy?: UserCreateNestedOneWithoutAssignedShipmentsInput
+    originLocation?: LocationCreateNestedOneWithoutOriginShipmentsInput
+    destinationLocation?: LocationCreateNestedOneWithoutDestinationShipmentsInput
+    cost?: ShipmentCostCreateNestedOneWithoutShipmentInput
     statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
   }
 
@@ -15075,31 +24144,55 @@ export namespace Prisma {
     id?: string
     trackingId?: string
     userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
     origin: string
     destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
     weight: number
+    declaredCargoValue?: number
     description?: string | null
     status?: $Enums.ShipmentStatus
     estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updateBy?: string | null
+    cost?: ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput
     statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
   }
 
   export type ShipmentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateBy?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutShipmentsNestedInput
+    user?: UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput
+    agent?: UserUpdateOneWithoutAgentShipmentsNestedInput
+    assignedBy?: UserUpdateOneWithoutAssignedShipmentsNestedInput
+    originLocation?: LocationUpdateOneWithoutOriginShipmentsNestedInput
+    destinationLocation?: LocationUpdateOneWithoutDestinationShipmentsNestedInput
+    cost?: ShipmentCostUpdateOneWithoutShipmentNestedInput
     statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
   }
 
@@ -15107,15 +24200,27 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     trackingId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
     weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cost?: ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput
     statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
@@ -15123,12 +24228,23 @@ export namespace Prisma {
     id?: string
     trackingId?: string
     userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
     origin: string
     destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
     weight: number
+    declaredCargoValue?: number
     description?: string | null
     status?: $Enums.ShipmentStatus
     estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updateBy?: string | null
@@ -15137,12 +24253,19 @@ export namespace Prisma {
   export type ShipmentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateBy?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15152,15 +24275,200 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     trackingId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
     weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ShipmentCostCreateInput = {
+    id?: string
+    originHandling: number
+    oceanFreight: number
+    bafSurcharge: number
+    thcOrigin: number
+    thcDestination: number
+    transshipmentFee: number
+    customsClearance: number
+    customsDuty: number
+    vat: number
+    destinationHandling: number
+    cargoInsurance: number
+    lastMileDelivery: number
+    agencyFee: number
+    platformFee: number
+    totalCost: number
+    currency?: string
+    exchangeRate?: number
+    convertedTotal: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipment: ShipmentCreateNestedOneWithoutCostInput
+  }
+
+  export type ShipmentCostUncheckedCreateInput = {
+    id?: string
+    shipmentId: string
+    originHandling: number
+    oceanFreight: number
+    bafSurcharge: number
+    thcOrigin: number
+    thcDestination: number
+    transshipmentFee: number
+    customsClearance: number
+    customsDuty: number
+    vat: number
+    destinationHandling: number
+    cargoInsurance: number
+    lastMileDelivery: number
+    agencyFee: number
+    platformFee: number
+    totalCost: number
+    currency?: string
+    exchangeRate?: number
+    convertedTotal: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShipmentCostUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originHandling?: FloatFieldUpdateOperationsInput | number
+    oceanFreight?: FloatFieldUpdateOperationsInput | number
+    bafSurcharge?: FloatFieldUpdateOperationsInput | number
+    thcOrigin?: FloatFieldUpdateOperationsInput | number
+    thcDestination?: FloatFieldUpdateOperationsInput | number
+    transshipmentFee?: FloatFieldUpdateOperationsInput | number
+    customsClearance?: FloatFieldUpdateOperationsInput | number
+    customsDuty?: FloatFieldUpdateOperationsInput | number
+    vat?: FloatFieldUpdateOperationsInput | number
+    destinationHandling?: FloatFieldUpdateOperationsInput | number
+    cargoInsurance?: FloatFieldUpdateOperationsInput | number
+    lastMileDelivery?: FloatFieldUpdateOperationsInput | number
+    agencyFee?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    totalCost?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    exchangeRate?: FloatFieldUpdateOperationsInput | number
+    convertedTotal?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipment?: ShipmentUpdateOneRequiredWithoutCostNestedInput
+  }
+
+  export type ShipmentCostUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    originHandling?: FloatFieldUpdateOperationsInput | number
+    oceanFreight?: FloatFieldUpdateOperationsInput | number
+    bafSurcharge?: FloatFieldUpdateOperationsInput | number
+    thcOrigin?: FloatFieldUpdateOperationsInput | number
+    thcDestination?: FloatFieldUpdateOperationsInput | number
+    transshipmentFee?: FloatFieldUpdateOperationsInput | number
+    customsClearance?: FloatFieldUpdateOperationsInput | number
+    customsDuty?: FloatFieldUpdateOperationsInput | number
+    vat?: FloatFieldUpdateOperationsInput | number
+    destinationHandling?: FloatFieldUpdateOperationsInput | number
+    cargoInsurance?: FloatFieldUpdateOperationsInput | number
+    lastMileDelivery?: FloatFieldUpdateOperationsInput | number
+    agencyFee?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    totalCost?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    exchangeRate?: FloatFieldUpdateOperationsInput | number
+    convertedTotal?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShipmentCostCreateManyInput = {
+    id?: string
+    shipmentId: string
+    originHandling: number
+    oceanFreight: number
+    bafSurcharge: number
+    thcOrigin: number
+    thcDestination: number
+    transshipmentFee: number
+    customsClearance: number
+    customsDuty: number
+    vat: number
+    destinationHandling: number
+    cargoInsurance: number
+    lastMileDelivery: number
+    agencyFee: number
+    platformFee: number
+    totalCost: number
+    currency?: string
+    exchangeRate?: number
+    convertedTotal: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShipmentCostUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originHandling?: FloatFieldUpdateOperationsInput | number
+    oceanFreight?: FloatFieldUpdateOperationsInput | number
+    bafSurcharge?: FloatFieldUpdateOperationsInput | number
+    thcOrigin?: FloatFieldUpdateOperationsInput | number
+    thcDestination?: FloatFieldUpdateOperationsInput | number
+    transshipmentFee?: FloatFieldUpdateOperationsInput | number
+    customsClearance?: FloatFieldUpdateOperationsInput | number
+    customsDuty?: FloatFieldUpdateOperationsInput | number
+    vat?: FloatFieldUpdateOperationsInput | number
+    destinationHandling?: FloatFieldUpdateOperationsInput | number
+    cargoInsurance?: FloatFieldUpdateOperationsInput | number
+    lastMileDelivery?: FloatFieldUpdateOperationsInput | number
+    agencyFee?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    totalCost?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    exchangeRate?: FloatFieldUpdateOperationsInput | number
+    convertedTotal?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShipmentCostUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    originHandling?: FloatFieldUpdateOperationsInput | number
+    oceanFreight?: FloatFieldUpdateOperationsInput | number
+    bafSurcharge?: FloatFieldUpdateOperationsInput | number
+    thcOrigin?: FloatFieldUpdateOperationsInput | number
+    thcDestination?: FloatFieldUpdateOperationsInput | number
+    transshipmentFee?: FloatFieldUpdateOperationsInput | number
+    customsClearance?: FloatFieldUpdateOperationsInput | number
+    customsDuty?: FloatFieldUpdateOperationsInput | number
+    vat?: FloatFieldUpdateOperationsInput | number
+    destinationHandling?: FloatFieldUpdateOperationsInput | number
+    cargoInsurance?: FloatFieldUpdateOperationsInput | number
+    lastMileDelivery?: FloatFieldUpdateOperationsInput | number
+    agencyFee?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    totalCost?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    exchangeRate?: FloatFieldUpdateOperationsInput | number
+    convertedTotal?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StatusLogCreateInput = {
@@ -15168,9 +24476,9 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
-    updateBy?: string | null
     createdAt?: Date | string
     shipment: ShipmentCreateNestedOneWithoutStatusLogsInput
+    updatedByUser?: UserCreateNestedOneWithoutStatusLogsInput
   }
 
   export type StatusLogUncheckedCreateInput = {
@@ -15188,9 +24496,9 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
-    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipment?: ShipmentUpdateOneRequiredWithoutStatusLogsNestedInput
+    updatedByUser?: UserUpdateOneWithoutStatusLogsNestedInput
   }
 
   export type StatusLogUncheckedUpdateInput = {
@@ -15218,7 +24526,6 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
-    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15247,16 +24554,11 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type EnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type EnumAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
@@ -15272,6 +24574,135 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type AdminAuditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    action?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    details?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AdminAuditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    action?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    details?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AdminAuditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    action?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    details?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type EnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.AuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumAuditActionFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -15296,21 +24727,23 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  export type EnumAgentVerificationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AgentVerificationStatus | EnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAgentVerificationStatusFilter<$PrismaModel> | $Enums.AgentVerificationStatus
   }
 
   export type PhoneVerificationListRelationFilter = {
     every?: PhoneVerificationWhereInput
     some?: PhoneVerificationWhereInput
     none?: PhoneVerificationWhereInput
+  }
+
+  export type ShipmentListRelationFilter = {
+    every?: ShipmentWhereInput
+    some?: ShipmentWhereInput
+    none?: ShipmentWhereInput
   }
 
   export type SessionListRelationFilter = {
@@ -15325,24 +24758,47 @@ export namespace Prisma {
     none?: AccountWhereInput
   }
 
-  export type ShipmentListRelationFilter = {
-    every?: ShipmentWhereInput
-    some?: ShipmentWhereInput
-    none?: ShipmentWhereInput
-  }
-
   export type ChatSessionListRelationFilter = {
     every?: ChatSessionWhereInput
     some?: ChatSessionWhereInput
     none?: ChatSessionWhereInput
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
+  export type StatusLogListRelationFilter = {
+    every?: StatusLogWhereInput
+    some?: StatusLogWhereInput
+    none?: StatusLogWhereInput
+  }
+
+  export type AgentCorridorListRelationFilter = {
+    every?: AgentCorridorWhereInput
+    some?: AgentCorridorWhereInput
+    none?: AgentCorridorWhereInput
+  }
+
+  export type AgentCredentialListRelationFilter = {
+    every?: AgentCredentialWhereInput
+    some?: AgentCredentialWhereInput
+    none?: AgentCredentialWhereInput
+  }
+
+  export type AdminAuditLogListRelationFilter = {
+    every?: AdminAuditLogWhereInput
+    some?: AdminAuditLogWhereInput
+    none?: AdminAuditLogWhereInput
+  }
+
+  export type LocationListRelationFilter = {
+    every?: LocationWhereInput
+    some?: LocationWhereInput
+    none?: LocationWhereInput
   }
 
   export type PhoneVerificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ShipmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -15354,11 +24810,27 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ShipmentOrderByRelationAggregateInput = {
+  export type ChatSessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type ChatSessionOrderByRelationAggregateInput = {
+  export type StatusLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AgentCorridorOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AgentCredentialOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AdminAuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LocationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -15371,6 +24843,8 @@ export namespace Prisma {
     image?: SortOrder
     address?: SortOrder
     phone?: SortOrder
+    assignedArea?: SortOrder
+    isAvailable?: SortOrder
     isBlocked?: SortOrder
     isDeleted?: SortOrder
     blockedReason?: SortOrder
@@ -15382,6 +24856,9 @@ export namespace Prisma {
     passwordChangedAt?: SortOrder
     failedLoginAttempts?: SortOrder
     lockedUntil?: SortOrder
+    agentVerificationStatus?: SortOrder
+    verifiedAt?: SortOrder
+    verifiedById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15399,6 +24876,8 @@ export namespace Prisma {
     image?: SortOrder
     address?: SortOrder
     phone?: SortOrder
+    assignedArea?: SortOrder
+    isAvailable?: SortOrder
     isBlocked?: SortOrder
     isDeleted?: SortOrder
     blockedReason?: SortOrder
@@ -15410,6 +24889,9 @@ export namespace Prisma {
     passwordChangedAt?: SortOrder
     failedLoginAttempts?: SortOrder
     lockedUntil?: SortOrder
+    agentVerificationStatus?: SortOrder
+    verifiedAt?: SortOrder
+    verifiedById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15423,6 +24905,8 @@ export namespace Prisma {
     image?: SortOrder
     address?: SortOrder
     phone?: SortOrder
+    assignedArea?: SortOrder
+    isAvailable?: SortOrder
     isBlocked?: SortOrder
     isDeleted?: SortOrder
     blockedReason?: SortOrder
@@ -15434,30 +24918,15 @@ export namespace Prisma {
     passwordChangedAt?: SortOrder
     failedLoginAttempts?: SortOrder
     lockedUntil?: SortOrder
+    agentVerificationStatus?: SortOrder
+    verifiedAt?: SortOrder
+    verifiedById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
     failedLoginAttempts?: SortOrder
-  }
-
-  export type StringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -15476,24 +24945,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -15526,23 +24977,14 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+  export type EnumAgentVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AgentVerificationStatus | EnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAgentVerificationStatusWithAggregatesFilter<$PrismaModel> | $Enums.AgentVerificationStatus
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
+    _min?: NestedEnumAgentVerificationStatusFilter<$PrismaModel>
+    _max?: NestedEnumAgentVerificationStatusFilter<$PrismaModel>
   }
 
   export type SessionCountOrderByAggregateInput = {
@@ -15755,6 +25197,268 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumCredentialTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialType | EnumCredentialTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialTypeFilter<$PrismaModel> | $Enums.CredentialType
+  }
+
+  export type EnumCredentialStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialStatus | EnumCredentialStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialStatusFilter<$PrismaModel> | $Enums.CredentialStatus
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type AgentCredentialAgentIdTypeCompoundUniqueInput = {
+    agentId: string
+    type: $Enums.CredentialType
+  }
+
+  export type AgentCredentialCountOrderByAggregateInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    type?: SortOrder
+    documentNumber?: SortOrder
+    cloudinaryPublicId?: SortOrder
+    documentUrl?: SortOrder
+    issuingAuthority?: SortOrder
+    issueDate?: SortOrder
+    expiryDate?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    verifiedById?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AgentCredentialMaxOrderByAggregateInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    type?: SortOrder
+    documentNumber?: SortOrder
+    cloudinaryPublicId?: SortOrder
+    documentUrl?: SortOrder
+    issuingAuthority?: SortOrder
+    issueDate?: SortOrder
+    expiryDate?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    verifiedById?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AgentCredentialMinOrderByAggregateInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    type?: SortOrder
+    documentNumber?: SortOrder
+    cloudinaryPublicId?: SortOrder
+    documentUrl?: SortOrder
+    issuingAuthority?: SortOrder
+    issueDate?: SortOrder
+    expiryDate?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    verifiedById?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumCredentialTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialType | EnumCredentialTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialTypeWithAggregatesFilter<$PrismaModel> | $Enums.CredentialType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCredentialTypeFilter<$PrismaModel>
+    _max?: NestedEnumCredentialTypeFilter<$PrismaModel>
+  }
+
+  export type EnumCredentialStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialStatus | EnumCredentialStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialStatusWithAggregatesFilter<$PrismaModel> | $Enums.CredentialStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCredentialStatusFilter<$PrismaModel>
+    _max?: NestedEnumCredentialStatusFilter<$PrismaModel>
+  }
+
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type EnumLocationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLocationTypeFilter<$PrismaModel> | $Enums.LocationType
+  }
+
+  export type LocationCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    country?: SortOrder
+    countryCode?: SortOrder
+    city?: SortOrder
+    region?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    type?: SortOrder
+    isBlocked?: SortOrder
+    blockedReason?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrder
+    createdById?: SortOrder
+    updatedById?: SortOrder
+    deletedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LocationAvgOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type LocationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    country?: SortOrder
+    countryCode?: SortOrder
+    city?: SortOrder
+    region?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    type?: SortOrder
+    isBlocked?: SortOrder
+    blockedReason?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrder
+    createdById?: SortOrder
+    updatedById?: SortOrder
+    deletedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LocationMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    country?: SortOrder
+    countryCode?: SortOrder
+    city?: SortOrder
+    region?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    type?: SortOrder
+    isBlocked?: SortOrder
+    blockedReason?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrder
+    createdById?: SortOrder
+    updatedById?: SortOrder
+    deletedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LocationSumOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type EnumLocationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLocationTypeWithAggregatesFilter<$PrismaModel> | $Enums.LocationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumLocationTypeFilter<$PrismaModel>
+    _max?: NestedEnumLocationTypeFilter<$PrismaModel>
+  }
+
+  export type LocationScalarRelationFilter = {
+    is?: LocationWhereInput
+    isNot?: LocationWhereInput
+  }
+
+  export type AgentCorridorAgentIdOriginPortIdDestinationPortIdCompoundUniqueInput = {
+    agentId: string
+    originPortId: string
+    destinationPortId: string
+  }
+
+  export type AgentCorridorCountOrderByAggregateInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    originPortId?: SortOrder
+    destinationPortId?: SortOrder
+    originText?: SortOrder
+    destinationText?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AgentCorridorMaxOrderByAggregateInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    originPortId?: SortOrder
+    destinationPortId?: SortOrder
+    originText?: SortOrder
+    destinationText?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AgentCorridorMinOrderByAggregateInput = {
+    id?: SortOrder
+    agentId?: SortOrder
+    originPortId?: SortOrder
+    destinationPortId?: SortOrder
+    originText?: SortOrder
+    destinationText?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type PhoneVerificationCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -15796,17 +25500,6 @@ export namespace Prisma {
     attempts?: SortOrder
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type EnumShipmentStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ShipmentStatus | EnumShipmentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
@@ -15814,26 +25507,44 @@ export namespace Prisma {
     not?: NestedEnumShipmentStatusFilter<$PrismaModel> | $Enums.ShipmentStatus
   }
 
-  export type StatusLogListRelationFilter = {
-    every?: StatusLogWhereInput
-    some?: StatusLogWhereInput
-    none?: StatusLogWhereInput
+  export type EnumPaymentStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
   }
 
-  export type StatusLogOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type LocationNullableScalarRelationFilter = {
+    is?: LocationWhereInput | null
+    isNot?: LocationWhereInput | null
+  }
+
+  export type ShipmentCostNullableScalarRelationFilter = {
+    is?: ShipmentCostWhereInput | null
+    isNot?: ShipmentCostWhereInput | null
   }
 
   export type ShipmentCountOrderByAggregateInput = {
     id?: SortOrder
     trackingId?: SortOrder
     userId?: SortOrder
+    agentId?: SortOrder
+    assignedById?: SortOrder
+    assignedAt?: SortOrder
     origin?: SortOrder
     destination?: SortOrder
+    originLocationId?: SortOrder
+    destinationLocationId?: SortOrder
     weight?: SortOrder
+    declaredCargoValue?: SortOrder
     description?: SortOrder
     status?: SortOrder
     estimatedDate?: SortOrder
+    acceptedAt?: SortOrder
+    paymentStatus?: SortOrder
+    stripePaymentIntentId?: SortOrder
+    stripeRefundId?: SortOrder
+    paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updateBy?: SortOrder
@@ -15841,18 +25552,30 @@ export namespace Prisma {
 
   export type ShipmentAvgOrderByAggregateInput = {
     weight?: SortOrder
+    declaredCargoValue?: SortOrder
   }
 
   export type ShipmentMaxOrderByAggregateInput = {
     id?: SortOrder
     trackingId?: SortOrder
     userId?: SortOrder
+    agentId?: SortOrder
+    assignedById?: SortOrder
+    assignedAt?: SortOrder
     origin?: SortOrder
     destination?: SortOrder
+    originLocationId?: SortOrder
+    destinationLocationId?: SortOrder
     weight?: SortOrder
+    declaredCargoValue?: SortOrder
     description?: SortOrder
     status?: SortOrder
     estimatedDate?: SortOrder
+    acceptedAt?: SortOrder
+    paymentStatus?: SortOrder
+    stripePaymentIntentId?: SortOrder
+    stripeRefundId?: SortOrder
+    paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updateBy?: SortOrder
@@ -15862,12 +25585,23 @@ export namespace Prisma {
     id?: SortOrder
     trackingId?: SortOrder
     userId?: SortOrder
+    agentId?: SortOrder
+    assignedById?: SortOrder
+    assignedAt?: SortOrder
     origin?: SortOrder
     destination?: SortOrder
+    originLocationId?: SortOrder
+    destinationLocationId?: SortOrder
     weight?: SortOrder
+    declaredCargoValue?: SortOrder
     description?: SortOrder
     status?: SortOrder
     estimatedDate?: SortOrder
+    acceptedAt?: SortOrder
+    paymentStatus?: SortOrder
+    stripePaymentIntentId?: SortOrder
+    stripeRefundId?: SortOrder
+    paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     updateBy?: SortOrder
@@ -15875,22 +25609,7 @@ export namespace Prisma {
 
   export type ShipmentSumOrderByAggregateInput = {
     weight?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
+    declaredCargoValue?: SortOrder
   }
 
   export type EnumShipmentStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -15903,9 +25622,134 @@ export namespace Prisma {
     _max?: NestedEnumShipmentStatusFilter<$PrismaModel>
   }
 
+  export type EnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
   export type ShipmentScalarRelationFilter = {
     is?: ShipmentWhereInput
     isNot?: ShipmentWhereInput
+  }
+
+  export type ShipmentCostCountOrderByAggregateInput = {
+    id?: SortOrder
+    shipmentId?: SortOrder
+    originHandling?: SortOrder
+    oceanFreight?: SortOrder
+    bafSurcharge?: SortOrder
+    thcOrigin?: SortOrder
+    thcDestination?: SortOrder
+    transshipmentFee?: SortOrder
+    customsClearance?: SortOrder
+    customsDuty?: SortOrder
+    vat?: SortOrder
+    destinationHandling?: SortOrder
+    cargoInsurance?: SortOrder
+    lastMileDelivery?: SortOrder
+    agencyFee?: SortOrder
+    platformFee?: SortOrder
+    totalCost?: SortOrder
+    currency?: SortOrder
+    exchangeRate?: SortOrder
+    convertedTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ShipmentCostAvgOrderByAggregateInput = {
+    originHandling?: SortOrder
+    oceanFreight?: SortOrder
+    bafSurcharge?: SortOrder
+    thcOrigin?: SortOrder
+    thcDestination?: SortOrder
+    transshipmentFee?: SortOrder
+    customsClearance?: SortOrder
+    customsDuty?: SortOrder
+    vat?: SortOrder
+    destinationHandling?: SortOrder
+    cargoInsurance?: SortOrder
+    lastMileDelivery?: SortOrder
+    agencyFee?: SortOrder
+    platformFee?: SortOrder
+    totalCost?: SortOrder
+    exchangeRate?: SortOrder
+    convertedTotal?: SortOrder
+  }
+
+  export type ShipmentCostMaxOrderByAggregateInput = {
+    id?: SortOrder
+    shipmentId?: SortOrder
+    originHandling?: SortOrder
+    oceanFreight?: SortOrder
+    bafSurcharge?: SortOrder
+    thcOrigin?: SortOrder
+    thcDestination?: SortOrder
+    transshipmentFee?: SortOrder
+    customsClearance?: SortOrder
+    customsDuty?: SortOrder
+    vat?: SortOrder
+    destinationHandling?: SortOrder
+    cargoInsurance?: SortOrder
+    lastMileDelivery?: SortOrder
+    agencyFee?: SortOrder
+    platformFee?: SortOrder
+    totalCost?: SortOrder
+    currency?: SortOrder
+    exchangeRate?: SortOrder
+    convertedTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ShipmentCostMinOrderByAggregateInput = {
+    id?: SortOrder
+    shipmentId?: SortOrder
+    originHandling?: SortOrder
+    oceanFreight?: SortOrder
+    bafSurcharge?: SortOrder
+    thcOrigin?: SortOrder
+    thcDestination?: SortOrder
+    transshipmentFee?: SortOrder
+    customsClearance?: SortOrder
+    customsDuty?: SortOrder
+    vat?: SortOrder
+    destinationHandling?: SortOrder
+    cargoInsurance?: SortOrder
+    lastMileDelivery?: SortOrder
+    agencyFee?: SortOrder
+    platformFee?: SortOrder
+    totalCost?: SortOrder
+    currency?: SortOrder
+    exchangeRate?: SortOrder
+    convertedTotal?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ShipmentCostSumOrderByAggregateInput = {
+    originHandling?: SortOrder
+    oceanFreight?: SortOrder
+    bafSurcharge?: SortOrder
+    thcOrigin?: SortOrder
+    thcDestination?: SortOrder
+    transshipmentFee?: SortOrder
+    customsClearance?: SortOrder
+    customsDuty?: SortOrder
+    vat?: SortOrder
+    destinationHandling?: SortOrder
+    cargoInsurance?: SortOrder
+    lastMileDelivery?: SortOrder
+    agencyFee?: SortOrder
+    platformFee?: SortOrder
+    totalCost?: SortOrder
+    exchangeRate?: SortOrder
+    convertedTotal?: SortOrder
   }
 
   export type StatusLogCountOrderByAggregateInput = {
@@ -15938,11 +25782,62 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type UserCreateNestedOneWithoutAdminAuditLogsInput = {
+    create?: XOR<UserCreateWithoutAdminAuditLogsInput, UserUncheckedCreateWithoutAdminAuditLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAdminAuditLogsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
+  export type EnumAuditActionFieldUpdateOperationsInput = {
+    set?: $Enums.AuditAction
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type UserUpdateOneRequiredWithoutAdminAuditLogsNestedInput = {
+    create?: XOR<UserCreateWithoutAdminAuditLogsInput, UserUncheckedCreateWithoutAdminAuditLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAdminAuditLogsInput
+    upsert?: UserUpsertWithoutAdminAuditLogsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAdminAuditLogsInput, UserUpdateWithoutAdminAuditLogsInput>, UserUncheckedUpdateWithoutAdminAuditLogsInput>
+  }
+
   export type PhoneVerificationCreateNestedManyWithoutUserInput = {
     create?: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput> | PhoneVerificationCreateWithoutUserInput[] | PhoneVerificationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: PhoneVerificationCreateOrConnectWithoutUserInput | PhoneVerificationCreateOrConnectWithoutUserInput[]
     createMany?: PhoneVerificationCreateManyUserInputEnvelope
     connect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+  }
+
+  export type ShipmentCreateNestedManyWithoutAgentInput = {
+    create?: XOR<ShipmentCreateWithoutAgentInput, ShipmentUncheckedCreateWithoutAgentInput> | ShipmentCreateWithoutAgentInput[] | ShipmentUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAgentInput | ShipmentCreateOrConnectWithoutAgentInput[]
+    createMany?: ShipmentCreateManyAgentInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type ShipmentCreateNestedManyWithoutUserInput = {
+    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
+    createMany?: ShipmentCreateManyUserInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type ShipmentCreateNestedManyWithoutAssignedByInput = {
+    create?: XOR<ShipmentCreateWithoutAssignedByInput, ShipmentUncheckedCreateWithoutAssignedByInput> | ShipmentCreateWithoutAssignedByInput[] | ShipmentUncheckedCreateWithoutAssignedByInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAssignedByInput | ShipmentCreateOrConnectWithoutAssignedByInput[]
+    createMany?: ShipmentCreateManyAssignedByInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
   }
 
   export type SessionCreateNestedManyWithoutUserInput = {
@@ -15959,13 +25854,6 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
-  export type ShipmentCreateNestedManyWithoutUserInput = {
-    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
-    createMany?: ShipmentCreateManyUserInputEnvelope
-    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-  }
-
   export type ChatSessionCreateNestedManyWithoutUserInput = {
     create?: XOR<ChatSessionCreateWithoutUserInput, ChatSessionUncheckedCreateWithoutUserInput> | ChatSessionCreateWithoutUserInput[] | ChatSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
@@ -15973,11 +25861,88 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
+  export type StatusLogCreateNestedManyWithoutUpdatedByUserInput = {
+    create?: XOR<StatusLogCreateWithoutUpdatedByUserInput, StatusLogUncheckedCreateWithoutUpdatedByUserInput> | StatusLogCreateWithoutUpdatedByUserInput[] | StatusLogUncheckedCreateWithoutUpdatedByUserInput[]
+    connectOrCreate?: StatusLogCreateOrConnectWithoutUpdatedByUserInput | StatusLogCreateOrConnectWithoutUpdatedByUserInput[]
+    createMany?: StatusLogCreateManyUpdatedByUserInputEnvelope
+    connect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+  }
+
+  export type AgentCorridorCreateNestedManyWithoutAgentInput = {
+    create?: XOR<AgentCorridorCreateWithoutAgentInput, AgentCorridorUncheckedCreateWithoutAgentInput> | AgentCorridorCreateWithoutAgentInput[] | AgentCorridorUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutAgentInput | AgentCorridorCreateOrConnectWithoutAgentInput[]
+    createMany?: AgentCorridorCreateManyAgentInputEnvelope
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+  }
+
+  export type AgentCredentialCreateNestedManyWithoutAgentInput = {
+    create?: XOR<AgentCredentialCreateWithoutAgentInput, AgentCredentialUncheckedCreateWithoutAgentInput> | AgentCredentialCreateWithoutAgentInput[] | AgentCredentialUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutAgentInput | AgentCredentialCreateOrConnectWithoutAgentInput[]
+    createMany?: AgentCredentialCreateManyAgentInputEnvelope
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+  }
+
+  export type AgentCredentialCreateNestedManyWithoutVerifiedByInput = {
+    create?: XOR<AgentCredentialCreateWithoutVerifiedByInput, AgentCredentialUncheckedCreateWithoutVerifiedByInput> | AgentCredentialCreateWithoutVerifiedByInput[] | AgentCredentialUncheckedCreateWithoutVerifiedByInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutVerifiedByInput | AgentCredentialCreateOrConnectWithoutVerifiedByInput[]
+    createMany?: AgentCredentialCreateManyVerifiedByInputEnvelope
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+  }
+
+  export type AdminAuditLogCreateNestedManyWithoutAdminInput = {
+    create?: XOR<AdminAuditLogCreateWithoutAdminInput, AdminAuditLogUncheckedCreateWithoutAdminInput> | AdminAuditLogCreateWithoutAdminInput[] | AdminAuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AdminAuditLogCreateOrConnectWithoutAdminInput | AdminAuditLogCreateOrConnectWithoutAdminInput[]
+    createMany?: AdminAuditLogCreateManyAdminInputEnvelope
+    connect?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+  }
+
+  export type LocationCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<LocationCreateWithoutCreatedByInput, LocationUncheckedCreateWithoutCreatedByInput> | LocationCreateWithoutCreatedByInput[] | LocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutCreatedByInput | LocationCreateOrConnectWithoutCreatedByInput[]
+    createMany?: LocationCreateManyCreatedByInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+  }
+
+  export type LocationCreateNestedManyWithoutUpdatedByInput = {
+    create?: XOR<LocationCreateWithoutUpdatedByInput, LocationUncheckedCreateWithoutUpdatedByInput> | LocationCreateWithoutUpdatedByInput[] | LocationUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutUpdatedByInput | LocationCreateOrConnectWithoutUpdatedByInput[]
+    createMany?: LocationCreateManyUpdatedByInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+  }
+
+  export type LocationCreateNestedManyWithoutDeletedByInput = {
+    create?: XOR<LocationCreateWithoutDeletedByInput, LocationUncheckedCreateWithoutDeletedByInput> | LocationCreateWithoutDeletedByInput[] | LocationUncheckedCreateWithoutDeletedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutDeletedByInput | LocationCreateOrConnectWithoutDeletedByInput[]
+    createMany?: LocationCreateManyDeletedByInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+  }
+
   export type PhoneVerificationUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput> | PhoneVerificationCreateWithoutUserInput[] | PhoneVerificationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: PhoneVerificationCreateOrConnectWithoutUserInput | PhoneVerificationCreateOrConnectWithoutUserInput[]
     createMany?: PhoneVerificationCreateManyUserInputEnvelope
     connect?: PhoneVerificationWhereUniqueInput | PhoneVerificationWhereUniqueInput[]
+  }
+
+  export type ShipmentUncheckedCreateNestedManyWithoutAgentInput = {
+    create?: XOR<ShipmentCreateWithoutAgentInput, ShipmentUncheckedCreateWithoutAgentInput> | ShipmentCreateWithoutAgentInput[] | ShipmentUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAgentInput | ShipmentCreateOrConnectWithoutAgentInput[]
+    createMany?: ShipmentCreateManyAgentInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type ShipmentUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
+    createMany?: ShipmentCreateManyUserInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type ShipmentUncheckedCreateNestedManyWithoutAssignedByInput = {
+    create?: XOR<ShipmentCreateWithoutAssignedByInput, ShipmentUncheckedCreateWithoutAssignedByInput> | ShipmentCreateWithoutAssignedByInput[] | ShipmentUncheckedCreateWithoutAssignedByInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAssignedByInput | ShipmentCreateOrConnectWithoutAssignedByInput[]
+    createMany?: ShipmentCreateManyAssignedByInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
   }
 
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -15994,13 +25959,6 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
-  export type ShipmentUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
-    createMany?: ShipmentCreateManyUserInputEnvelope
-    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-  }
-
   export type ChatSessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<ChatSessionCreateWithoutUserInput, ChatSessionUncheckedCreateWithoutUserInput> | ChatSessionCreateWithoutUserInput[] | ChatSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
@@ -16008,8 +25966,60 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
+  export type StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput = {
+    create?: XOR<StatusLogCreateWithoutUpdatedByUserInput, StatusLogUncheckedCreateWithoutUpdatedByUserInput> | StatusLogCreateWithoutUpdatedByUserInput[] | StatusLogUncheckedCreateWithoutUpdatedByUserInput[]
+    connectOrCreate?: StatusLogCreateOrConnectWithoutUpdatedByUserInput | StatusLogCreateOrConnectWithoutUpdatedByUserInput[]
+    createMany?: StatusLogCreateManyUpdatedByUserInputEnvelope
+    connect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+  }
+
+  export type AgentCorridorUncheckedCreateNestedManyWithoutAgentInput = {
+    create?: XOR<AgentCorridorCreateWithoutAgentInput, AgentCorridorUncheckedCreateWithoutAgentInput> | AgentCorridorCreateWithoutAgentInput[] | AgentCorridorUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutAgentInput | AgentCorridorCreateOrConnectWithoutAgentInput[]
+    createMany?: AgentCorridorCreateManyAgentInputEnvelope
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+  }
+
+  export type AgentCredentialUncheckedCreateNestedManyWithoutAgentInput = {
+    create?: XOR<AgentCredentialCreateWithoutAgentInput, AgentCredentialUncheckedCreateWithoutAgentInput> | AgentCredentialCreateWithoutAgentInput[] | AgentCredentialUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutAgentInput | AgentCredentialCreateOrConnectWithoutAgentInput[]
+    createMany?: AgentCredentialCreateManyAgentInputEnvelope
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+  }
+
+  export type AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput = {
+    create?: XOR<AgentCredentialCreateWithoutVerifiedByInput, AgentCredentialUncheckedCreateWithoutVerifiedByInput> | AgentCredentialCreateWithoutVerifiedByInput[] | AgentCredentialUncheckedCreateWithoutVerifiedByInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutVerifiedByInput | AgentCredentialCreateOrConnectWithoutVerifiedByInput[]
+    createMany?: AgentCredentialCreateManyVerifiedByInputEnvelope
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+  }
+
+  export type AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<AdminAuditLogCreateWithoutAdminInput, AdminAuditLogUncheckedCreateWithoutAdminInput> | AdminAuditLogCreateWithoutAdminInput[] | AdminAuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AdminAuditLogCreateOrConnectWithoutAdminInput | AdminAuditLogCreateOrConnectWithoutAdminInput[]
+    createMany?: AdminAuditLogCreateManyAdminInputEnvelope
+    connect?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+  }
+
+  export type LocationUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<LocationCreateWithoutCreatedByInput, LocationUncheckedCreateWithoutCreatedByInput> | LocationCreateWithoutCreatedByInput[] | LocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutCreatedByInput | LocationCreateOrConnectWithoutCreatedByInput[]
+    createMany?: LocationCreateManyCreatedByInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+  }
+
+  export type LocationUncheckedCreateNestedManyWithoutUpdatedByInput = {
+    create?: XOR<LocationCreateWithoutUpdatedByInput, LocationUncheckedCreateWithoutUpdatedByInput> | LocationCreateWithoutUpdatedByInput[] | LocationUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutUpdatedByInput | LocationCreateOrConnectWithoutUpdatedByInput[]
+    createMany?: LocationCreateManyUpdatedByInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+  }
+
+  export type LocationUncheckedCreateNestedManyWithoutDeletedByInput = {
+    create?: XOR<LocationCreateWithoutDeletedByInput, LocationUncheckedCreateWithoutDeletedByInput> | LocationCreateWithoutDeletedByInput[] | LocationUncheckedCreateWithoutDeletedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutDeletedByInput | LocationCreateOrConnectWithoutDeletedByInput[]
+    createMany?: LocationCreateManyDeletedByInputEnvelope
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
   }
 
   export type EnumRoleFieldUpdateOperationsInput = {
@@ -16018,10 +26028,6 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -16036,8 +26042,8 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
+  export type EnumAgentVerificationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.AgentVerificationStatus
   }
 
   export type PhoneVerificationUpdateManyWithoutUserNestedInput = {
@@ -16052,6 +26058,48 @@ export namespace Prisma {
     update?: PhoneVerificationUpdateWithWhereUniqueWithoutUserInput | PhoneVerificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PhoneVerificationUpdateManyWithWhereWithoutUserInput | PhoneVerificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PhoneVerificationScalarWhereInput | PhoneVerificationScalarWhereInput[]
+  }
+
+  export type ShipmentUpdateManyWithoutAgentNestedInput = {
+    create?: XOR<ShipmentCreateWithoutAgentInput, ShipmentUncheckedCreateWithoutAgentInput> | ShipmentCreateWithoutAgentInput[] | ShipmentUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAgentInput | ShipmentCreateOrConnectWithoutAgentInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutAgentInput | ShipmentUpsertWithWhereUniqueWithoutAgentInput[]
+    createMany?: ShipmentCreateManyAgentInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutAgentInput | ShipmentUpdateWithWhereUniqueWithoutAgentInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutAgentInput | ShipmentUpdateManyWithWhereWithoutAgentInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type ShipmentUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutUserInput | ShipmentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ShipmentCreateManyUserInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutUserInput | ShipmentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutUserInput | ShipmentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type ShipmentUpdateManyWithoutAssignedByNestedInput = {
+    create?: XOR<ShipmentCreateWithoutAssignedByInput, ShipmentUncheckedCreateWithoutAssignedByInput> | ShipmentCreateWithoutAssignedByInput[] | ShipmentUncheckedCreateWithoutAssignedByInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAssignedByInput | ShipmentCreateOrConnectWithoutAssignedByInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutAssignedByInput | ShipmentUpsertWithWhereUniqueWithoutAssignedByInput[]
+    createMany?: ShipmentCreateManyAssignedByInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutAssignedByInput | ShipmentUpdateWithWhereUniqueWithoutAssignedByInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutAssignedByInput | ShipmentUpdateManyWithWhereWithoutAssignedByInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
   }
 
   export type SessionUpdateManyWithoutUserNestedInput = {
@@ -16082,20 +26130,6 @@ export namespace Prisma {
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
-  export type ShipmentUpdateManyWithoutUserNestedInput = {
-    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
-    upsert?: ShipmentUpsertWithWhereUniqueWithoutUserInput | ShipmentUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: ShipmentCreateManyUserInputEnvelope
-    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    update?: ShipmentUpdateWithWhereUniqueWithoutUserInput | ShipmentUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: ShipmentUpdateManyWithWhereWithoutUserInput | ShipmentUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
-  }
-
   export type ChatSessionUpdateManyWithoutUserNestedInput = {
     create?: XOR<ChatSessionCreateWithoutUserInput, ChatSessionUncheckedCreateWithoutUserInput> | ChatSessionCreateWithoutUserInput[] | ChatSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
@@ -16110,6 +26144,118 @@ export namespace Prisma {
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
   }
 
+  export type StatusLogUpdateManyWithoutUpdatedByUserNestedInput = {
+    create?: XOR<StatusLogCreateWithoutUpdatedByUserInput, StatusLogUncheckedCreateWithoutUpdatedByUserInput> | StatusLogCreateWithoutUpdatedByUserInput[] | StatusLogUncheckedCreateWithoutUpdatedByUserInput[]
+    connectOrCreate?: StatusLogCreateOrConnectWithoutUpdatedByUserInput | StatusLogCreateOrConnectWithoutUpdatedByUserInput[]
+    upsert?: StatusLogUpsertWithWhereUniqueWithoutUpdatedByUserInput | StatusLogUpsertWithWhereUniqueWithoutUpdatedByUserInput[]
+    createMany?: StatusLogCreateManyUpdatedByUserInputEnvelope
+    set?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    disconnect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    delete?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    connect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    update?: StatusLogUpdateWithWhereUniqueWithoutUpdatedByUserInput | StatusLogUpdateWithWhereUniqueWithoutUpdatedByUserInput[]
+    updateMany?: StatusLogUpdateManyWithWhereWithoutUpdatedByUserInput | StatusLogUpdateManyWithWhereWithoutUpdatedByUserInput[]
+    deleteMany?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
+  }
+
+  export type AgentCorridorUpdateManyWithoutAgentNestedInput = {
+    create?: XOR<AgentCorridorCreateWithoutAgentInput, AgentCorridorUncheckedCreateWithoutAgentInput> | AgentCorridorCreateWithoutAgentInput[] | AgentCorridorUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutAgentInput | AgentCorridorCreateOrConnectWithoutAgentInput[]
+    upsert?: AgentCorridorUpsertWithWhereUniqueWithoutAgentInput | AgentCorridorUpsertWithWhereUniqueWithoutAgentInput[]
+    createMany?: AgentCorridorCreateManyAgentInputEnvelope
+    set?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    disconnect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    delete?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    update?: AgentCorridorUpdateWithWhereUniqueWithoutAgentInput | AgentCorridorUpdateWithWhereUniqueWithoutAgentInput[]
+    updateMany?: AgentCorridorUpdateManyWithWhereWithoutAgentInput | AgentCorridorUpdateManyWithWhereWithoutAgentInput[]
+    deleteMany?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+  }
+
+  export type AgentCredentialUpdateManyWithoutAgentNestedInput = {
+    create?: XOR<AgentCredentialCreateWithoutAgentInput, AgentCredentialUncheckedCreateWithoutAgentInput> | AgentCredentialCreateWithoutAgentInput[] | AgentCredentialUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutAgentInput | AgentCredentialCreateOrConnectWithoutAgentInput[]
+    upsert?: AgentCredentialUpsertWithWhereUniqueWithoutAgentInput | AgentCredentialUpsertWithWhereUniqueWithoutAgentInput[]
+    createMany?: AgentCredentialCreateManyAgentInputEnvelope
+    set?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    disconnect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    delete?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    update?: AgentCredentialUpdateWithWhereUniqueWithoutAgentInput | AgentCredentialUpdateWithWhereUniqueWithoutAgentInput[]
+    updateMany?: AgentCredentialUpdateManyWithWhereWithoutAgentInput | AgentCredentialUpdateManyWithWhereWithoutAgentInput[]
+    deleteMany?: AgentCredentialScalarWhereInput | AgentCredentialScalarWhereInput[]
+  }
+
+  export type AgentCredentialUpdateManyWithoutVerifiedByNestedInput = {
+    create?: XOR<AgentCredentialCreateWithoutVerifiedByInput, AgentCredentialUncheckedCreateWithoutVerifiedByInput> | AgentCredentialCreateWithoutVerifiedByInput[] | AgentCredentialUncheckedCreateWithoutVerifiedByInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutVerifiedByInput | AgentCredentialCreateOrConnectWithoutVerifiedByInput[]
+    upsert?: AgentCredentialUpsertWithWhereUniqueWithoutVerifiedByInput | AgentCredentialUpsertWithWhereUniqueWithoutVerifiedByInput[]
+    createMany?: AgentCredentialCreateManyVerifiedByInputEnvelope
+    set?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    disconnect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    delete?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    update?: AgentCredentialUpdateWithWhereUniqueWithoutVerifiedByInput | AgentCredentialUpdateWithWhereUniqueWithoutVerifiedByInput[]
+    updateMany?: AgentCredentialUpdateManyWithWhereWithoutVerifiedByInput | AgentCredentialUpdateManyWithWhereWithoutVerifiedByInput[]
+    deleteMany?: AgentCredentialScalarWhereInput | AgentCredentialScalarWhereInput[]
+  }
+
+  export type AdminAuditLogUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<AdminAuditLogCreateWithoutAdminInput, AdminAuditLogUncheckedCreateWithoutAdminInput> | AdminAuditLogCreateWithoutAdminInput[] | AdminAuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AdminAuditLogCreateOrConnectWithoutAdminInput | AdminAuditLogCreateOrConnectWithoutAdminInput[]
+    upsert?: AdminAuditLogUpsertWithWhereUniqueWithoutAdminInput | AdminAuditLogUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: AdminAuditLogCreateManyAdminInputEnvelope
+    set?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    disconnect?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    delete?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    connect?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    update?: AdminAuditLogUpdateWithWhereUniqueWithoutAdminInput | AdminAuditLogUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: AdminAuditLogUpdateManyWithWhereWithoutAdminInput | AdminAuditLogUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: AdminAuditLogScalarWhereInput | AdminAuditLogScalarWhereInput[]
+  }
+
+  export type LocationUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<LocationCreateWithoutCreatedByInput, LocationUncheckedCreateWithoutCreatedByInput> | LocationCreateWithoutCreatedByInput[] | LocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutCreatedByInput | LocationCreateOrConnectWithoutCreatedByInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutCreatedByInput | LocationUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: LocationCreateManyCreatedByInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutCreatedByInput | LocationUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutCreatedByInput | LocationUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
+  }
+
+  export type LocationUpdateManyWithoutUpdatedByNestedInput = {
+    create?: XOR<LocationCreateWithoutUpdatedByInput, LocationUncheckedCreateWithoutUpdatedByInput> | LocationCreateWithoutUpdatedByInput[] | LocationUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutUpdatedByInput | LocationCreateOrConnectWithoutUpdatedByInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutUpdatedByInput | LocationUpsertWithWhereUniqueWithoutUpdatedByInput[]
+    createMany?: LocationCreateManyUpdatedByInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutUpdatedByInput | LocationUpdateWithWhereUniqueWithoutUpdatedByInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutUpdatedByInput | LocationUpdateManyWithWhereWithoutUpdatedByInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
+  }
+
+  export type LocationUpdateManyWithoutDeletedByNestedInput = {
+    create?: XOR<LocationCreateWithoutDeletedByInput, LocationUncheckedCreateWithoutDeletedByInput> | LocationCreateWithoutDeletedByInput[] | LocationUncheckedCreateWithoutDeletedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutDeletedByInput | LocationCreateOrConnectWithoutDeletedByInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutDeletedByInput | LocationUpsertWithWhereUniqueWithoutDeletedByInput[]
+    createMany?: LocationCreateManyDeletedByInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutDeletedByInput | LocationUpdateWithWhereUniqueWithoutDeletedByInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutDeletedByInput | LocationUpdateManyWithWhereWithoutDeletedByInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
+  }
+
   export type PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<PhoneVerificationCreateWithoutUserInput, PhoneVerificationUncheckedCreateWithoutUserInput> | PhoneVerificationCreateWithoutUserInput[] | PhoneVerificationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: PhoneVerificationCreateOrConnectWithoutUserInput | PhoneVerificationCreateOrConnectWithoutUserInput[]
@@ -16122,6 +26268,48 @@ export namespace Prisma {
     update?: PhoneVerificationUpdateWithWhereUniqueWithoutUserInput | PhoneVerificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PhoneVerificationUpdateManyWithWhereWithoutUserInput | PhoneVerificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PhoneVerificationScalarWhereInput | PhoneVerificationScalarWhereInput[]
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutAgentNestedInput = {
+    create?: XOR<ShipmentCreateWithoutAgentInput, ShipmentUncheckedCreateWithoutAgentInput> | ShipmentCreateWithoutAgentInput[] | ShipmentUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAgentInput | ShipmentCreateOrConnectWithoutAgentInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutAgentInput | ShipmentUpsertWithWhereUniqueWithoutAgentInput[]
+    createMany?: ShipmentCreateManyAgentInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutAgentInput | ShipmentUpdateWithWhereUniqueWithoutAgentInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutAgentInput | ShipmentUpdateManyWithWhereWithoutAgentInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutUserInput | ShipmentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ShipmentCreateManyUserInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutUserInput | ShipmentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutUserInput | ShipmentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput = {
+    create?: XOR<ShipmentCreateWithoutAssignedByInput, ShipmentUncheckedCreateWithoutAssignedByInput> | ShipmentCreateWithoutAssignedByInput[] | ShipmentUncheckedCreateWithoutAssignedByInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutAssignedByInput | ShipmentCreateOrConnectWithoutAssignedByInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutAssignedByInput | ShipmentUpsertWithWhereUniqueWithoutAssignedByInput[]
+    createMany?: ShipmentCreateManyAssignedByInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutAssignedByInput | ShipmentUpdateWithWhereUniqueWithoutAssignedByInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutAssignedByInput | ShipmentUpdateManyWithWhereWithoutAssignedByInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
   }
 
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -16152,20 +26340,6 @@ export namespace Prisma {
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
-  export type ShipmentUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput> | ShipmentCreateWithoutUserInput[] | ShipmentUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ShipmentCreateOrConnectWithoutUserInput | ShipmentCreateOrConnectWithoutUserInput[]
-    upsert?: ShipmentUpsertWithWhereUniqueWithoutUserInput | ShipmentUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: ShipmentCreateManyUserInputEnvelope
-    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    update?: ShipmentUpdateWithWhereUniqueWithoutUserInput | ShipmentUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: ShipmentUpdateManyWithWhereWithoutUserInput | ShipmentUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
-  }
-
   export type ChatSessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<ChatSessionCreateWithoutUserInput, ChatSessionUncheckedCreateWithoutUserInput> | ChatSessionCreateWithoutUserInput[] | ChatSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
@@ -16178,6 +26352,118 @@ export namespace Prisma {
     update?: ChatSessionUpdateWithWhereUniqueWithoutUserInput | ChatSessionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ChatSessionUpdateManyWithWhereWithoutUserInput | ChatSessionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput = {
+    create?: XOR<StatusLogCreateWithoutUpdatedByUserInput, StatusLogUncheckedCreateWithoutUpdatedByUserInput> | StatusLogCreateWithoutUpdatedByUserInput[] | StatusLogUncheckedCreateWithoutUpdatedByUserInput[]
+    connectOrCreate?: StatusLogCreateOrConnectWithoutUpdatedByUserInput | StatusLogCreateOrConnectWithoutUpdatedByUserInput[]
+    upsert?: StatusLogUpsertWithWhereUniqueWithoutUpdatedByUserInput | StatusLogUpsertWithWhereUniqueWithoutUpdatedByUserInput[]
+    createMany?: StatusLogCreateManyUpdatedByUserInputEnvelope
+    set?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    disconnect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    delete?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    connect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
+    update?: StatusLogUpdateWithWhereUniqueWithoutUpdatedByUserInput | StatusLogUpdateWithWhereUniqueWithoutUpdatedByUserInput[]
+    updateMany?: StatusLogUpdateManyWithWhereWithoutUpdatedByUserInput | StatusLogUpdateManyWithWhereWithoutUpdatedByUserInput[]
+    deleteMany?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
+  }
+
+  export type AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput = {
+    create?: XOR<AgentCorridorCreateWithoutAgentInput, AgentCorridorUncheckedCreateWithoutAgentInput> | AgentCorridorCreateWithoutAgentInput[] | AgentCorridorUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutAgentInput | AgentCorridorCreateOrConnectWithoutAgentInput[]
+    upsert?: AgentCorridorUpsertWithWhereUniqueWithoutAgentInput | AgentCorridorUpsertWithWhereUniqueWithoutAgentInput[]
+    createMany?: AgentCorridorCreateManyAgentInputEnvelope
+    set?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    disconnect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    delete?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    update?: AgentCorridorUpdateWithWhereUniqueWithoutAgentInput | AgentCorridorUpdateWithWhereUniqueWithoutAgentInput[]
+    updateMany?: AgentCorridorUpdateManyWithWhereWithoutAgentInput | AgentCorridorUpdateManyWithWhereWithoutAgentInput[]
+    deleteMany?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+  }
+
+  export type AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput = {
+    create?: XOR<AgentCredentialCreateWithoutAgentInput, AgentCredentialUncheckedCreateWithoutAgentInput> | AgentCredentialCreateWithoutAgentInput[] | AgentCredentialUncheckedCreateWithoutAgentInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutAgentInput | AgentCredentialCreateOrConnectWithoutAgentInput[]
+    upsert?: AgentCredentialUpsertWithWhereUniqueWithoutAgentInput | AgentCredentialUpsertWithWhereUniqueWithoutAgentInput[]
+    createMany?: AgentCredentialCreateManyAgentInputEnvelope
+    set?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    disconnect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    delete?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    update?: AgentCredentialUpdateWithWhereUniqueWithoutAgentInput | AgentCredentialUpdateWithWhereUniqueWithoutAgentInput[]
+    updateMany?: AgentCredentialUpdateManyWithWhereWithoutAgentInput | AgentCredentialUpdateManyWithWhereWithoutAgentInput[]
+    deleteMany?: AgentCredentialScalarWhereInput | AgentCredentialScalarWhereInput[]
+  }
+
+  export type AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput = {
+    create?: XOR<AgentCredentialCreateWithoutVerifiedByInput, AgentCredentialUncheckedCreateWithoutVerifiedByInput> | AgentCredentialCreateWithoutVerifiedByInput[] | AgentCredentialUncheckedCreateWithoutVerifiedByInput[]
+    connectOrCreate?: AgentCredentialCreateOrConnectWithoutVerifiedByInput | AgentCredentialCreateOrConnectWithoutVerifiedByInput[]
+    upsert?: AgentCredentialUpsertWithWhereUniqueWithoutVerifiedByInput | AgentCredentialUpsertWithWhereUniqueWithoutVerifiedByInput[]
+    createMany?: AgentCredentialCreateManyVerifiedByInputEnvelope
+    set?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    disconnect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    delete?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    connect?: AgentCredentialWhereUniqueInput | AgentCredentialWhereUniqueInput[]
+    update?: AgentCredentialUpdateWithWhereUniqueWithoutVerifiedByInput | AgentCredentialUpdateWithWhereUniqueWithoutVerifiedByInput[]
+    updateMany?: AgentCredentialUpdateManyWithWhereWithoutVerifiedByInput | AgentCredentialUpdateManyWithWhereWithoutVerifiedByInput[]
+    deleteMany?: AgentCredentialScalarWhereInput | AgentCredentialScalarWhereInput[]
+  }
+
+  export type AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<AdminAuditLogCreateWithoutAdminInput, AdminAuditLogUncheckedCreateWithoutAdminInput> | AdminAuditLogCreateWithoutAdminInput[] | AdminAuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AdminAuditLogCreateOrConnectWithoutAdminInput | AdminAuditLogCreateOrConnectWithoutAdminInput[]
+    upsert?: AdminAuditLogUpsertWithWhereUniqueWithoutAdminInput | AdminAuditLogUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: AdminAuditLogCreateManyAdminInputEnvelope
+    set?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    disconnect?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    delete?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    connect?: AdminAuditLogWhereUniqueInput | AdminAuditLogWhereUniqueInput[]
+    update?: AdminAuditLogUpdateWithWhereUniqueWithoutAdminInput | AdminAuditLogUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: AdminAuditLogUpdateManyWithWhereWithoutAdminInput | AdminAuditLogUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: AdminAuditLogScalarWhereInput | AdminAuditLogScalarWhereInput[]
+  }
+
+  export type LocationUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<LocationCreateWithoutCreatedByInput, LocationUncheckedCreateWithoutCreatedByInput> | LocationCreateWithoutCreatedByInput[] | LocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutCreatedByInput | LocationCreateOrConnectWithoutCreatedByInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutCreatedByInput | LocationUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: LocationCreateManyCreatedByInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutCreatedByInput | LocationUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutCreatedByInput | LocationUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
+  }
+
+  export type LocationUncheckedUpdateManyWithoutUpdatedByNestedInput = {
+    create?: XOR<LocationCreateWithoutUpdatedByInput, LocationUncheckedCreateWithoutUpdatedByInput> | LocationCreateWithoutUpdatedByInput[] | LocationUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutUpdatedByInput | LocationCreateOrConnectWithoutUpdatedByInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutUpdatedByInput | LocationUpsertWithWhereUniqueWithoutUpdatedByInput[]
+    createMany?: LocationCreateManyUpdatedByInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutUpdatedByInput | LocationUpdateWithWhereUniqueWithoutUpdatedByInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutUpdatedByInput | LocationUpdateManyWithWhereWithoutUpdatedByInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
+  }
+
+  export type LocationUncheckedUpdateManyWithoutDeletedByNestedInput = {
+    create?: XOR<LocationCreateWithoutDeletedByInput, LocationUncheckedCreateWithoutDeletedByInput> | LocationCreateWithoutDeletedByInput[] | LocationUncheckedCreateWithoutDeletedByInput[]
+    connectOrCreate?: LocationCreateOrConnectWithoutDeletedByInput | LocationCreateOrConnectWithoutDeletedByInput[]
+    upsert?: LocationUpsertWithWhereUniqueWithoutDeletedByInput | LocationUpsertWithWhereUniqueWithoutDeletedByInput[]
+    createMany?: LocationCreateManyDeletedByInputEnvelope
+    set?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    disconnect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    delete?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    connect?: LocationWhereUniqueInput | LocationWhereUniqueInput[]
+    update?: LocationUpdateWithWhereUniqueWithoutDeletedByInput | LocationUpdateWithWhereUniqueWithoutDeletedByInput[]
+    updateMany?: LocationUpdateManyWithWhereWithoutDeletedByInput | LocationUpdateManyWithWhereWithoutDeletedByInput[]
+    deleteMany?: LocationScalarWhereInput | LocationScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -16278,6 +26564,314 @@ export namespace Prisma {
     update?: XOR<XOR<ChatSessionUpdateToOneWithWhereWithoutMessagesInput, ChatSessionUpdateWithoutMessagesInput>, ChatSessionUncheckedUpdateWithoutMessagesInput>
   }
 
+  export type UserCreateNestedOneWithoutAgentCredentialsInput = {
+    create?: XOR<UserCreateWithoutAgentCredentialsInput, UserUncheckedCreateWithoutAgentCredentialsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAgentCredentialsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutVerifiedCredentialsInput = {
+    create?: XOR<UserCreateWithoutVerifiedCredentialsInput, UserUncheckedCreateWithoutVerifiedCredentialsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVerifiedCredentialsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumCredentialTypeFieldUpdateOperationsInput = {
+    set?: $Enums.CredentialType
+  }
+
+  export type EnumCredentialStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CredentialStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutAgentCredentialsNestedInput = {
+    create?: XOR<UserCreateWithoutAgentCredentialsInput, UserUncheckedCreateWithoutAgentCredentialsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAgentCredentialsInput
+    upsert?: UserUpsertWithoutAgentCredentialsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAgentCredentialsInput, UserUpdateWithoutAgentCredentialsInput>, UserUncheckedUpdateWithoutAgentCredentialsInput>
+  }
+
+  export type UserUpdateOneWithoutVerifiedCredentialsNestedInput = {
+    create?: XOR<UserCreateWithoutVerifiedCredentialsInput, UserUncheckedCreateWithoutVerifiedCredentialsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVerifiedCredentialsInput
+    upsert?: UserUpsertWithoutVerifiedCredentialsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVerifiedCredentialsInput, UserUpdateWithoutVerifiedCredentialsInput>, UserUncheckedUpdateWithoutVerifiedCredentialsInput>
+  }
+
+  export type UserCreateNestedOneWithoutLocationsCreatedInput = {
+    create?: XOR<UserCreateWithoutLocationsCreatedInput, UserUncheckedCreateWithoutLocationsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLocationsCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutLocationsUpdatedInput = {
+    create?: XOR<UserCreateWithoutLocationsUpdatedInput, UserUncheckedCreateWithoutLocationsUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLocationsUpdatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutLocationsDeletedInput = {
+    create?: XOR<UserCreateWithoutLocationsDeletedInput, UserUncheckedCreateWithoutLocationsDeletedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLocationsDeletedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type AgentCorridorCreateNestedManyWithoutOriginPortInput = {
+    create?: XOR<AgentCorridorCreateWithoutOriginPortInput, AgentCorridorUncheckedCreateWithoutOriginPortInput> | AgentCorridorCreateWithoutOriginPortInput[] | AgentCorridorUncheckedCreateWithoutOriginPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutOriginPortInput | AgentCorridorCreateOrConnectWithoutOriginPortInput[]
+    createMany?: AgentCorridorCreateManyOriginPortInputEnvelope
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+  }
+
+  export type AgentCorridorCreateNestedManyWithoutDestinationPortInput = {
+    create?: XOR<AgentCorridorCreateWithoutDestinationPortInput, AgentCorridorUncheckedCreateWithoutDestinationPortInput> | AgentCorridorCreateWithoutDestinationPortInput[] | AgentCorridorUncheckedCreateWithoutDestinationPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutDestinationPortInput | AgentCorridorCreateOrConnectWithoutDestinationPortInput[]
+    createMany?: AgentCorridorCreateManyDestinationPortInputEnvelope
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+  }
+
+  export type ShipmentCreateNestedManyWithoutOriginLocationInput = {
+    create?: XOR<ShipmentCreateWithoutOriginLocationInput, ShipmentUncheckedCreateWithoutOriginLocationInput> | ShipmentCreateWithoutOriginLocationInput[] | ShipmentUncheckedCreateWithoutOriginLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutOriginLocationInput | ShipmentCreateOrConnectWithoutOriginLocationInput[]
+    createMany?: ShipmentCreateManyOriginLocationInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type ShipmentCreateNestedManyWithoutDestinationLocationInput = {
+    create?: XOR<ShipmentCreateWithoutDestinationLocationInput, ShipmentUncheckedCreateWithoutDestinationLocationInput> | ShipmentCreateWithoutDestinationLocationInput[] | ShipmentUncheckedCreateWithoutDestinationLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutDestinationLocationInput | ShipmentCreateOrConnectWithoutDestinationLocationInput[]
+    createMany?: ShipmentCreateManyDestinationLocationInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput = {
+    create?: XOR<AgentCorridorCreateWithoutOriginPortInput, AgentCorridorUncheckedCreateWithoutOriginPortInput> | AgentCorridorCreateWithoutOriginPortInput[] | AgentCorridorUncheckedCreateWithoutOriginPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutOriginPortInput | AgentCorridorCreateOrConnectWithoutOriginPortInput[]
+    createMany?: AgentCorridorCreateManyOriginPortInputEnvelope
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+  }
+
+  export type AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput = {
+    create?: XOR<AgentCorridorCreateWithoutDestinationPortInput, AgentCorridorUncheckedCreateWithoutDestinationPortInput> | AgentCorridorCreateWithoutDestinationPortInput[] | AgentCorridorUncheckedCreateWithoutDestinationPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutDestinationPortInput | AgentCorridorCreateOrConnectWithoutDestinationPortInput[]
+    createMany?: AgentCorridorCreateManyDestinationPortInputEnvelope
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+  }
+
+  export type ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput = {
+    create?: XOR<ShipmentCreateWithoutOriginLocationInput, ShipmentUncheckedCreateWithoutOriginLocationInput> | ShipmentCreateWithoutOriginLocationInput[] | ShipmentUncheckedCreateWithoutOriginLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutOriginLocationInput | ShipmentCreateOrConnectWithoutOriginLocationInput[]
+    createMany?: ShipmentCreateManyOriginLocationInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput = {
+    create?: XOR<ShipmentCreateWithoutDestinationLocationInput, ShipmentUncheckedCreateWithoutDestinationLocationInput> | ShipmentCreateWithoutDestinationLocationInput[] | ShipmentUncheckedCreateWithoutDestinationLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutDestinationLocationInput | ShipmentCreateOrConnectWithoutDestinationLocationInput[]
+    createMany?: ShipmentCreateManyDestinationLocationInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type EnumLocationTypeFieldUpdateOperationsInput = {
+    set?: $Enums.LocationType
+  }
+
+  export type UserUpdateOneWithoutLocationsCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutLocationsCreatedInput, UserUncheckedCreateWithoutLocationsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLocationsCreatedInput
+    upsert?: UserUpsertWithoutLocationsCreatedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLocationsCreatedInput, UserUpdateWithoutLocationsCreatedInput>, UserUncheckedUpdateWithoutLocationsCreatedInput>
+  }
+
+  export type UserUpdateOneWithoutLocationsUpdatedNestedInput = {
+    create?: XOR<UserCreateWithoutLocationsUpdatedInput, UserUncheckedCreateWithoutLocationsUpdatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLocationsUpdatedInput
+    upsert?: UserUpsertWithoutLocationsUpdatedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLocationsUpdatedInput, UserUpdateWithoutLocationsUpdatedInput>, UserUncheckedUpdateWithoutLocationsUpdatedInput>
+  }
+
+  export type UserUpdateOneWithoutLocationsDeletedNestedInput = {
+    create?: XOR<UserCreateWithoutLocationsDeletedInput, UserUncheckedCreateWithoutLocationsDeletedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLocationsDeletedInput
+    upsert?: UserUpsertWithoutLocationsDeletedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLocationsDeletedInput, UserUpdateWithoutLocationsDeletedInput>, UserUncheckedUpdateWithoutLocationsDeletedInput>
+  }
+
+  export type AgentCorridorUpdateManyWithoutOriginPortNestedInput = {
+    create?: XOR<AgentCorridorCreateWithoutOriginPortInput, AgentCorridorUncheckedCreateWithoutOriginPortInput> | AgentCorridorCreateWithoutOriginPortInput[] | AgentCorridorUncheckedCreateWithoutOriginPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutOriginPortInput | AgentCorridorCreateOrConnectWithoutOriginPortInput[]
+    upsert?: AgentCorridorUpsertWithWhereUniqueWithoutOriginPortInput | AgentCorridorUpsertWithWhereUniqueWithoutOriginPortInput[]
+    createMany?: AgentCorridorCreateManyOriginPortInputEnvelope
+    set?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    disconnect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    delete?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    update?: AgentCorridorUpdateWithWhereUniqueWithoutOriginPortInput | AgentCorridorUpdateWithWhereUniqueWithoutOriginPortInput[]
+    updateMany?: AgentCorridorUpdateManyWithWhereWithoutOriginPortInput | AgentCorridorUpdateManyWithWhereWithoutOriginPortInput[]
+    deleteMany?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+  }
+
+  export type AgentCorridorUpdateManyWithoutDestinationPortNestedInput = {
+    create?: XOR<AgentCorridorCreateWithoutDestinationPortInput, AgentCorridorUncheckedCreateWithoutDestinationPortInput> | AgentCorridorCreateWithoutDestinationPortInput[] | AgentCorridorUncheckedCreateWithoutDestinationPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutDestinationPortInput | AgentCorridorCreateOrConnectWithoutDestinationPortInput[]
+    upsert?: AgentCorridorUpsertWithWhereUniqueWithoutDestinationPortInput | AgentCorridorUpsertWithWhereUniqueWithoutDestinationPortInput[]
+    createMany?: AgentCorridorCreateManyDestinationPortInputEnvelope
+    set?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    disconnect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    delete?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    update?: AgentCorridorUpdateWithWhereUniqueWithoutDestinationPortInput | AgentCorridorUpdateWithWhereUniqueWithoutDestinationPortInput[]
+    updateMany?: AgentCorridorUpdateManyWithWhereWithoutDestinationPortInput | AgentCorridorUpdateManyWithWhereWithoutDestinationPortInput[]
+    deleteMany?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+  }
+
+  export type ShipmentUpdateManyWithoutOriginLocationNestedInput = {
+    create?: XOR<ShipmentCreateWithoutOriginLocationInput, ShipmentUncheckedCreateWithoutOriginLocationInput> | ShipmentCreateWithoutOriginLocationInput[] | ShipmentUncheckedCreateWithoutOriginLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutOriginLocationInput | ShipmentCreateOrConnectWithoutOriginLocationInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutOriginLocationInput | ShipmentUpsertWithWhereUniqueWithoutOriginLocationInput[]
+    createMany?: ShipmentCreateManyOriginLocationInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutOriginLocationInput | ShipmentUpdateWithWhereUniqueWithoutOriginLocationInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutOriginLocationInput | ShipmentUpdateManyWithWhereWithoutOriginLocationInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type ShipmentUpdateManyWithoutDestinationLocationNestedInput = {
+    create?: XOR<ShipmentCreateWithoutDestinationLocationInput, ShipmentUncheckedCreateWithoutDestinationLocationInput> | ShipmentCreateWithoutDestinationLocationInput[] | ShipmentUncheckedCreateWithoutDestinationLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutDestinationLocationInput | ShipmentCreateOrConnectWithoutDestinationLocationInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutDestinationLocationInput | ShipmentUpsertWithWhereUniqueWithoutDestinationLocationInput[]
+    createMany?: ShipmentCreateManyDestinationLocationInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutDestinationLocationInput | ShipmentUpdateWithWhereUniqueWithoutDestinationLocationInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutDestinationLocationInput | ShipmentUpdateManyWithWhereWithoutDestinationLocationInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput = {
+    create?: XOR<AgentCorridorCreateWithoutOriginPortInput, AgentCorridorUncheckedCreateWithoutOriginPortInput> | AgentCorridorCreateWithoutOriginPortInput[] | AgentCorridorUncheckedCreateWithoutOriginPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutOriginPortInput | AgentCorridorCreateOrConnectWithoutOriginPortInput[]
+    upsert?: AgentCorridorUpsertWithWhereUniqueWithoutOriginPortInput | AgentCorridorUpsertWithWhereUniqueWithoutOriginPortInput[]
+    createMany?: AgentCorridorCreateManyOriginPortInputEnvelope
+    set?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    disconnect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    delete?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    update?: AgentCorridorUpdateWithWhereUniqueWithoutOriginPortInput | AgentCorridorUpdateWithWhereUniqueWithoutOriginPortInput[]
+    updateMany?: AgentCorridorUpdateManyWithWhereWithoutOriginPortInput | AgentCorridorUpdateManyWithWhereWithoutOriginPortInput[]
+    deleteMany?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+  }
+
+  export type AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput = {
+    create?: XOR<AgentCorridorCreateWithoutDestinationPortInput, AgentCorridorUncheckedCreateWithoutDestinationPortInput> | AgentCorridorCreateWithoutDestinationPortInput[] | AgentCorridorUncheckedCreateWithoutDestinationPortInput[]
+    connectOrCreate?: AgentCorridorCreateOrConnectWithoutDestinationPortInput | AgentCorridorCreateOrConnectWithoutDestinationPortInput[]
+    upsert?: AgentCorridorUpsertWithWhereUniqueWithoutDestinationPortInput | AgentCorridorUpsertWithWhereUniqueWithoutDestinationPortInput[]
+    createMany?: AgentCorridorCreateManyDestinationPortInputEnvelope
+    set?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    disconnect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    delete?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    connect?: AgentCorridorWhereUniqueInput | AgentCorridorWhereUniqueInput[]
+    update?: AgentCorridorUpdateWithWhereUniqueWithoutDestinationPortInput | AgentCorridorUpdateWithWhereUniqueWithoutDestinationPortInput[]
+    updateMany?: AgentCorridorUpdateManyWithWhereWithoutDestinationPortInput | AgentCorridorUpdateManyWithWhereWithoutDestinationPortInput[]
+    deleteMany?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput = {
+    create?: XOR<ShipmentCreateWithoutOriginLocationInput, ShipmentUncheckedCreateWithoutOriginLocationInput> | ShipmentCreateWithoutOriginLocationInput[] | ShipmentUncheckedCreateWithoutOriginLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutOriginLocationInput | ShipmentCreateOrConnectWithoutOriginLocationInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutOriginLocationInput | ShipmentUpsertWithWhereUniqueWithoutOriginLocationInput[]
+    createMany?: ShipmentCreateManyOriginLocationInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutOriginLocationInput | ShipmentUpdateWithWhereUniqueWithoutOriginLocationInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutOriginLocationInput | ShipmentUpdateManyWithWhereWithoutOriginLocationInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput = {
+    create?: XOR<ShipmentCreateWithoutDestinationLocationInput, ShipmentUncheckedCreateWithoutDestinationLocationInput> | ShipmentCreateWithoutDestinationLocationInput[] | ShipmentUncheckedCreateWithoutDestinationLocationInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutDestinationLocationInput | ShipmentCreateOrConnectWithoutDestinationLocationInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutDestinationLocationInput | ShipmentUpsertWithWhereUniqueWithoutDestinationLocationInput[]
+    createMany?: ShipmentCreateManyDestinationLocationInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutDestinationLocationInput | ShipmentUpdateWithWhereUniqueWithoutDestinationLocationInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutDestinationLocationInput | ShipmentUpdateManyWithWhereWithoutDestinationLocationInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutAgentCorridorsInput = {
+    create?: XOR<UserCreateWithoutAgentCorridorsInput, UserUncheckedCreateWithoutAgentCorridorsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAgentCorridorsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type LocationCreateNestedOneWithoutOriginCorridorsInput = {
+    create?: XOR<LocationCreateWithoutOriginCorridorsInput, LocationUncheckedCreateWithoutOriginCorridorsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutOriginCorridorsInput
+    connect?: LocationWhereUniqueInput
+  }
+
+  export type LocationCreateNestedOneWithoutDestinationCorridorsInput = {
+    create?: XOR<LocationCreateWithoutDestinationCorridorsInput, LocationUncheckedCreateWithoutDestinationCorridorsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutDestinationCorridorsInput
+    connect?: LocationWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutAgentCorridorsNestedInput = {
+    create?: XOR<UserCreateWithoutAgentCorridorsInput, UserUncheckedCreateWithoutAgentCorridorsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAgentCorridorsInput
+    upsert?: UserUpsertWithoutAgentCorridorsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAgentCorridorsInput, UserUpdateWithoutAgentCorridorsInput>, UserUncheckedUpdateWithoutAgentCorridorsInput>
+  }
+
+  export type LocationUpdateOneRequiredWithoutOriginCorridorsNestedInput = {
+    create?: XOR<LocationCreateWithoutOriginCorridorsInput, LocationUncheckedCreateWithoutOriginCorridorsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutOriginCorridorsInput
+    upsert?: LocationUpsertWithoutOriginCorridorsInput
+    connect?: LocationWhereUniqueInput
+    update?: XOR<XOR<LocationUpdateToOneWithWhereWithoutOriginCorridorsInput, LocationUpdateWithoutOriginCorridorsInput>, LocationUncheckedUpdateWithoutOriginCorridorsInput>
+  }
+
+  export type LocationUpdateOneRequiredWithoutDestinationCorridorsNestedInput = {
+    create?: XOR<LocationCreateWithoutDestinationCorridorsInput, LocationUncheckedCreateWithoutDestinationCorridorsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutDestinationCorridorsInput
+    upsert?: LocationUpsertWithoutDestinationCorridorsInput
+    connect?: LocationWhereUniqueInput
+    update?: XOR<XOR<LocationUpdateToOneWithWhereWithoutDestinationCorridorsInput, LocationUpdateWithoutDestinationCorridorsInput>, LocationUncheckedUpdateWithoutDestinationCorridorsInput>
+  }
+
   export type UserCreateNestedOneWithoutPhoneVerificationsInput = {
     create?: XOR<UserCreateWithoutPhoneVerificationsInput, UserUncheckedCreateWithoutPhoneVerificationsInput>
     connectOrCreate?: UserCreateOrConnectWithoutPhoneVerificationsInput
@@ -16292,10 +26886,40 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPhoneVerificationsInput, UserUpdateWithoutPhoneVerificationsInput>, UserUncheckedUpdateWithoutPhoneVerificationsInput>
   }
 
-  export type UserCreateNestedOneWithoutShipmentsInput = {
-    create?: XOR<UserCreateWithoutShipmentsInput, UserUncheckedCreateWithoutShipmentsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutShipmentsInput
+  export type UserCreateNestedOneWithoutCustomerShipmentsInput = {
+    create?: XOR<UserCreateWithoutCustomerShipmentsInput, UserUncheckedCreateWithoutCustomerShipmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCustomerShipmentsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAgentShipmentsInput = {
+    create?: XOR<UserCreateWithoutAgentShipmentsInput, UserUncheckedCreateWithoutAgentShipmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAgentShipmentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAssignedShipmentsInput = {
+    create?: XOR<UserCreateWithoutAssignedShipmentsInput, UserUncheckedCreateWithoutAssignedShipmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedShipmentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type LocationCreateNestedOneWithoutOriginShipmentsInput = {
+    create?: XOR<LocationCreateWithoutOriginShipmentsInput, LocationUncheckedCreateWithoutOriginShipmentsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutOriginShipmentsInput
+    connect?: LocationWhereUniqueInput
+  }
+
+  export type LocationCreateNestedOneWithoutDestinationShipmentsInput = {
+    create?: XOR<LocationCreateWithoutDestinationShipmentsInput, LocationUncheckedCreateWithoutDestinationShipmentsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutDestinationShipmentsInput
+    connect?: LocationWhereUniqueInput
+  }
+
+  export type ShipmentCostCreateNestedOneWithoutShipmentInput = {
+    create?: XOR<ShipmentCostCreateWithoutShipmentInput, ShipmentCostUncheckedCreateWithoutShipmentInput>
+    connectOrCreate?: ShipmentCostCreateOrConnectWithoutShipmentInput
+    connect?: ShipmentCostWhereUniqueInput
   }
 
   export type StatusLogCreateNestedManyWithoutShipmentInput = {
@@ -16305,6 +26929,12 @@ export namespace Prisma {
     connect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
   }
 
+  export type ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput = {
+    create?: XOR<ShipmentCostCreateWithoutShipmentInput, ShipmentCostUncheckedCreateWithoutShipmentInput>
+    connectOrCreate?: ShipmentCostCreateOrConnectWithoutShipmentInput
+    connect?: ShipmentCostWhereUniqueInput
+  }
+
   export type StatusLogUncheckedCreateNestedManyWithoutShipmentInput = {
     create?: XOR<StatusLogCreateWithoutShipmentInput, StatusLogUncheckedCreateWithoutShipmentInput> | StatusLogCreateWithoutShipmentInput[] | StatusLogUncheckedCreateWithoutShipmentInput[]
     connectOrCreate?: StatusLogCreateOrConnectWithoutShipmentInput | StatusLogCreateOrConnectWithoutShipmentInput[]
@@ -16312,24 +26942,70 @@ export namespace Prisma {
     connect?: StatusLogWhereUniqueInput | StatusLogWhereUniqueInput[]
   }
 
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type EnumShipmentStatusFieldUpdateOperationsInput = {
     set?: $Enums.ShipmentStatus
   }
 
-  export type UserUpdateOneRequiredWithoutShipmentsNestedInput = {
-    create?: XOR<UserCreateWithoutShipmentsInput, UserUncheckedCreateWithoutShipmentsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutShipmentsInput
-    upsert?: UserUpsertWithoutShipmentsInput
+  export type EnumPaymentStatusFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput = {
+    create?: XOR<UserCreateWithoutCustomerShipmentsInput, UserUncheckedCreateWithoutCustomerShipmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCustomerShipmentsInput
+    upsert?: UserUpsertWithoutCustomerShipmentsInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutShipmentsInput, UserUpdateWithoutShipmentsInput>, UserUncheckedUpdateWithoutShipmentsInput>
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCustomerShipmentsInput, UserUpdateWithoutCustomerShipmentsInput>, UserUncheckedUpdateWithoutCustomerShipmentsInput>
+  }
+
+  export type UserUpdateOneWithoutAgentShipmentsNestedInput = {
+    create?: XOR<UserCreateWithoutAgentShipmentsInput, UserUncheckedCreateWithoutAgentShipmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAgentShipmentsInput
+    upsert?: UserUpsertWithoutAgentShipmentsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAgentShipmentsInput, UserUpdateWithoutAgentShipmentsInput>, UserUncheckedUpdateWithoutAgentShipmentsInput>
+  }
+
+  export type UserUpdateOneWithoutAssignedShipmentsNestedInput = {
+    create?: XOR<UserCreateWithoutAssignedShipmentsInput, UserUncheckedCreateWithoutAssignedShipmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedShipmentsInput
+    upsert?: UserUpsertWithoutAssignedShipmentsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAssignedShipmentsInput, UserUpdateWithoutAssignedShipmentsInput>, UserUncheckedUpdateWithoutAssignedShipmentsInput>
+  }
+
+  export type LocationUpdateOneWithoutOriginShipmentsNestedInput = {
+    create?: XOR<LocationCreateWithoutOriginShipmentsInput, LocationUncheckedCreateWithoutOriginShipmentsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutOriginShipmentsInput
+    upsert?: LocationUpsertWithoutOriginShipmentsInput
+    disconnect?: LocationWhereInput | boolean
+    delete?: LocationWhereInput | boolean
+    connect?: LocationWhereUniqueInput
+    update?: XOR<XOR<LocationUpdateToOneWithWhereWithoutOriginShipmentsInput, LocationUpdateWithoutOriginShipmentsInput>, LocationUncheckedUpdateWithoutOriginShipmentsInput>
+  }
+
+  export type LocationUpdateOneWithoutDestinationShipmentsNestedInput = {
+    create?: XOR<LocationCreateWithoutDestinationShipmentsInput, LocationUncheckedCreateWithoutDestinationShipmentsInput>
+    connectOrCreate?: LocationCreateOrConnectWithoutDestinationShipmentsInput
+    upsert?: LocationUpsertWithoutDestinationShipmentsInput
+    disconnect?: LocationWhereInput | boolean
+    delete?: LocationWhereInput | boolean
+    connect?: LocationWhereUniqueInput
+    update?: XOR<XOR<LocationUpdateToOneWithWhereWithoutDestinationShipmentsInput, LocationUpdateWithoutDestinationShipmentsInput>, LocationUncheckedUpdateWithoutDestinationShipmentsInput>
+  }
+
+  export type ShipmentCostUpdateOneWithoutShipmentNestedInput = {
+    create?: XOR<ShipmentCostCreateWithoutShipmentInput, ShipmentCostUncheckedCreateWithoutShipmentInput>
+    connectOrCreate?: ShipmentCostCreateOrConnectWithoutShipmentInput
+    upsert?: ShipmentCostUpsertWithoutShipmentInput
+    disconnect?: ShipmentCostWhereInput | boolean
+    delete?: ShipmentCostWhereInput | boolean
+    connect?: ShipmentCostWhereUniqueInput
+    update?: XOR<XOR<ShipmentCostUpdateToOneWithWhereWithoutShipmentInput, ShipmentCostUpdateWithoutShipmentInput>, ShipmentCostUncheckedUpdateWithoutShipmentInput>
   }
 
   export type StatusLogUpdateManyWithoutShipmentNestedInput = {
@@ -16346,6 +27022,16 @@ export namespace Prisma {
     deleteMany?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
   }
 
+  export type ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput = {
+    create?: XOR<ShipmentCostCreateWithoutShipmentInput, ShipmentCostUncheckedCreateWithoutShipmentInput>
+    connectOrCreate?: ShipmentCostCreateOrConnectWithoutShipmentInput
+    upsert?: ShipmentCostUpsertWithoutShipmentInput
+    disconnect?: ShipmentCostWhereInput | boolean
+    delete?: ShipmentCostWhereInput | boolean
+    connect?: ShipmentCostWhereUniqueInput
+    update?: XOR<XOR<ShipmentCostUpdateToOneWithWhereWithoutShipmentInput, ShipmentCostUpdateWithoutShipmentInput>, ShipmentCostUncheckedUpdateWithoutShipmentInput>
+  }
+
   export type StatusLogUncheckedUpdateManyWithoutShipmentNestedInput = {
     create?: XOR<StatusLogCreateWithoutShipmentInput, StatusLogUncheckedCreateWithoutShipmentInput> | StatusLogCreateWithoutShipmentInput[] | StatusLogUncheckedCreateWithoutShipmentInput[]
     connectOrCreate?: StatusLogCreateOrConnectWithoutShipmentInput | StatusLogCreateOrConnectWithoutShipmentInput[]
@@ -16360,10 +27046,30 @@ export namespace Prisma {
     deleteMany?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
   }
 
+  export type ShipmentCreateNestedOneWithoutCostInput = {
+    create?: XOR<ShipmentCreateWithoutCostInput, ShipmentUncheckedCreateWithoutCostInput>
+    connectOrCreate?: ShipmentCreateOrConnectWithoutCostInput
+    connect?: ShipmentWhereUniqueInput
+  }
+
+  export type ShipmentUpdateOneRequiredWithoutCostNestedInput = {
+    create?: XOR<ShipmentCreateWithoutCostInput, ShipmentUncheckedCreateWithoutCostInput>
+    connectOrCreate?: ShipmentCreateOrConnectWithoutCostInput
+    upsert?: ShipmentUpsertWithoutCostInput
+    connect?: ShipmentWhereUniqueInput
+    update?: XOR<XOR<ShipmentUpdateToOneWithWhereWithoutCostInput, ShipmentUpdateWithoutCostInput>, ShipmentUncheckedUpdateWithoutCostInput>
+  }
+
   export type ShipmentCreateNestedOneWithoutStatusLogsInput = {
     create?: XOR<ShipmentCreateWithoutStatusLogsInput, ShipmentUncheckedCreateWithoutStatusLogsInput>
     connectOrCreate?: ShipmentCreateOrConnectWithoutStatusLogsInput
     connect?: ShipmentWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutStatusLogsInput = {
+    create?: XOR<UserCreateWithoutStatusLogsInput, UserUncheckedCreateWithoutStatusLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStatusLogsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type ShipmentUpdateOneRequiredWithoutStatusLogsNestedInput = {
@@ -16372,6 +27078,16 @@ export namespace Prisma {
     upsert?: ShipmentUpsertWithoutStatusLogsInput
     connect?: ShipmentWhereUniqueInput
     update?: XOR<XOR<ShipmentUpdateToOneWithWhereWithoutStatusLogsInput, ShipmentUpdateWithoutStatusLogsInput>, ShipmentUncheckedUpdateWithoutStatusLogsInput>
+  }
+
+  export type UserUpdateOneWithoutStatusLogsNestedInput = {
+    create?: XOR<UserCreateWithoutStatusLogsInput, UserUncheckedCreateWithoutStatusLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStatusLogsInput
+    upsert?: UserUpsertWithoutStatusLogsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStatusLogsInput, UserUpdateWithoutStatusLogsInput>, UserUncheckedUpdateWithoutStatusLogsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -16388,16 +27104,11 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedEnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -16412,28 +27123,6 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -16464,22 +27153,25 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type NestedEnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.AuditAction
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+    _min?: NestedEnumAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumAuditActionFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -16508,6 +27200,68 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumAgentVerificationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AgentVerificationStatus | EnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAgentVerificationStatusFilter<$PrismaModel> | $Enums.AgentVerificationStatus
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -16551,25 +27305,55 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+  export type NestedEnumAgentVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AgentVerificationStatus | EnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AgentVerificationStatus[] | ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAgentVerificationStatusWithAggregatesFilter<$PrismaModel> | $Enums.AgentVerificationStatus
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
+    _min?: NestedEnumAgentVerificationStatusFilter<$PrismaModel>
+    _max?: NestedEnumAgentVerificationStatusFilter<$PrismaModel>
   }
 
-  export type NestedEnumShipmentStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ShipmentStatus | EnumShipmentStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumShipmentStatusFilter<$PrismaModel> | $Enums.ShipmentStatus
+  export type NestedEnumCredentialTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialType | EnumCredentialTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialTypeFilter<$PrismaModel> | $Enums.CredentialType
+  }
+
+  export type NestedEnumCredentialStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialStatus | EnumCredentialStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialStatusFilter<$PrismaModel> | $Enums.CredentialStatus
+  }
+
+  export type NestedEnumCredentialTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialType | EnumCredentialTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialType[] | ListEnumCredentialTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialTypeWithAggregatesFilter<$PrismaModel> | $Enums.CredentialType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCredentialTypeFilter<$PrismaModel>
+    _max?: NestedEnumCredentialTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCredentialStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CredentialStatus | EnumCredentialStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CredentialStatus[] | ListEnumCredentialStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCredentialStatusWithAggregatesFilter<$PrismaModel> | $Enums.CredentialStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCredentialStatusFilter<$PrismaModel>
+    _max?: NestedEnumCredentialStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumLocationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLocationTypeFilter<$PrismaModel> | $Enums.LocationType
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -16588,6 +27372,30 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedEnumLocationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLocationTypeWithAggregatesFilter<$PrismaModel> | $Enums.LocationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumLocationTypeFilter<$PrismaModel>
+    _max?: NestedEnumLocationTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumShipmentStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShipmentStatus | EnumShipmentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumShipmentStatusFilter<$PrismaModel> | $Enums.ShipmentStatus
+  }
+
+  export type NestedEnumPaymentStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
+  }
+
   export type NestedEnumShipmentStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ShipmentStatus | EnumShipmentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ShipmentStatus[] | ListEnumShipmentStatusFieldRefInput<$PrismaModel>
@@ -16596,6 +27404,204 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumShipmentStatusFilter<$PrismaModel>
     _max?: NestedEnumShipmentStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
+  export type UserCreateWithoutAdminAuditLogsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAdminAuditLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAdminAuditLogsInput, UserUncheckedCreateWithoutAdminAuditLogsInput>
+  }
+
+  export type UserUpsertWithoutAdminAuditLogsInput = {
+    update: XOR<UserUpdateWithoutAdminAuditLogsInput, UserUncheckedUpdateWithoutAdminAuditLogsInput>
+    create: XOR<UserCreateWithoutAdminAuditLogsInput, UserUncheckedCreateWithoutAdminAuditLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAdminAuditLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAdminAuditLogsInput, UserUncheckedUpdateWithoutAdminAuditLogsInput>
+  }
+
+  export type UserUpdateWithoutAdminAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
   }
 
   export type PhoneVerificationCreateWithoutUserInput = {
@@ -16625,6 +27631,198 @@ export namespace Prisma {
 
   export type PhoneVerificationCreateManyUserInputEnvelope = {
     data: PhoneVerificationCreateManyUserInput | PhoneVerificationCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ShipmentCreateWithoutAgentInput = {
+    id?: string
+    trackingId?: string
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    user: UserCreateNestedOneWithoutCustomerShipmentsInput
+    assignedBy?: UserCreateNestedOneWithoutAssignedShipmentsInput
+    originLocation?: LocationCreateNestedOneWithoutOriginShipmentsInput
+    destinationLocation?: LocationCreateNestedOneWithoutDestinationShipmentsInput
+    cost?: ShipmentCostCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutAgentInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    cost?: ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutAgentInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutAgentInput, ShipmentUncheckedCreateWithoutAgentInput>
+  }
+
+  export type ShipmentCreateManyAgentInputEnvelope = {
+    data: ShipmentCreateManyAgentInput | ShipmentCreateManyAgentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ShipmentCreateWithoutUserInput = {
+    id?: string
+    trackingId?: string
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    agent?: UserCreateNestedOneWithoutAgentShipmentsInput
+    assignedBy?: UserCreateNestedOneWithoutAssignedShipmentsInput
+    originLocation?: LocationCreateNestedOneWithoutOriginShipmentsInput
+    destinationLocation?: LocationCreateNestedOneWithoutDestinationShipmentsInput
+    cost?: ShipmentCostCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutUserInput = {
+    id?: string
+    trackingId?: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    cost?: ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutUserInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput>
+  }
+
+  export type ShipmentCreateManyUserInputEnvelope = {
+    data: ShipmentCreateManyUserInput | ShipmentCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ShipmentCreateWithoutAssignedByInput = {
+    id?: string
+    trackingId?: string
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    user: UserCreateNestedOneWithoutCustomerShipmentsInput
+    agent?: UserCreateNestedOneWithoutAgentShipmentsInput
+    originLocation?: LocationCreateNestedOneWithoutOriginShipmentsInput
+    destinationLocation?: LocationCreateNestedOneWithoutDestinationShipmentsInput
+    cost?: ShipmentCostCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutAssignedByInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    agentId?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    cost?: ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutAssignedByInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutAssignedByInput, ShipmentUncheckedCreateWithoutAssignedByInput>
+  }
+
+  export type ShipmentCreateManyAssignedByInputEnvelope = {
+    data: ShipmentCreateManyAssignedByInput | ShipmentCreateManyAssignedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -16708,46 +27906,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ShipmentCreateWithoutUserInput = {
-    id?: string
-    trackingId?: string
-    origin: string
-    destination: string
-    weight: number
-    description?: string | null
-    status?: $Enums.ShipmentStatus
-    estimatedDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    updateBy?: string | null
-    statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
-  }
-
-  export type ShipmentUncheckedCreateWithoutUserInput = {
-    id?: string
-    trackingId?: string
-    origin: string
-    destination: string
-    weight: number
-    description?: string | null
-    status?: $Enums.ShipmentStatus
-    estimatedDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    updateBy?: string | null
-    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
-  }
-
-  export type ShipmentCreateOrConnectWithoutUserInput = {
-    where: ShipmentWhereUniqueInput
-    create: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput>
-  }
-
-  export type ShipmentCreateManyUserInputEnvelope = {
-    data: ShipmentCreateManyUserInput | ShipmentCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ChatSessionCreateWithoutUserInput = {
     id?: string
     title?: string | null
@@ -16771,6 +27929,364 @@ export namespace Prisma {
 
   export type ChatSessionCreateManyUserInputEnvelope = {
     data: ChatSessionCreateManyUserInput | ChatSessionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type StatusLogCreateWithoutUpdatedByUserInput = {
+    id?: string
+    status: $Enums.ShipmentStatus
+    location: string
+    note?: string | null
+    createdAt?: Date | string
+    shipment: ShipmentCreateNestedOneWithoutStatusLogsInput
+  }
+
+  export type StatusLogUncheckedCreateWithoutUpdatedByUserInput = {
+    id?: string
+    shipmentId: string
+    status: $Enums.ShipmentStatus
+    location: string
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type StatusLogCreateOrConnectWithoutUpdatedByUserInput = {
+    where: StatusLogWhereUniqueInput
+    create: XOR<StatusLogCreateWithoutUpdatedByUserInput, StatusLogUncheckedCreateWithoutUpdatedByUserInput>
+  }
+
+  export type StatusLogCreateManyUpdatedByUserInputEnvelope = {
+    data: StatusLogCreateManyUpdatedByUserInput | StatusLogCreateManyUpdatedByUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AgentCorridorCreateWithoutAgentInput = {
+    id?: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    originPort: LocationCreateNestedOneWithoutOriginCorridorsInput
+    destinationPort: LocationCreateNestedOneWithoutDestinationCorridorsInput
+  }
+
+  export type AgentCorridorUncheckedCreateWithoutAgentInput = {
+    id?: string
+    originPortId: string
+    destinationPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type AgentCorridorCreateOrConnectWithoutAgentInput = {
+    where: AgentCorridorWhereUniqueInput
+    create: XOR<AgentCorridorCreateWithoutAgentInput, AgentCorridorUncheckedCreateWithoutAgentInput>
+  }
+
+  export type AgentCorridorCreateManyAgentInputEnvelope = {
+    data: AgentCorridorCreateManyAgentInput | AgentCorridorCreateManyAgentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AgentCredentialCreateWithoutAgentInput = {
+    id?: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    verifiedBy?: UserCreateNestedOneWithoutVerifiedCredentialsInput
+  }
+
+  export type AgentCredentialUncheckedCreateWithoutAgentInput = {
+    id?: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedById?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AgentCredentialCreateOrConnectWithoutAgentInput = {
+    where: AgentCredentialWhereUniqueInput
+    create: XOR<AgentCredentialCreateWithoutAgentInput, AgentCredentialUncheckedCreateWithoutAgentInput>
+  }
+
+  export type AgentCredentialCreateManyAgentInputEnvelope = {
+    data: AgentCredentialCreateManyAgentInput | AgentCredentialCreateManyAgentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AgentCredentialCreateWithoutVerifiedByInput = {
+    id?: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    agent: UserCreateNestedOneWithoutAgentCredentialsInput
+  }
+
+  export type AgentCredentialUncheckedCreateWithoutVerifiedByInput = {
+    id?: string
+    agentId: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AgentCredentialCreateOrConnectWithoutVerifiedByInput = {
+    where: AgentCredentialWhereUniqueInput
+    create: XOR<AgentCredentialCreateWithoutVerifiedByInput, AgentCredentialUncheckedCreateWithoutVerifiedByInput>
+  }
+
+  export type AgentCredentialCreateManyVerifiedByInputEnvelope = {
+    data: AgentCredentialCreateManyVerifiedByInput | AgentCredentialCreateManyVerifiedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AdminAuditLogCreateWithoutAdminInput = {
+    id?: string
+    action: $Enums.AuditAction
+    targetType: string
+    targetId: string
+    details: string
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AdminAuditLogUncheckedCreateWithoutAdminInput = {
+    id?: string
+    action: $Enums.AuditAction
+    targetType: string
+    targetId: string
+    details: string
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AdminAuditLogCreateOrConnectWithoutAdminInput = {
+    where: AdminAuditLogWhereUniqueInput
+    create: XOR<AdminAuditLogCreateWithoutAdminInput, AdminAuditLogUncheckedCreateWithoutAdminInput>
+  }
+
+  export type AdminAuditLogCreateManyAdminInputEnvelope = {
+    data: AdminAuditLogCreateManyAdminInput | AdminAuditLogCreateManyAdminInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LocationCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy?: UserCreateNestedOneWithoutLocationsUpdatedInput
+    deletedBy?: UserCreateNestedOneWithoutLocationsDeletedInput
+    originCorridors?: AgentCorridorCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutCreatedByInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutCreatedByInput, LocationUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type LocationCreateManyCreatedByInputEnvelope = {
+    data: LocationCreateManyCreatedByInput | LocationCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LocationCreateWithoutUpdatedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutLocationsCreatedInput
+    deletedBy?: UserCreateNestedOneWithoutLocationsDeletedInput
+    originCorridors?: AgentCorridorCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutUpdatedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutUpdatedByInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutUpdatedByInput, LocationUncheckedCreateWithoutUpdatedByInput>
+  }
+
+  export type LocationCreateManyUpdatedByInputEnvelope = {
+    data: LocationCreateManyUpdatedByInput | LocationCreateManyUpdatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LocationCreateWithoutDeletedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutLocationsCreatedInput
+    updatedBy?: UserCreateNestedOneWithoutLocationsUpdatedInput
+    originCorridors?: AgentCorridorCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutDeletedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutDeletedByInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutDeletedByInput, LocationUncheckedCreateWithoutDeletedByInput>
+  }
+
+  export type LocationCreateManyDeletedByInputEnvelope = {
+    data: LocationCreateManyDeletedByInput | LocationCreateManyDeletedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -16802,6 +28318,83 @@ export namespace Prisma {
     attempts?: IntFilter<"PhoneVerification"> | number
     verified?: BoolFilter<"PhoneVerification"> | boolean
     createdAt?: DateTimeFilter<"PhoneVerification"> | Date | string
+  }
+
+  export type ShipmentUpsertWithWhereUniqueWithoutAgentInput = {
+    where: ShipmentWhereUniqueInput
+    update: XOR<ShipmentUpdateWithoutAgentInput, ShipmentUncheckedUpdateWithoutAgentInput>
+    create: XOR<ShipmentCreateWithoutAgentInput, ShipmentUncheckedCreateWithoutAgentInput>
+  }
+
+  export type ShipmentUpdateWithWhereUniqueWithoutAgentInput = {
+    where: ShipmentWhereUniqueInput
+    data: XOR<ShipmentUpdateWithoutAgentInput, ShipmentUncheckedUpdateWithoutAgentInput>
+  }
+
+  export type ShipmentUpdateManyWithWhereWithoutAgentInput = {
+    where: ShipmentScalarWhereInput
+    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutAgentInput>
+  }
+
+  export type ShipmentScalarWhereInput = {
+    AND?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+    OR?: ShipmentScalarWhereInput[]
+    NOT?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+    id?: StringFilter<"Shipment"> | string
+    trackingId?: StringFilter<"Shipment"> | string
+    userId?: StringFilter<"Shipment"> | string
+    agentId?: StringNullableFilter<"Shipment"> | string | null
+    assignedById?: StringNullableFilter<"Shipment"> | string | null
+    assignedAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    origin?: StringFilter<"Shipment"> | string
+    destination?: StringFilter<"Shipment"> | string
+    originLocationId?: StringNullableFilter<"Shipment"> | string | null
+    destinationLocationId?: StringNullableFilter<"Shipment"> | string | null
+    weight?: FloatFilter<"Shipment"> | number
+    declaredCargoValue?: FloatFilter<"Shipment"> | number
+    description?: StringNullableFilter<"Shipment"> | string | null
+    status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
+    estimatedDate?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    acceptedAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    paymentStatus?: EnumPaymentStatusFilter<"Shipment"> | $Enums.PaymentStatus
+    stripePaymentIntentId?: StringNullableFilter<"Shipment"> | string | null
+    stripeRefundId?: StringNullableFilter<"Shipment"> | string | null
+    paidAt?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    createdAt?: DateTimeFilter<"Shipment"> | Date | string
+    updatedAt?: DateTimeFilter<"Shipment"> | Date | string
+    updateBy?: StringNullableFilter<"Shipment"> | string | null
+  }
+
+  export type ShipmentUpsertWithWhereUniqueWithoutUserInput = {
+    where: ShipmentWhereUniqueInput
+    update: XOR<ShipmentUpdateWithoutUserInput, ShipmentUncheckedUpdateWithoutUserInput>
+    create: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput>
+  }
+
+  export type ShipmentUpdateWithWhereUniqueWithoutUserInput = {
+    where: ShipmentWhereUniqueInput
+    data: XOR<ShipmentUpdateWithoutUserInput, ShipmentUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ShipmentUpdateManyWithWhereWithoutUserInput = {
+    where: ShipmentScalarWhereInput
+    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ShipmentUpsertWithWhereUniqueWithoutAssignedByInput = {
+    where: ShipmentWhereUniqueInput
+    update: XOR<ShipmentUpdateWithoutAssignedByInput, ShipmentUncheckedUpdateWithoutAssignedByInput>
+    create: XOR<ShipmentCreateWithoutAssignedByInput, ShipmentUncheckedCreateWithoutAssignedByInput>
+  }
+
+  export type ShipmentUpdateWithWhereUniqueWithoutAssignedByInput = {
+    where: ShipmentWhereUniqueInput
+    data: XOR<ShipmentUpdateWithoutAssignedByInput, ShipmentUncheckedUpdateWithoutAssignedByInput>
+  }
+
+  export type ShipmentUpdateManyWithWhereWithoutAssignedByInput = {
+    where: ShipmentScalarWhereInput
+    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutAssignedByInput>
   }
 
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
@@ -16874,40 +28467,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Account"> | Date | string
   }
 
-  export type ShipmentUpsertWithWhereUniqueWithoutUserInput = {
-    where: ShipmentWhereUniqueInput
-    update: XOR<ShipmentUpdateWithoutUserInput, ShipmentUncheckedUpdateWithoutUserInput>
-    create: XOR<ShipmentCreateWithoutUserInput, ShipmentUncheckedCreateWithoutUserInput>
-  }
-
-  export type ShipmentUpdateWithWhereUniqueWithoutUserInput = {
-    where: ShipmentWhereUniqueInput
-    data: XOR<ShipmentUpdateWithoutUserInput, ShipmentUncheckedUpdateWithoutUserInput>
-  }
-
-  export type ShipmentUpdateManyWithWhereWithoutUserInput = {
-    where: ShipmentScalarWhereInput
-    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type ShipmentScalarWhereInput = {
-    AND?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
-    OR?: ShipmentScalarWhereInput[]
-    NOT?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
-    id?: StringFilter<"Shipment"> | string
-    trackingId?: StringFilter<"Shipment"> | string
-    userId?: StringFilter<"Shipment"> | string
-    origin?: StringFilter<"Shipment"> | string
-    destination?: StringFilter<"Shipment"> | string
-    weight?: FloatFilter<"Shipment"> | number
-    description?: StringNullableFilter<"Shipment"> | string | null
-    status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
-    estimatedDate?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    createdAt?: DateTimeFilter<"Shipment"> | Date | string
-    updatedAt?: DateTimeFilter<"Shipment"> | Date | string
-    updateBy?: StringNullableFilter<"Shipment"> | string | null
-  }
-
   export type ChatSessionUpsertWithWhereUniqueWithoutUserInput = {
     where: ChatSessionWhereUniqueInput
     update: XOR<ChatSessionUpdateWithoutUserInput, ChatSessionUncheckedUpdateWithoutUserInput>
@@ -16935,6 +28494,222 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ChatSession"> | Date | string
   }
 
+  export type StatusLogUpsertWithWhereUniqueWithoutUpdatedByUserInput = {
+    where: StatusLogWhereUniqueInput
+    update: XOR<StatusLogUpdateWithoutUpdatedByUserInput, StatusLogUncheckedUpdateWithoutUpdatedByUserInput>
+    create: XOR<StatusLogCreateWithoutUpdatedByUserInput, StatusLogUncheckedCreateWithoutUpdatedByUserInput>
+  }
+
+  export type StatusLogUpdateWithWhereUniqueWithoutUpdatedByUserInput = {
+    where: StatusLogWhereUniqueInput
+    data: XOR<StatusLogUpdateWithoutUpdatedByUserInput, StatusLogUncheckedUpdateWithoutUpdatedByUserInput>
+  }
+
+  export type StatusLogUpdateManyWithWhereWithoutUpdatedByUserInput = {
+    where: StatusLogScalarWhereInput
+    data: XOR<StatusLogUpdateManyMutationInput, StatusLogUncheckedUpdateManyWithoutUpdatedByUserInput>
+  }
+
+  export type StatusLogScalarWhereInput = {
+    AND?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
+    OR?: StatusLogScalarWhereInput[]
+    NOT?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
+    id?: StringFilter<"StatusLog"> | string
+    shipmentId?: StringFilter<"StatusLog"> | string
+    status?: EnumShipmentStatusFilter<"StatusLog"> | $Enums.ShipmentStatus
+    location?: StringFilter<"StatusLog"> | string
+    note?: StringNullableFilter<"StatusLog"> | string | null
+    updateBy?: StringNullableFilter<"StatusLog"> | string | null
+    createdAt?: DateTimeFilter<"StatusLog"> | Date | string
+  }
+
+  export type AgentCorridorUpsertWithWhereUniqueWithoutAgentInput = {
+    where: AgentCorridorWhereUniqueInput
+    update: XOR<AgentCorridorUpdateWithoutAgentInput, AgentCorridorUncheckedUpdateWithoutAgentInput>
+    create: XOR<AgentCorridorCreateWithoutAgentInput, AgentCorridorUncheckedCreateWithoutAgentInput>
+  }
+
+  export type AgentCorridorUpdateWithWhereUniqueWithoutAgentInput = {
+    where: AgentCorridorWhereUniqueInput
+    data: XOR<AgentCorridorUpdateWithoutAgentInput, AgentCorridorUncheckedUpdateWithoutAgentInput>
+  }
+
+  export type AgentCorridorUpdateManyWithWhereWithoutAgentInput = {
+    where: AgentCorridorScalarWhereInput
+    data: XOR<AgentCorridorUpdateManyMutationInput, AgentCorridorUncheckedUpdateManyWithoutAgentInput>
+  }
+
+  export type AgentCorridorScalarWhereInput = {
+    AND?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+    OR?: AgentCorridorScalarWhereInput[]
+    NOT?: AgentCorridorScalarWhereInput | AgentCorridorScalarWhereInput[]
+    id?: StringFilter<"AgentCorridor"> | string
+    agentId?: StringFilter<"AgentCorridor"> | string
+    originPortId?: StringFilter<"AgentCorridor"> | string
+    destinationPortId?: StringFilter<"AgentCorridor"> | string
+    originText?: StringFilter<"AgentCorridor"> | string
+    destinationText?: StringFilter<"AgentCorridor"> | string
+    isActive?: BoolFilter<"AgentCorridor"> | boolean
+    createdAt?: DateTimeFilter<"AgentCorridor"> | Date | string
+  }
+
+  export type AgentCredentialUpsertWithWhereUniqueWithoutAgentInput = {
+    where: AgentCredentialWhereUniqueInput
+    update: XOR<AgentCredentialUpdateWithoutAgentInput, AgentCredentialUncheckedUpdateWithoutAgentInput>
+    create: XOR<AgentCredentialCreateWithoutAgentInput, AgentCredentialUncheckedCreateWithoutAgentInput>
+  }
+
+  export type AgentCredentialUpdateWithWhereUniqueWithoutAgentInput = {
+    where: AgentCredentialWhereUniqueInput
+    data: XOR<AgentCredentialUpdateWithoutAgentInput, AgentCredentialUncheckedUpdateWithoutAgentInput>
+  }
+
+  export type AgentCredentialUpdateManyWithWhereWithoutAgentInput = {
+    where: AgentCredentialScalarWhereInput
+    data: XOR<AgentCredentialUpdateManyMutationInput, AgentCredentialUncheckedUpdateManyWithoutAgentInput>
+  }
+
+  export type AgentCredentialScalarWhereInput = {
+    AND?: AgentCredentialScalarWhereInput | AgentCredentialScalarWhereInput[]
+    OR?: AgentCredentialScalarWhereInput[]
+    NOT?: AgentCredentialScalarWhereInput | AgentCredentialScalarWhereInput[]
+    id?: StringFilter<"AgentCredential"> | string
+    agentId?: StringFilter<"AgentCredential"> | string
+    type?: EnumCredentialTypeFilter<"AgentCredential"> | $Enums.CredentialType
+    documentNumber?: StringFilter<"AgentCredential"> | string
+    cloudinaryPublicId?: StringFilter<"AgentCredential"> | string
+    documentUrl?: StringFilter<"AgentCredential"> | string
+    issuingAuthority?: StringNullableFilter<"AgentCredential"> | string | null
+    issueDate?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    expiryDate?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    status?: EnumCredentialStatusFilter<"AgentCredential"> | $Enums.CredentialStatus
+    rejectionReason?: StringNullableFilter<"AgentCredential"> | string | null
+    verifiedById?: StringNullableFilter<"AgentCredential"> | string | null
+    verifiedAt?: DateTimeNullableFilter<"AgentCredential"> | Date | string | null
+    createdAt?: DateTimeFilter<"AgentCredential"> | Date | string
+    updatedAt?: DateTimeFilter<"AgentCredential"> | Date | string
+  }
+
+  export type AgentCredentialUpsertWithWhereUniqueWithoutVerifiedByInput = {
+    where: AgentCredentialWhereUniqueInput
+    update: XOR<AgentCredentialUpdateWithoutVerifiedByInput, AgentCredentialUncheckedUpdateWithoutVerifiedByInput>
+    create: XOR<AgentCredentialCreateWithoutVerifiedByInput, AgentCredentialUncheckedCreateWithoutVerifiedByInput>
+  }
+
+  export type AgentCredentialUpdateWithWhereUniqueWithoutVerifiedByInput = {
+    where: AgentCredentialWhereUniqueInput
+    data: XOR<AgentCredentialUpdateWithoutVerifiedByInput, AgentCredentialUncheckedUpdateWithoutVerifiedByInput>
+  }
+
+  export type AgentCredentialUpdateManyWithWhereWithoutVerifiedByInput = {
+    where: AgentCredentialScalarWhereInput
+    data: XOR<AgentCredentialUpdateManyMutationInput, AgentCredentialUncheckedUpdateManyWithoutVerifiedByInput>
+  }
+
+  export type AdminAuditLogUpsertWithWhereUniqueWithoutAdminInput = {
+    where: AdminAuditLogWhereUniqueInput
+    update: XOR<AdminAuditLogUpdateWithoutAdminInput, AdminAuditLogUncheckedUpdateWithoutAdminInput>
+    create: XOR<AdminAuditLogCreateWithoutAdminInput, AdminAuditLogUncheckedCreateWithoutAdminInput>
+  }
+
+  export type AdminAuditLogUpdateWithWhereUniqueWithoutAdminInput = {
+    where: AdminAuditLogWhereUniqueInput
+    data: XOR<AdminAuditLogUpdateWithoutAdminInput, AdminAuditLogUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type AdminAuditLogUpdateManyWithWhereWithoutAdminInput = {
+    where: AdminAuditLogScalarWhereInput
+    data: XOR<AdminAuditLogUpdateManyMutationInput, AdminAuditLogUncheckedUpdateManyWithoutAdminInput>
+  }
+
+  export type AdminAuditLogScalarWhereInput = {
+    AND?: AdminAuditLogScalarWhereInput | AdminAuditLogScalarWhereInput[]
+    OR?: AdminAuditLogScalarWhereInput[]
+    NOT?: AdminAuditLogScalarWhereInput | AdminAuditLogScalarWhereInput[]
+    id?: StringFilter<"AdminAuditLog"> | string
+    adminId?: StringFilter<"AdminAuditLog"> | string
+    action?: EnumAuditActionFilter<"AdminAuditLog"> | $Enums.AuditAction
+    targetType?: StringFilter<"AdminAuditLog"> | string
+    targetId?: StringFilter<"AdminAuditLog"> | string
+    details?: StringFilter<"AdminAuditLog"> | string
+    ipAddress?: StringNullableFilter<"AdminAuditLog"> | string | null
+    userAgent?: StringNullableFilter<"AdminAuditLog"> | string | null
+    createdAt?: DateTimeFilter<"AdminAuditLog"> | Date | string
+  }
+
+  export type LocationUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: LocationWhereUniqueInput
+    update: XOR<LocationUpdateWithoutCreatedByInput, LocationUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<LocationCreateWithoutCreatedByInput, LocationUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type LocationUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: LocationWhereUniqueInput
+    data: XOR<LocationUpdateWithoutCreatedByInput, LocationUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type LocationUpdateManyWithWhereWithoutCreatedByInput = {
+    where: LocationScalarWhereInput
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type LocationScalarWhereInput = {
+    AND?: LocationScalarWhereInput | LocationScalarWhereInput[]
+    OR?: LocationScalarWhereInput[]
+    NOT?: LocationScalarWhereInput | LocationScalarWhereInput[]
+    id?: StringFilter<"Location"> | string
+    name?: StringFilter<"Location"> | string
+    code?: StringFilter<"Location"> | string
+    country?: StringFilter<"Location"> | string
+    countryCode?: StringFilter<"Location"> | string
+    city?: StringFilter<"Location"> | string
+    region?: StringFilter<"Location"> | string
+    latitude?: FloatFilter<"Location"> | number
+    longitude?: FloatFilter<"Location"> | number
+    type?: EnumLocationTypeFilter<"Location"> | $Enums.LocationType
+    isBlocked?: BoolFilter<"Location"> | boolean
+    blockedReason?: StringNullableFilter<"Location"> | string | null
+    isDeleted?: BoolFilter<"Location"> | boolean
+    deletedAt?: DateTimeNullableFilter<"Location"> | Date | string | null
+    createdById?: StringNullableFilter<"Location"> | string | null
+    updatedById?: StringNullableFilter<"Location"> | string | null
+    deletedById?: StringNullableFilter<"Location"> | string | null
+    createdAt?: DateTimeFilter<"Location"> | Date | string
+    updatedAt?: DateTimeFilter<"Location"> | Date | string
+  }
+
+  export type LocationUpsertWithWhereUniqueWithoutUpdatedByInput = {
+    where: LocationWhereUniqueInput
+    update: XOR<LocationUpdateWithoutUpdatedByInput, LocationUncheckedUpdateWithoutUpdatedByInput>
+    create: XOR<LocationCreateWithoutUpdatedByInput, LocationUncheckedCreateWithoutUpdatedByInput>
+  }
+
+  export type LocationUpdateWithWhereUniqueWithoutUpdatedByInput = {
+    where: LocationWhereUniqueInput
+    data: XOR<LocationUpdateWithoutUpdatedByInput, LocationUncheckedUpdateWithoutUpdatedByInput>
+  }
+
+  export type LocationUpdateManyWithWhereWithoutUpdatedByInput = {
+    where: LocationScalarWhereInput
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyWithoutUpdatedByInput>
+  }
+
+  export type LocationUpsertWithWhereUniqueWithoutDeletedByInput = {
+    where: LocationWhereUniqueInput
+    update: XOR<LocationUpdateWithoutDeletedByInput, LocationUncheckedUpdateWithoutDeletedByInput>
+    create: XOR<LocationCreateWithoutDeletedByInput, LocationUncheckedCreateWithoutDeletedByInput>
+  }
+
+  export type LocationUpdateWithWhereUniqueWithoutDeletedByInput = {
+    where: LocationWhereUniqueInput
+    data: XOR<LocationUpdateWithoutDeletedByInput, LocationUncheckedUpdateWithoutDeletedByInput>
+  }
+
+  export type LocationUpdateManyWithWhereWithoutDeletedByInput = {
+    where: LocationScalarWhereInput
+    data: XOR<LocationUpdateManyMutationInput, LocationUncheckedUpdateManyWithoutDeletedByInput>
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id: string
     email: string
@@ -16944,6 +28719,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -16955,12 +28732,25 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
     accounts?: AccountCreateNestedManyWithoutUserInput
-    shipments?: ShipmentCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -16972,6 +28762,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -16983,12 +28775,25 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -17016,6 +28821,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17027,12 +28834,25 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -17044,6 +28864,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17055,12 +28877,25 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -17072,6 +28907,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17083,12 +28920,25 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    shipments?: ShipmentCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -17100,6 +28950,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17111,12 +28963,25 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -17144,6 +29009,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17155,12 +29022,25 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -17172,6 +29052,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17183,12 +29065,25 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserCreateWithoutChatSessionsInput = {
@@ -17200,6 +29095,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17211,12 +29108,25 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
-    shipments?: ShipmentCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserUncheckedCreateWithoutChatSessionsInput = {
@@ -17228,6 +29138,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17239,12 +29151,25 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserCreateOrConnectWithoutChatSessionsInput = {
@@ -17296,6 +29221,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17307,12 +29234,25 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatSessionsInput = {
@@ -17324,6 +29264,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17335,12 +29277,25 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
   }
 
   export type ChatMessageUpsertWithWhereUniqueWithoutSessionInput = {
@@ -17418,7 +29373,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserCreateWithoutPhoneVerificationsInput = {
+  export type UserCreateWithoutAgentCredentialsInput = {
     id: string
     email: string
     name: string
@@ -17427,6 +29382,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17438,12 +29395,1637 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
-    shipments?: ShipmentCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAgentCredentialsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAgentCredentialsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAgentCredentialsInput, UserUncheckedCreateWithoutAgentCredentialsInput>
+  }
+
+  export type UserCreateWithoutVerifiedCredentialsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutVerifiedCredentialsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutVerifiedCredentialsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutVerifiedCredentialsInput, UserUncheckedCreateWithoutVerifiedCredentialsInput>
+  }
+
+  export type UserUpsertWithoutAgentCredentialsInput = {
+    update: XOR<UserUpdateWithoutAgentCredentialsInput, UserUncheckedUpdateWithoutAgentCredentialsInput>
+    create: XOR<UserCreateWithoutAgentCredentialsInput, UserUncheckedCreateWithoutAgentCredentialsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAgentCredentialsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAgentCredentialsInput, UserUncheckedUpdateWithoutAgentCredentialsInput>
+  }
+
+  export type UserUpdateWithoutAgentCredentialsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAgentCredentialsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUpsertWithoutVerifiedCredentialsInput = {
+    update: XOR<UserUpdateWithoutVerifiedCredentialsInput, UserUncheckedUpdateWithoutVerifiedCredentialsInput>
+    create: XOR<UserCreateWithoutVerifiedCredentialsInput, UserUncheckedCreateWithoutVerifiedCredentialsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutVerifiedCredentialsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutVerifiedCredentialsInput, UserUncheckedUpdateWithoutVerifiedCredentialsInput>
+  }
+
+  export type UserUpdateWithoutVerifiedCredentialsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutVerifiedCredentialsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserCreateWithoutLocationsCreatedInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutLocationsCreatedInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutLocationsCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutLocationsCreatedInput, UserUncheckedCreateWithoutLocationsCreatedInput>
+  }
+
+  export type UserCreateWithoutLocationsUpdatedInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutLocationsUpdatedInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutLocationsUpdatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutLocationsUpdatedInput, UserUncheckedCreateWithoutLocationsUpdatedInput>
+  }
+
+  export type UserCreateWithoutLocationsDeletedInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutLocationsDeletedInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutLocationsDeletedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutLocationsDeletedInput, UserUncheckedCreateWithoutLocationsDeletedInput>
+  }
+
+  export type AgentCorridorCreateWithoutOriginPortInput = {
+    id?: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    agent: UserCreateNestedOneWithoutAgentCorridorsInput
+    destinationPort: LocationCreateNestedOneWithoutDestinationCorridorsInput
+  }
+
+  export type AgentCorridorUncheckedCreateWithoutOriginPortInput = {
+    id?: string
+    agentId: string
+    destinationPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type AgentCorridorCreateOrConnectWithoutOriginPortInput = {
+    where: AgentCorridorWhereUniqueInput
+    create: XOR<AgentCorridorCreateWithoutOriginPortInput, AgentCorridorUncheckedCreateWithoutOriginPortInput>
+  }
+
+  export type AgentCorridorCreateManyOriginPortInputEnvelope = {
+    data: AgentCorridorCreateManyOriginPortInput | AgentCorridorCreateManyOriginPortInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AgentCorridorCreateWithoutDestinationPortInput = {
+    id?: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+    agent: UserCreateNestedOneWithoutAgentCorridorsInput
+    originPort: LocationCreateNestedOneWithoutOriginCorridorsInput
+  }
+
+  export type AgentCorridorUncheckedCreateWithoutDestinationPortInput = {
+    id?: string
+    agentId: string
+    originPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type AgentCorridorCreateOrConnectWithoutDestinationPortInput = {
+    where: AgentCorridorWhereUniqueInput
+    create: XOR<AgentCorridorCreateWithoutDestinationPortInput, AgentCorridorUncheckedCreateWithoutDestinationPortInput>
+  }
+
+  export type AgentCorridorCreateManyDestinationPortInputEnvelope = {
+    data: AgentCorridorCreateManyDestinationPortInput | AgentCorridorCreateManyDestinationPortInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ShipmentCreateWithoutOriginLocationInput = {
+    id?: string
+    trackingId?: string
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    user: UserCreateNestedOneWithoutCustomerShipmentsInput
+    agent?: UserCreateNestedOneWithoutAgentShipmentsInput
+    assignedBy?: UserCreateNestedOneWithoutAssignedShipmentsInput
+    destinationLocation?: LocationCreateNestedOneWithoutDestinationShipmentsInput
+    cost?: ShipmentCostCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutOriginLocationInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    cost?: ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutOriginLocationInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutOriginLocationInput, ShipmentUncheckedCreateWithoutOriginLocationInput>
+  }
+
+  export type ShipmentCreateManyOriginLocationInputEnvelope = {
+    data: ShipmentCreateManyOriginLocationInput | ShipmentCreateManyOriginLocationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ShipmentCreateWithoutDestinationLocationInput = {
+    id?: string
+    trackingId?: string
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    user: UserCreateNestedOneWithoutCustomerShipmentsInput
+    agent?: UserCreateNestedOneWithoutAgentShipmentsInput
+    assignedBy?: UserCreateNestedOneWithoutAssignedShipmentsInput
+    originLocation?: LocationCreateNestedOneWithoutOriginShipmentsInput
+    cost?: ShipmentCostCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutDestinationLocationInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    cost?: ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutDestinationLocationInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutDestinationLocationInput, ShipmentUncheckedCreateWithoutDestinationLocationInput>
+  }
+
+  export type ShipmentCreateManyDestinationLocationInputEnvelope = {
+    data: ShipmentCreateManyDestinationLocationInput | ShipmentCreateManyDestinationLocationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutLocationsCreatedInput = {
+    update: XOR<UserUpdateWithoutLocationsCreatedInput, UserUncheckedUpdateWithoutLocationsCreatedInput>
+    create: XOR<UserCreateWithoutLocationsCreatedInput, UserUncheckedCreateWithoutLocationsCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutLocationsCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutLocationsCreatedInput, UserUncheckedUpdateWithoutLocationsCreatedInput>
+  }
+
+  export type UserUpdateWithoutLocationsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutLocationsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUpsertWithoutLocationsUpdatedInput = {
+    update: XOR<UserUpdateWithoutLocationsUpdatedInput, UserUncheckedUpdateWithoutLocationsUpdatedInput>
+    create: XOR<UserCreateWithoutLocationsUpdatedInput, UserUncheckedCreateWithoutLocationsUpdatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutLocationsUpdatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutLocationsUpdatedInput, UserUncheckedUpdateWithoutLocationsUpdatedInput>
+  }
+
+  export type UserUpdateWithoutLocationsUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutLocationsUpdatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUpsertWithoutLocationsDeletedInput = {
+    update: XOR<UserUpdateWithoutLocationsDeletedInput, UserUncheckedUpdateWithoutLocationsDeletedInput>
+    create: XOR<UserCreateWithoutLocationsDeletedInput, UserUncheckedCreateWithoutLocationsDeletedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutLocationsDeletedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutLocationsDeletedInput, UserUncheckedUpdateWithoutLocationsDeletedInput>
+  }
+
+  export type UserUpdateWithoutLocationsDeletedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutLocationsDeletedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type AgentCorridorUpsertWithWhereUniqueWithoutOriginPortInput = {
+    where: AgentCorridorWhereUniqueInput
+    update: XOR<AgentCorridorUpdateWithoutOriginPortInput, AgentCorridorUncheckedUpdateWithoutOriginPortInput>
+    create: XOR<AgentCorridorCreateWithoutOriginPortInput, AgentCorridorUncheckedCreateWithoutOriginPortInput>
+  }
+
+  export type AgentCorridorUpdateWithWhereUniqueWithoutOriginPortInput = {
+    where: AgentCorridorWhereUniqueInput
+    data: XOR<AgentCorridorUpdateWithoutOriginPortInput, AgentCorridorUncheckedUpdateWithoutOriginPortInput>
+  }
+
+  export type AgentCorridorUpdateManyWithWhereWithoutOriginPortInput = {
+    where: AgentCorridorScalarWhereInput
+    data: XOR<AgentCorridorUpdateManyMutationInput, AgentCorridorUncheckedUpdateManyWithoutOriginPortInput>
+  }
+
+  export type AgentCorridorUpsertWithWhereUniqueWithoutDestinationPortInput = {
+    where: AgentCorridorWhereUniqueInput
+    update: XOR<AgentCorridorUpdateWithoutDestinationPortInput, AgentCorridorUncheckedUpdateWithoutDestinationPortInput>
+    create: XOR<AgentCorridorCreateWithoutDestinationPortInput, AgentCorridorUncheckedCreateWithoutDestinationPortInput>
+  }
+
+  export type AgentCorridorUpdateWithWhereUniqueWithoutDestinationPortInput = {
+    where: AgentCorridorWhereUniqueInput
+    data: XOR<AgentCorridorUpdateWithoutDestinationPortInput, AgentCorridorUncheckedUpdateWithoutDestinationPortInput>
+  }
+
+  export type AgentCorridorUpdateManyWithWhereWithoutDestinationPortInput = {
+    where: AgentCorridorScalarWhereInput
+    data: XOR<AgentCorridorUpdateManyMutationInput, AgentCorridorUncheckedUpdateManyWithoutDestinationPortInput>
+  }
+
+  export type ShipmentUpsertWithWhereUniqueWithoutOriginLocationInput = {
+    where: ShipmentWhereUniqueInput
+    update: XOR<ShipmentUpdateWithoutOriginLocationInput, ShipmentUncheckedUpdateWithoutOriginLocationInput>
+    create: XOR<ShipmentCreateWithoutOriginLocationInput, ShipmentUncheckedCreateWithoutOriginLocationInput>
+  }
+
+  export type ShipmentUpdateWithWhereUniqueWithoutOriginLocationInput = {
+    where: ShipmentWhereUniqueInput
+    data: XOR<ShipmentUpdateWithoutOriginLocationInput, ShipmentUncheckedUpdateWithoutOriginLocationInput>
+  }
+
+  export type ShipmentUpdateManyWithWhereWithoutOriginLocationInput = {
+    where: ShipmentScalarWhereInput
+    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutOriginLocationInput>
+  }
+
+  export type ShipmentUpsertWithWhereUniqueWithoutDestinationLocationInput = {
+    where: ShipmentWhereUniqueInput
+    update: XOR<ShipmentUpdateWithoutDestinationLocationInput, ShipmentUncheckedUpdateWithoutDestinationLocationInput>
+    create: XOR<ShipmentCreateWithoutDestinationLocationInput, ShipmentUncheckedCreateWithoutDestinationLocationInput>
+  }
+
+  export type ShipmentUpdateWithWhereUniqueWithoutDestinationLocationInput = {
+    where: ShipmentWhereUniqueInput
+    data: XOR<ShipmentUpdateWithoutDestinationLocationInput, ShipmentUncheckedUpdateWithoutDestinationLocationInput>
+  }
+
+  export type ShipmentUpdateManyWithWhereWithoutDestinationLocationInput = {
+    where: ShipmentScalarWhereInput
+    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutDestinationLocationInput>
+  }
+
+  export type UserCreateWithoutAgentCorridorsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAgentCorridorsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAgentCorridorsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAgentCorridorsInput, UserUncheckedCreateWithoutAgentCorridorsInput>
+  }
+
+  export type LocationCreateWithoutOriginCorridorsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutLocationsCreatedInput
+    updatedBy?: UserCreateNestedOneWithoutLocationsUpdatedInput
+    deletedBy?: UserCreateNestedOneWithoutLocationsDeletedInput
+    destinationCorridors?: AgentCorridorCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutOriginCorridorsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    destinationCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutOriginCorridorsInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutOriginCorridorsInput, LocationUncheckedCreateWithoutOriginCorridorsInput>
+  }
+
+  export type LocationCreateWithoutDestinationCorridorsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutLocationsCreatedInput
+    updatedBy?: UserCreateNestedOneWithoutLocationsUpdatedInput
+    deletedBy?: UserCreateNestedOneWithoutLocationsDeletedInput
+    originCorridors?: AgentCorridorCreateNestedManyWithoutOriginPortInput
+    originShipments?: ShipmentCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutDestinationCorridorsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput
+    originShipments?: ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput
+    destinationShipments?: ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutDestinationCorridorsInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutDestinationCorridorsInput, LocationUncheckedCreateWithoutDestinationCorridorsInput>
+  }
+
+  export type UserUpsertWithoutAgentCorridorsInput = {
+    update: XOR<UserUpdateWithoutAgentCorridorsInput, UserUncheckedUpdateWithoutAgentCorridorsInput>
+    create: XOR<UserCreateWithoutAgentCorridorsInput, UserUncheckedCreateWithoutAgentCorridorsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAgentCorridorsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAgentCorridorsInput, UserUncheckedUpdateWithoutAgentCorridorsInput>
+  }
+
+  export type UserUpdateWithoutAgentCorridorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAgentCorridorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type LocationUpsertWithoutOriginCorridorsInput = {
+    update: XOR<LocationUpdateWithoutOriginCorridorsInput, LocationUncheckedUpdateWithoutOriginCorridorsInput>
+    create: XOR<LocationCreateWithoutOriginCorridorsInput, LocationUncheckedCreateWithoutOriginCorridorsInput>
+    where?: LocationWhereInput
+  }
+
+  export type LocationUpdateToOneWithWhereWithoutOriginCorridorsInput = {
+    where?: LocationWhereInput
+    data: XOR<LocationUpdateWithoutOriginCorridorsInput, LocationUncheckedUpdateWithoutOriginCorridorsInput>
+  }
+
+  export type LocationUpdateWithoutOriginCorridorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutLocationsCreatedNestedInput
+    updatedBy?: UserUpdateOneWithoutLocationsUpdatedNestedInput
+    deletedBy?: UserUpdateOneWithoutLocationsDeletedNestedInput
+    destinationCorridors?: AgentCorridorUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutOriginCorridorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    destinationCorridors?: AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUpsertWithoutDestinationCorridorsInput = {
+    update: XOR<LocationUpdateWithoutDestinationCorridorsInput, LocationUncheckedUpdateWithoutDestinationCorridorsInput>
+    create: XOR<LocationCreateWithoutDestinationCorridorsInput, LocationUncheckedCreateWithoutDestinationCorridorsInput>
+    where?: LocationWhereInput
+  }
+
+  export type LocationUpdateToOneWithWhereWithoutDestinationCorridorsInput = {
+    where?: LocationWhereInput
+    data: XOR<LocationUpdateWithoutDestinationCorridorsInput, LocationUncheckedUpdateWithoutDestinationCorridorsInput>
+  }
+
+  export type LocationUpdateWithoutDestinationCorridorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutLocationsCreatedNestedInput
+    updatedBy?: UserUpdateOneWithoutLocationsUpdatedNestedInput
+    deletedBy?: UserUpdateOneWithoutLocationsDeletedNestedInput
+    originCorridors?: AgentCorridorUpdateManyWithoutOriginPortNestedInput
+    originShipments?: ShipmentUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutDestinationCorridorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originCorridors?: AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput
+    originShipments?: ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type UserCreateWithoutPhoneVerificationsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserUncheckedCreateWithoutPhoneVerificationsInput = {
@@ -17455,6 +31037,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17466,12 +31050,25 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    shipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
   }
 
   export type UserCreateOrConnectWithoutPhoneVerificationsInput = {
@@ -17499,6 +31096,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17510,12 +31109,25 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPhoneVerificationsInput = {
@@ -17527,6 +31139,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17538,15 +31152,28 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    shipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
   }
 
-  export type UserCreateWithoutShipmentsInput = {
+  export type UserCreateWithoutCustomerShipmentsInput = {
     id: string
     email: string
     name: string
@@ -17555,6 +31182,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17566,15 +31195,28 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
   }
 
-  export type UserUncheckedCreateWithoutShipmentsInput = {
+  export type UserUncheckedCreateWithoutCustomerShipmentsInput = {
     id: string
     email: string
     name: string
@@ -17583,6 +31225,8 @@ export namespace Prisma {
     image?: string | null
     address?: string | null
     phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
     isBlocked?: boolean
     isDeleted?: boolean
     blockedReason?: string | null
@@ -17594,17 +31238,375 @@ export namespace Prisma {
     passwordChangedAt?: Date | string | null
     failedLoginAttempts?: number
     lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
   }
 
-  export type UserCreateOrConnectWithoutShipmentsInput = {
+  export type UserCreateOrConnectWithoutCustomerShipmentsInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutShipmentsInput, UserUncheckedCreateWithoutShipmentsInput>
+    create: XOR<UserCreateWithoutCustomerShipmentsInput, UserUncheckedCreateWithoutCustomerShipmentsInput>
+  }
+
+  export type UserCreateWithoutAgentShipmentsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAgentShipmentsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAgentShipmentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAgentShipmentsInput, UserUncheckedCreateWithoutAgentShipmentsInput>
+  }
+
+  export type UserCreateWithoutAssignedShipmentsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAssignedShipmentsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAssignedShipmentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAssignedShipmentsInput, UserUncheckedCreateWithoutAssignedShipmentsInput>
+  }
+
+  export type LocationCreateWithoutOriginShipmentsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutLocationsCreatedInput
+    updatedBy?: UserCreateNestedOneWithoutLocationsUpdatedInput
+    deletedBy?: UserCreateNestedOneWithoutLocationsDeletedInput
+    originCorridors?: AgentCorridorCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorCreateNestedManyWithoutDestinationPortInput
+    destinationShipments?: ShipmentCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutOriginShipmentsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput
+    destinationShipments?: ShipmentUncheckedCreateNestedManyWithoutDestinationLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutOriginShipmentsInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutOriginShipmentsInput, LocationUncheckedCreateWithoutOriginShipmentsInput>
+  }
+
+  export type LocationCreateWithoutDestinationShipmentsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutLocationsCreatedInput
+    updatedBy?: UserCreateNestedOneWithoutLocationsUpdatedInput
+    deletedBy?: UserCreateNestedOneWithoutLocationsDeletedInput
+    originCorridors?: AgentCorridorCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentCreateNestedManyWithoutOriginLocationInput
+  }
+
+  export type LocationUncheckedCreateWithoutDestinationShipmentsInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutOriginPortInput
+    destinationCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutDestinationPortInput
+    originShipments?: ShipmentUncheckedCreateNestedManyWithoutOriginLocationInput
+  }
+
+  export type LocationCreateOrConnectWithoutDestinationShipmentsInput = {
+    where: LocationWhereUniqueInput
+    create: XOR<LocationCreateWithoutDestinationShipmentsInput, LocationUncheckedCreateWithoutDestinationShipmentsInput>
+  }
+
+  export type ShipmentCostCreateWithoutShipmentInput = {
+    id?: string
+    originHandling: number
+    oceanFreight: number
+    bafSurcharge: number
+    thcOrigin: number
+    thcDestination: number
+    transshipmentFee: number
+    customsClearance: number
+    customsDuty: number
+    vat: number
+    destinationHandling: number
+    cargoInsurance: number
+    lastMileDelivery: number
+    agencyFee: number
+    platformFee: number
+    totalCost: number
+    currency?: string
+    exchangeRate?: number
+    convertedTotal: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShipmentCostUncheckedCreateWithoutShipmentInput = {
+    id?: string
+    originHandling: number
+    oceanFreight: number
+    bafSurcharge: number
+    thcOrigin: number
+    thcDestination: number
+    transshipmentFee: number
+    customsClearance: number
+    customsDuty: number
+    vat: number
+    destinationHandling: number
+    cargoInsurance: number
+    lastMileDelivery: number
+    agencyFee: number
+    platformFee: number
+    totalCost: number
+    currency?: string
+    exchangeRate?: number
+    convertedTotal: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShipmentCostCreateOrConnectWithoutShipmentInput = {
+    where: ShipmentCostWhereUniqueInput
+    create: XOR<ShipmentCostCreateWithoutShipmentInput, ShipmentCostUncheckedCreateWithoutShipmentInput>
   }
 
   export type StatusLogCreateWithoutShipmentInput = {
@@ -17612,8 +31614,8 @@ export namespace Prisma {
     status: $Enums.ShipmentStatus
     location: string
     note?: string | null
-    updateBy?: string | null
     createdAt?: Date | string
+    updatedByUser?: UserCreateNestedOneWithoutStatusLogsInput
   }
 
   export type StatusLogUncheckedCreateWithoutShipmentInput = {
@@ -17635,18 +31637,18 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserUpsertWithoutShipmentsInput = {
-    update: XOR<UserUpdateWithoutShipmentsInput, UserUncheckedUpdateWithoutShipmentsInput>
-    create: XOR<UserCreateWithoutShipmentsInput, UserUncheckedCreateWithoutShipmentsInput>
+  export type UserUpsertWithoutCustomerShipmentsInput = {
+    update: XOR<UserUpdateWithoutCustomerShipmentsInput, UserUncheckedUpdateWithoutCustomerShipmentsInput>
+    create: XOR<UserCreateWithoutCustomerShipmentsInput, UserUncheckedCreateWithoutCustomerShipmentsInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutShipmentsInput = {
+  export type UserUpdateToOneWithWhereWithoutCustomerShipmentsInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutShipmentsInput, UserUncheckedUpdateWithoutShipmentsInput>
+    data: XOR<UserUpdateWithoutCustomerShipmentsInput, UserUncheckedUpdateWithoutCustomerShipmentsInput>
   }
 
-  export type UserUpdateWithoutShipmentsInput = {
+  export type UserUpdateWithoutCustomerShipmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -17655,6 +31657,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17666,15 +31670,28 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutShipmentsInput = {
+  export type UserUncheckedUpdateWithoutCustomerShipmentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -17683,6 +31700,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17694,12 +31713,400 @@ export namespace Prisma {
     passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUpsertWithoutAgentShipmentsInput = {
+    update: XOR<UserUpdateWithoutAgentShipmentsInput, UserUncheckedUpdateWithoutAgentShipmentsInput>
+    create: XOR<UserCreateWithoutAgentShipmentsInput, UserUncheckedCreateWithoutAgentShipmentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAgentShipmentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAgentShipmentsInput, UserUncheckedUpdateWithoutAgentShipmentsInput>
+  }
+
+  export type UserUpdateWithoutAgentShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAgentShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUpsertWithoutAssignedShipmentsInput = {
+    update: XOR<UserUpdateWithoutAssignedShipmentsInput, UserUncheckedUpdateWithoutAssignedShipmentsInput>
+    create: XOR<UserCreateWithoutAssignedShipmentsInput, UserUncheckedCreateWithoutAssignedShipmentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAssignedShipmentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAssignedShipmentsInput, UserUncheckedUpdateWithoutAssignedShipmentsInput>
+  }
+
+  export type UserUpdateWithoutAssignedShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAssignedShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type LocationUpsertWithoutOriginShipmentsInput = {
+    update: XOR<LocationUpdateWithoutOriginShipmentsInput, LocationUncheckedUpdateWithoutOriginShipmentsInput>
+    create: XOR<LocationCreateWithoutOriginShipmentsInput, LocationUncheckedCreateWithoutOriginShipmentsInput>
+    where?: LocationWhereInput
+  }
+
+  export type LocationUpdateToOneWithWhereWithoutOriginShipmentsInput = {
+    where?: LocationWhereInput
+    data: XOR<LocationUpdateWithoutOriginShipmentsInput, LocationUncheckedUpdateWithoutOriginShipmentsInput>
+  }
+
+  export type LocationUpdateWithoutOriginShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutLocationsCreatedNestedInput
+    updatedBy?: UserUpdateOneWithoutLocationsUpdatedNestedInput
+    deletedBy?: UserUpdateOneWithoutLocationsDeletedNestedInput
+    originCorridors?: AgentCorridorUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUpdateManyWithoutDestinationPortNestedInput
+    destinationShipments?: ShipmentUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutOriginShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originCorridors?: AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput
+    destinationShipments?: ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUpsertWithoutDestinationShipmentsInput = {
+    update: XOR<LocationUpdateWithoutDestinationShipmentsInput, LocationUncheckedUpdateWithoutDestinationShipmentsInput>
+    create: XOR<LocationCreateWithoutDestinationShipmentsInput, LocationUncheckedCreateWithoutDestinationShipmentsInput>
+    where?: LocationWhereInput
+  }
+
+  export type LocationUpdateToOneWithWhereWithoutDestinationShipmentsInput = {
+    where?: LocationWhereInput
+    data: XOR<LocationUpdateWithoutDestinationShipmentsInput, LocationUncheckedUpdateWithoutDestinationShipmentsInput>
+  }
+
+  export type LocationUpdateWithoutDestinationShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutLocationsCreatedNestedInput
+    updatedBy?: UserUpdateOneWithoutLocationsUpdatedNestedInput
+    deletedBy?: UserUpdateOneWithoutLocationsDeletedNestedInput
+    originCorridors?: AgentCorridorUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUpdateManyWithoutOriginLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutDestinationShipmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originCorridors?: AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput
+  }
+
+  export type ShipmentCostUpsertWithoutShipmentInput = {
+    update: XOR<ShipmentCostUpdateWithoutShipmentInput, ShipmentCostUncheckedUpdateWithoutShipmentInput>
+    create: XOR<ShipmentCostCreateWithoutShipmentInput, ShipmentCostUncheckedCreateWithoutShipmentInput>
+    where?: ShipmentCostWhereInput
+  }
+
+  export type ShipmentCostUpdateToOneWithWhereWithoutShipmentInput = {
+    where?: ShipmentCostWhereInput
+    data: XOR<ShipmentCostUpdateWithoutShipmentInput, ShipmentCostUncheckedUpdateWithoutShipmentInput>
+  }
+
+  export type ShipmentCostUpdateWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originHandling?: FloatFieldUpdateOperationsInput | number
+    oceanFreight?: FloatFieldUpdateOperationsInput | number
+    bafSurcharge?: FloatFieldUpdateOperationsInput | number
+    thcOrigin?: FloatFieldUpdateOperationsInput | number
+    thcDestination?: FloatFieldUpdateOperationsInput | number
+    transshipmentFee?: FloatFieldUpdateOperationsInput | number
+    customsClearance?: FloatFieldUpdateOperationsInput | number
+    customsDuty?: FloatFieldUpdateOperationsInput | number
+    vat?: FloatFieldUpdateOperationsInput | number
+    destinationHandling?: FloatFieldUpdateOperationsInput | number
+    cargoInsurance?: FloatFieldUpdateOperationsInput | number
+    lastMileDelivery?: FloatFieldUpdateOperationsInput | number
+    agencyFee?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    totalCost?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    exchangeRate?: FloatFieldUpdateOperationsInput | number
+    convertedTotal?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShipmentCostUncheckedUpdateWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originHandling?: FloatFieldUpdateOperationsInput | number
+    oceanFreight?: FloatFieldUpdateOperationsInput | number
+    bafSurcharge?: FloatFieldUpdateOperationsInput | number
+    thcOrigin?: FloatFieldUpdateOperationsInput | number
+    thcDestination?: FloatFieldUpdateOperationsInput | number
+    transshipmentFee?: FloatFieldUpdateOperationsInput | number
+    customsClearance?: FloatFieldUpdateOperationsInput | number
+    customsDuty?: FloatFieldUpdateOperationsInput | number
+    vat?: FloatFieldUpdateOperationsInput | number
+    destinationHandling?: FloatFieldUpdateOperationsInput | number
+    cargoInsurance?: FloatFieldUpdateOperationsInput | number
+    lastMileDelivery?: FloatFieldUpdateOperationsInput | number
+    agencyFee?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    totalCost?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    exchangeRate?: FloatFieldUpdateOperationsInput | number
+    convertedTotal?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StatusLogUpsertWithWhereUniqueWithoutShipmentInput = {
@@ -17718,52 +32125,278 @@ export namespace Prisma {
     data: XOR<StatusLogUpdateManyMutationInput, StatusLogUncheckedUpdateManyWithoutShipmentInput>
   }
 
-  export type StatusLogScalarWhereInput = {
-    AND?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
-    OR?: StatusLogScalarWhereInput[]
-    NOT?: StatusLogScalarWhereInput | StatusLogScalarWhereInput[]
-    id?: StringFilter<"StatusLog"> | string
-    shipmentId?: StringFilter<"StatusLog"> | string
-    status?: EnumShipmentStatusFilter<"StatusLog"> | $Enums.ShipmentStatus
-    location?: StringFilter<"StatusLog"> | string
-    note?: StringNullableFilter<"StatusLog"> | string | null
-    updateBy?: StringNullableFilter<"StatusLog"> | string | null
-    createdAt?: DateTimeFilter<"StatusLog"> | Date | string
+  export type ShipmentCreateWithoutCostInput = {
+    id?: string
+    trackingId?: string
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    user: UserCreateNestedOneWithoutCustomerShipmentsInput
+    agent?: UserCreateNestedOneWithoutAgentShipmentsInput
+    assignedBy?: UserCreateNestedOneWithoutAssignedShipmentsInput
+    originLocation?: LocationCreateNestedOneWithoutOriginShipmentsInput
+    destinationLocation?: LocationCreateNestedOneWithoutDestinationShipmentsInput
+    statusLogs?: StatusLogCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutCostInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+    statusLogs?: StatusLogUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutCostInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutCostInput, ShipmentUncheckedCreateWithoutCostInput>
+  }
+
+  export type ShipmentUpsertWithoutCostInput = {
+    update: XOR<ShipmentUpdateWithoutCostInput, ShipmentUncheckedUpdateWithoutCostInput>
+    create: XOR<ShipmentCreateWithoutCostInput, ShipmentUncheckedCreateWithoutCostInput>
+    where?: ShipmentWhereInput
+  }
+
+  export type ShipmentUpdateToOneWithWhereWithoutCostInput = {
+    where?: ShipmentWhereInput
+    data: XOR<ShipmentUpdateWithoutCostInput, ShipmentUncheckedUpdateWithoutCostInput>
+  }
+
+  export type ShipmentUpdateWithoutCostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput
+    agent?: UserUpdateOneWithoutAgentShipmentsNestedInput
+    assignedBy?: UserUpdateOneWithoutAssignedShipmentsNestedInput
+    originLocation?: LocationUpdateOneWithoutOriginShipmentsNestedInput
+    destinationLocation?: LocationUpdateOneWithoutDestinationShipmentsNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutCostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
   }
 
   export type ShipmentCreateWithoutStatusLogsInput = {
     id?: string
     trackingId?: string
+    assignedAt?: Date | string | null
     origin: string
     destination: string
     weight: number
+    declaredCargoValue?: number
     description?: string | null
     status?: $Enums.ShipmentStatus
     estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updateBy?: string | null
-    user: UserCreateNestedOneWithoutShipmentsInput
+    user: UserCreateNestedOneWithoutCustomerShipmentsInput
+    agent?: UserCreateNestedOneWithoutAgentShipmentsInput
+    assignedBy?: UserCreateNestedOneWithoutAssignedShipmentsInput
+    originLocation?: LocationCreateNestedOneWithoutOriginShipmentsInput
+    destinationLocation?: LocationCreateNestedOneWithoutDestinationShipmentsInput
+    cost?: ShipmentCostCreateNestedOneWithoutShipmentInput
   }
 
   export type ShipmentUncheckedCreateWithoutStatusLogsInput = {
     id?: string
     trackingId?: string
     userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
     origin: string
     destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
     weight: number
+    declaredCargoValue?: number
     description?: string | null
     status?: $Enums.ShipmentStatus
     estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     updateBy?: string | null
+    cost?: ShipmentCostUncheckedCreateNestedOneWithoutShipmentInput
   }
 
   export type ShipmentCreateOrConnectWithoutStatusLogsInput = {
     where: ShipmentWhereUniqueInput
     create: XOR<ShipmentCreateWithoutStatusLogsInput, ShipmentUncheckedCreateWithoutStatusLogsInput>
+  }
+
+  export type UserCreateWithoutStatusLogsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    agentCorridors?: AgentCorridorCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserUncheckedCreateWithoutStatusLogsInput = {
+    id: string
+    email: string
+    name: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    image?: string | null
+    address?: string | null
+    phone?: string | null
+    assignedArea?: string | null
+    isAvailable?: boolean
+    isBlocked?: boolean
+    isDeleted?: boolean
+    blockedReason?: string | null
+    blockedAt?: Date | string | null
+    deletedAt?: Date | string | null
+    twoFactorEnabled?: boolean
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    passwordChangedAt?: Date | string | null
+    failedLoginAttempts?: number
+    lockedUntil?: Date | string | null
+    agentVerificationStatus?: $Enums.AgentVerificationStatus
+    verifiedAt?: Date | string | null
+    verifiedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    phoneVerifications?: PhoneVerificationUncheckedCreateNestedManyWithoutUserInput
+    agentShipments?: ShipmentUncheckedCreateNestedManyWithoutAgentInput
+    customerShipments?: ShipmentUncheckedCreateNestedManyWithoutUserInput
+    assignedShipments?: ShipmentUncheckedCreateNestedManyWithoutAssignedByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    agentCorridors?: AgentCorridorUncheckedCreateNestedManyWithoutAgentInput
+    agentCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutAgentInput
+    verifiedCredentials?: AgentCredentialUncheckedCreateNestedManyWithoutVerifiedByInput
+    adminAuditLogs?: AdminAuditLogUncheckedCreateNestedManyWithoutAdminInput
+    locationsCreated?: LocationUncheckedCreateNestedManyWithoutCreatedByInput
+    locationsUpdated?: LocationUncheckedCreateNestedManyWithoutUpdatedByInput
+    locationsDeleted?: LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  }
+
+  export type UserCreateOrConnectWithoutStatusLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutStatusLogsInput, UserUncheckedCreateWithoutStatusLogsInput>
   }
 
   export type ShipmentUpsertWithoutStatusLogsInput = {
@@ -17780,31 +32413,152 @@ export namespace Prisma {
   export type ShipmentUpdateWithoutStatusLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
     weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateBy?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutShipmentsNestedInput
+    user?: UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput
+    agent?: UserUpdateOneWithoutAgentShipmentsNestedInput
+    assignedBy?: UserUpdateOneWithoutAssignedShipmentsNestedInput
+    originLocation?: LocationUpdateOneWithoutOriginShipmentsNestedInput
+    destinationLocation?: LocationUpdateOneWithoutDestinationShipmentsNestedInput
+    cost?: ShipmentCostUpdateOneWithoutShipmentNestedInput
   }
 
   export type ShipmentUncheckedUpdateWithoutStatusLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     trackingId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     origin?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
     weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cost?: ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput
+  }
+
+  export type UserUpsertWithoutStatusLogsInput = {
+    update: XOR<UserUpdateWithoutStatusLogsInput, UserUncheckedUpdateWithoutStatusLogsInput>
+    create: XOR<UserCreateWithoutStatusLogsInput, UserUncheckedCreateWithoutStatusLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutStatusLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutStatusLogsInput, UserUncheckedUpdateWithoutStatusLogsInput>
+  }
+
+  export type UserUpdateWithoutStatusLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    agentCorridors?: AgentCorridorUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUpdateManyWithoutDeletedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutStatusLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedArea?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    lockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    agentVerificationStatus?: EnumAgentVerificationStatusFieldUpdateOperationsInput | $Enums.AgentVerificationStatus
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    phoneVerifications?: PhoneVerificationUncheckedUpdateManyWithoutUserNestedInput
+    agentShipments?: ShipmentUncheckedUpdateManyWithoutAgentNestedInput
+    customerShipments?: ShipmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedShipments?: ShipmentUncheckedUpdateManyWithoutAssignedByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    agentCorridors?: AgentCorridorUncheckedUpdateManyWithoutAgentNestedInput
+    agentCredentials?: AgentCredentialUncheckedUpdateManyWithoutAgentNestedInput
+    verifiedCredentials?: AgentCredentialUncheckedUpdateManyWithoutVerifiedByNestedInput
+    adminAuditLogs?: AdminAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    locationsCreated?: LocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    locationsUpdated?: LocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+    locationsDeleted?: LocationUncheckedUpdateManyWithoutDeletedByNestedInput
   }
 
   export type PhoneVerificationCreateManyUserInput = {
@@ -17815,6 +32569,81 @@ export namespace Prisma {
     attempts?: number
     verified?: boolean
     createdAt?: Date | string
+  }
+
+  export type ShipmentCreateManyAgentInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+  }
+
+  export type ShipmentCreateManyUserInput = {
+    id?: string
+    trackingId?: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+  }
+
+  export type ShipmentCreateManyAssignedByInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    agentId?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
   }
 
   export type SessionCreateManyUserInput = {
@@ -17847,23 +32676,136 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type ShipmentCreateManyUserInput = {
-    id?: string
-    trackingId?: string
-    origin: string
-    destination: string
-    weight: number
-    description?: string | null
-    status?: $Enums.ShipmentStatus
-    estimatedDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    updateBy?: string | null
-  }
-
   export type ChatSessionCreateManyUserInput = {
     id?: string
     title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StatusLogCreateManyUpdatedByUserInput = {
+    id?: string
+    shipmentId: string
+    status: $Enums.ShipmentStatus
+    location: string
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AgentCorridorCreateManyAgentInput = {
+    id?: string
+    originPortId: string
+    destinationPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type AgentCredentialCreateManyAgentInput = {
+    id?: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedById?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AgentCredentialCreateManyVerifiedByInput = {
+    id?: string
+    agentId: string
+    type: $Enums.CredentialType
+    documentNumber: string
+    cloudinaryPublicId: string
+    documentUrl: string
+    issuingAuthority?: string | null
+    issueDate?: Date | string | null
+    expiryDate?: Date | string | null
+    status?: $Enums.CredentialStatus
+    rejectionReason?: string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminAuditLogCreateManyAdminInput = {
+    id?: string
+    action: $Enums.AuditAction
+    targetType: string
+    targetId: string
+    details: string
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type LocationCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    updatedById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LocationCreateManyUpdatedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    deletedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LocationCreateManyDeletedByInput = {
+    id?: string
+    name: string
+    code: string
+    country: string
+    countryCode: string
+    city: string
+    region: string
+    latitude: number
+    longitude: number
+    type?: $Enums.LocationType
+    isBlocked?: boolean
+    blockedReason?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdById?: string | null
+    updatedById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17896,6 +32838,243 @@ export namespace Prisma {
     attempts?: IntFieldUpdateOperationsInput | number
     verified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShipmentUpdateWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput
+    assignedBy?: UserUpdateOneWithoutAssignedShipmentsNestedInput
+    originLocation?: LocationUpdateOneWithoutOriginShipmentsNestedInput
+    destinationLocation?: LocationUpdateOneWithoutDestinationShipmentsNestedInput
+    cost?: ShipmentCostUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cost?: ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ShipmentUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    agent?: UserUpdateOneWithoutAgentShipmentsNestedInput
+    assignedBy?: UserUpdateOneWithoutAssignedShipmentsNestedInput
+    originLocation?: LocationUpdateOneWithoutOriginShipmentsNestedInput
+    destinationLocation?: LocationUpdateOneWithoutDestinationShipmentsNestedInput
+    cost?: ShipmentCostUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cost?: ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ShipmentUpdateWithoutAssignedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput
+    agent?: UserUpdateOneWithoutAgentShipmentsNestedInput
+    originLocation?: LocationUpdateOneWithoutOriginShipmentsNestedInput
+    destinationLocation?: LocationUpdateOneWithoutDestinationShipmentsNestedInput
+    cost?: ShipmentCostUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutAssignedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cost?: ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutAssignedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SessionUpdateWithoutUserInput = {
@@ -17988,50 +33167,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ShipmentUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    trackingId?: StringFieldUpdateOperationsInput | string
-    origin?: StringFieldUpdateOperationsInput | string
-    destination?: StringFieldUpdateOperationsInput | string
-    weight?: FloatFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
-    statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
-  }
-
-  export type ShipmentUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    trackingId?: StringFieldUpdateOperationsInput | string
-    origin?: StringFieldUpdateOperationsInput | string
-    destination?: StringFieldUpdateOperationsInput | string
-    weight?: FloatFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
-    statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
-  }
-
-  export type ShipmentUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    trackingId?: StringFieldUpdateOperationsInput | string
-    origin?: StringFieldUpdateOperationsInput | string
-    destination?: StringFieldUpdateOperationsInput | string
-    weight?: FloatFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
   export type ChatSessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18051,6 +33186,411 @@ export namespace Prisma {
   export type ChatSessionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusLogUpdateWithoutUpdatedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    location?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipment?: ShipmentUpdateOneRequiredWithoutStatusLogsNestedInput
+  }
+
+  export type StatusLogUncheckedUpdateWithoutUpdatedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    location?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusLogUncheckedUpdateManyWithoutUpdatedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    location?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorUpdateWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originPort?: LocationUpdateOneRequiredWithoutOriginCorridorsNestedInput
+    destinationPort?: LocationUpdateOneRequiredWithoutDestinationCorridorsNestedInput
+  }
+
+  export type AgentCorridorUncheckedUpdateWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originPortId?: StringFieldUpdateOperationsInput | string
+    destinationPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorUncheckedUpdateManyWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originPortId?: StringFieldUpdateOperationsInput | string
+    destinationPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCredentialUpdateWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    verifiedBy?: UserUpdateOneWithoutVerifiedCredentialsNestedInput
+  }
+
+  export type AgentCredentialUncheckedUpdateWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCredentialUncheckedUpdateManyWithoutAgentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedById?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCredentialUpdateWithoutVerifiedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    agent?: UserUpdateOneRequiredWithoutAgentCredentialsNestedInput
+  }
+
+  export type AgentCredentialUncheckedUpdateWithoutVerifiedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCredentialUncheckedUpdateManyWithoutVerifiedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    type?: EnumCredentialTypeFieldUpdateOperationsInput | $Enums.CredentialType
+    documentNumber?: StringFieldUpdateOperationsInput | string
+    cloudinaryPublicId?: StringFieldUpdateOperationsInput | string
+    documentUrl?: StringFieldUpdateOperationsInput | string
+    issuingAuthority?: NullableStringFieldUpdateOperationsInput | string | null
+    issueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumCredentialStatusFieldUpdateOperationsInput | $Enums.CredentialStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminAuditLogUpdateWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    targetType?: StringFieldUpdateOperationsInput | string
+    targetId?: StringFieldUpdateOperationsInput | string
+    details?: StringFieldUpdateOperationsInput | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminAuditLogUncheckedUpdateWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    targetType?: StringFieldUpdateOperationsInput | string
+    targetId?: StringFieldUpdateOperationsInput | string
+    details?: StringFieldUpdateOperationsInput | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminAuditLogUncheckedUpdateManyWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+    targetType?: StringFieldUpdateOperationsInput | string
+    targetId?: StringFieldUpdateOperationsInput | string
+    details?: StringFieldUpdateOperationsInput | string
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LocationUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: UserUpdateOneWithoutLocationsUpdatedNestedInput
+    deletedBy?: UserUpdateOneWithoutLocationsDeletedNestedInput
+    originCorridors?: AgentCorridorUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originCorridors?: AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LocationUpdateWithoutUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutLocationsCreatedNestedInput
+    deletedBy?: UserUpdateOneWithoutLocationsDeletedNestedInput
+    originCorridors?: AgentCorridorUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originCorridors?: AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateManyWithoutUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LocationUpdateWithoutDeletedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutLocationsCreatedNestedInput
+    updatedBy?: UserUpdateOneWithoutLocationsUpdatedNestedInput
+    originCorridors?: AgentCorridorUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateWithoutDeletedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originCorridors?: AgentCorridorUncheckedUpdateManyWithoutOriginPortNestedInput
+    destinationCorridors?: AgentCorridorUncheckedUpdateManyWithoutDestinationPortNestedInput
+    originShipments?: ShipmentUncheckedUpdateManyWithoutOriginLocationNestedInput
+    destinationShipments?: ShipmentUncheckedUpdateManyWithoutDestinationLocationNestedInput
+  }
+
+  export type LocationUncheckedUpdateManyWithoutDeletedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    country?: StringFieldUpdateOperationsInput | string
+    countryCode?: StringFieldUpdateOperationsInput | string
+    city?: StringFieldUpdateOperationsInput | string
+    region?: StringFieldUpdateOperationsInput | string
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    type?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+    isBlocked?: BoolFieldUpdateOperationsInput | boolean
+    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18083,6 +33623,294 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AgentCorridorCreateManyOriginPortInput = {
+    id?: string
+    agentId: string
+    destinationPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type AgentCorridorCreateManyDestinationPortInput = {
+    id?: string
+    agentId: string
+    originPortId: string
+    originText: string
+    destinationText: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type ShipmentCreateManyOriginLocationInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    destinationLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+  }
+
+  export type ShipmentCreateManyDestinationLocationInput = {
+    id?: string
+    trackingId?: string
+    userId: string
+    agentId?: string | null
+    assignedById?: string | null
+    assignedAt?: Date | string | null
+    origin: string
+    destination: string
+    originLocationId?: string | null
+    weight: number
+    declaredCargoValue?: number
+    description?: string | null
+    status?: $Enums.ShipmentStatus
+    estimatedDate?: Date | string | null
+    acceptedAt?: Date | string | null
+    paymentStatus?: $Enums.PaymentStatus
+    stripePaymentIntentId?: string | null
+    stripeRefundId?: string | null
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updateBy?: string | null
+  }
+
+  export type AgentCorridorUpdateWithoutOriginPortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    agent?: UserUpdateOneRequiredWithoutAgentCorridorsNestedInput
+    destinationPort?: LocationUpdateOneRequiredWithoutDestinationCorridorsNestedInput
+  }
+
+  export type AgentCorridorUncheckedUpdateWithoutOriginPortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    destinationPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorUncheckedUpdateManyWithoutOriginPortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    destinationPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorUpdateWithoutDestinationPortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    agent?: UserUpdateOneRequiredWithoutAgentCorridorsNestedInput
+    originPort?: LocationUpdateOneRequiredWithoutOriginCorridorsNestedInput
+  }
+
+  export type AgentCorridorUncheckedUpdateWithoutDestinationPortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    originPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AgentCorridorUncheckedUpdateManyWithoutDestinationPortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    agentId?: StringFieldUpdateOperationsInput | string
+    originPortId?: StringFieldUpdateOperationsInput | string
+    originText?: StringFieldUpdateOperationsInput | string
+    destinationText?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShipmentUpdateWithoutOriginLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput
+    agent?: UserUpdateOneWithoutAgentShipmentsNestedInput
+    assignedBy?: UserUpdateOneWithoutAssignedShipmentsNestedInput
+    destinationLocation?: LocationUpdateOneWithoutDestinationShipmentsNestedInput
+    cost?: ShipmentCostUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutOriginLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cost?: ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutOriginLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    destinationLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ShipmentUpdateWithoutDestinationLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutCustomerShipmentsNestedInput
+    agent?: UserUpdateOneWithoutAgentShipmentsNestedInput
+    assignedBy?: UserUpdateOneWithoutAssignedShipmentsNestedInput
+    originLocation?: LocationUpdateOneWithoutOriginShipmentsNestedInput
+    cost?: ShipmentCostUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutDestinationLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cost?: ShipmentCostUncheckedUpdateOneWithoutShipmentNestedInput
+    statusLogs?: StatusLogUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutDestinationLocationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trackingId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedById?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origin?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    originLocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    weight?: FloatFieldUpdateOperationsInput | number
+    declaredCargoValue?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    estimatedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    stripePaymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeRefundId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type StatusLogCreateManyShipmentInput = {
     id?: string
     status: $Enums.ShipmentStatus
@@ -18097,8 +33925,8 @@ export namespace Prisma {
     status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
     location?: StringFieldUpdateOperationsInput | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
-    updateBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedByUser?: UserUpdateOneWithoutStatusLogsNestedInput
   }
 
   export type StatusLogUncheckedUpdateWithoutShipmentInput = {
