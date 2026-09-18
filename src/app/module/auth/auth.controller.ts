@@ -313,8 +313,6 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
 
         const tokenData = (await tokenRes.json()) as any;
 
-        console.error("GOOGLE_TOKEN_DEBUG:", JSON.stringify(tokenData));
-
         if (!tokenData.access_token) {
             return res.redirect(`${envConfig.FRONTEND_URL}/login?error=token_failed`);
         }
