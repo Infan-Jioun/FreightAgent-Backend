@@ -22,7 +22,6 @@ const router = Router();
  */
 router.get(
     "/search",
-    authenticate,
     locationController.search
 );
 
@@ -56,7 +55,6 @@ router.get(
  */
 router.get(
     "/",
-    authenticate,
     validateRequest(locationQuerySchema),
     locationController.getAll
 );
