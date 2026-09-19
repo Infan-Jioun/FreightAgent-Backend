@@ -141,4 +141,4 @@ router.patch(
     locationController.restore
 );
 
-export default router;
+export const locationRouter = router;

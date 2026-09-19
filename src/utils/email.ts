@@ -9,6 +9,9 @@ const isGmail = envConfig.EMAIL_HOST?.toLowerCase().includes("gmail");
 const transporter = isGmail
     ? nodemailer.createTransport({
           service: "gmail",
+          pool: true,
+          maxConnections: 3,
+          maxMessages: 100,
           auth: {
               user: envConfig.EMAIL_SMTP_USER,
               pass: envConfig.EMAIL_SMTP_PASS.replace(/\s+/g, ""),
@@ -18,6 +21,8 @@ const transporter = isGmail
           host: envConfig.EMAIL_HOST,
           port: Number(envConfig.EMAIL_PORT),
           secure: Number(envConfig.EMAIL_PORT) === 465,
+          pool: true,
+          maxConnections: 5,
           auth: {
               user: envConfig.EMAIL_SMTP_USER,
               pass: envConfig.EMAIL_SMTP_PASS.replace(/\s+/g, ""),

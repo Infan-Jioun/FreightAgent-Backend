@@ -11,6 +11,8 @@ import {
     PaginatedLocations,
     LocationResponse,
 } from "./location.interface";
+import { fromCache } from "../../../errorHelper/fromCache";
+import { locationEmailQueue } from "../../../lib/emailQueue";
 
 // ─── Cache Keys ───────────────────────────────────────────
 const CACHE_TTL = 20 * 60; // 20 minutes (seconds)
@@ -91,6 +93,13 @@ const create = async (
         invalidateListCache(),
     ]);
 
+    // Queue background email broadcast to all users via BullMQ
+    try {
+        await locationEmailQueue.add("broadcast-new-location", { location });
+    } catch (queueErr) {
+        console.error("Failed to enqueue location email broadcast:", queueErr);
+    }
+
     return location as LocationResponse;
 };
 
@@ -103,22 +112,41 @@ const getAll = async (query: LocationQuery): Promise<PaginatedLocations> => {
         region,
         type,
         isBlocked,
-        isDeleted = false,
+        isDeleted,
         page = 1,
         limit = 20,
         sortBy = "createdAt",
         sortOrder = "desc",
     } = query;
 
-    // ── Cache check ──
-    const key = cacheKey.list({ search, country, countryCode, region, type, isBlocked, isDeleted, page, limit, sortBy, sortOrder  });
-    console.log(key);
+    const isDeletedBool =
+        typeof isDeleted === "string"
+            ? isDeleted === "true"
+            : Boolean(isDeleted ?? false);
+
+    const isBlockedBool =
+        isBlocked === undefined
+            ? undefined
+            : typeof isBlocked === "string"
+                ? isBlocked === "true"
+                : Boolean(isBlocked);
+
+    const pageNum = typeof page === "string" ? parseInt(page, 10) : (page ?? 1);
+    const limitNum = typeof limit === "string" ? parseInt(limit, 10) : (limit ?? 20);
+
+    const key = cacheKey.list({
+        search, country, countryCode, region, type,
+        isBlocked: isBlockedBool,
+        isDeleted: isDeletedBool,
+        page: pageNum, limit: limitNum, sortBy, sortOrder,
+    });
+
     const cached = await redis.get(key);
-    if (cached) return JSON.parse(cached as string) as PaginatedLocations;
+    if (cached) return fromCache<PaginatedLocations>(cached);
 
     const where: Prisma.LocationWhereInput = {
-        isDeleted,
-        ...(isBlocked !== undefined && { isBlocked }),
+        isDeleted: isDeletedBool,
+        ...(isBlockedBool !== undefined && { isBlocked: isBlockedBool }),
         ...(type && { type }),
         ...(country && { country: { contains: country, mode: "insensitive" } }),
         ...(countryCode && { countryCode: countryCode.toUpperCase() }),
@@ -134,7 +162,7 @@ const getAll = async (query: LocationQuery): Promise<PaginatedLocations> => {
         }),
     };
 
-    const skip = (page - 1) * limit;
+    const skip = (pageNum - 1) * limitNum;
 
     const [data, total] = await prisma.$transaction([
         prisma.location.findMany({
@@ -142,20 +170,18 @@ const getAll = async (query: LocationQuery): Promise<PaginatedLocations> => {
             select: locationSelect,
             orderBy: { [sortBy]: sortOrder },
             skip,
-            take: limit,
+            take: limitNum,
         }),
         prisma.location.count({ where }),
     ]);
 
-    const totalPage = Math.ceil(total / limit);
-
+    const totalPage = Math.ceil(total / limitNum);
     const result: PaginatedLocations = {
         data: data as LocationResponse[],
-        meta: { total, page, limit, totalPage },
+        meta: { total, page: pageNum, limit: limitNum, totalPage },
     };
 
-    await redis.set(key, JSON.stringify(result), { ex: CACHE_TTL });
-
+    await redis.set(key, result, { ex: CACHE_TTL });
     return result;
 };
 
