@@ -30,7 +30,6 @@ export const auth = betterAuth({
                     httpOnly: true,
                     secure: isProd,
                     sameSite: isProd ? "none" : "lax",
-                    partitioned: isProd,
                 },
             },
             state: {
@@ -39,7 +38,6 @@ export const auth = betterAuth({
                     httpOnly: true,
                     secure: isProd,
                     sameSite: isProd ? "none" : "lax",
-                    partitioned: isProd,
                 },
             },
         },
@@ -53,10 +51,11 @@ export const auth = betterAuth({
     },
 
     trustedOrigins: [
-        envConfig.FRONTEND_URL,                    //  production URL
-        "http://localhost:3000",                   //  local dev
+        envConfig.FRONTEND_URL,
+        envConfig.FRONTEND_URL?.replace(/\/$/, ""),
+        "http://localhost:3000",
         "http://localhost:5000",
-    ],
+    ].filter(Boolean),
 
     emailAndPassword: {
         enabled: true,

@@ -32,7 +32,6 @@ router.get(
  */
 router.get(
     "/code/:code",
-    authenticate,
     locationController.getByCode
 );
 
