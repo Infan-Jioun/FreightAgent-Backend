@@ -11,7 +11,7 @@ import { notifyCustomer, notifyAdmin, notifyAgent } from "../../../lib/socket";
 import { generatePaymentReceiptPdf, generateWithdrawalSlipPdf } from "../../../utils/pdfGenerator";
 import { uploadPdfToCloudinary } from "../../../utils/cloudinary";
 import { sendEmail } from "../../../utils/email";
-import { AuditAction } from "../../../generated/prisma";
+import { AuditAction, Prisma } from "../../../generated/prisma";
 
 const getStripeClient = (): Stripe => {
     if (!envConfig.STRIPE_SECRET_KEY) {
@@ -45,6 +45,24 @@ export interface RefundPaymentResult {
     refundId: string;
     status: string | null;
     amountUSD: number;
+}
+
+export type ShipmentWithRelations = Prisma.ShipmentGetPayload<{
+    include: {
+        cost: true;
+        user: true;
+        agent: true;
+    };
+}>;
+
+export interface VerifyPaymentStatusResult {
+    success: boolean;
+    paymentStatus: string;
+    invoiceUrl?: string | null;
+    shipment?: ShipmentWithRelations;
+    message?: string;
+    reason?: string;
+    stripeStatus?: string;
 }
 
 /**
@@ -186,7 +204,7 @@ export const settleSuccessfulPayment = async (params: {
     shipmentId: string;
     stripePaymentIntentId?: string;
     amountUSD?: number;
-}) => {
+}): Promise<ShipmentWithRelations> => {
     const shipment = await prisma.shipment.findUnique({
         where: { id: params.shipmentId },
         include: {
@@ -347,7 +365,7 @@ export const settleSuccessfulPayment = async (params: {
 export const handlePaymentFailure = async (params: {
     shipmentId: string;
     reason?: string;
-}) => {
+}): Promise<void> => {
     const shipment = await prisma.shipment.findUnique({
         where: { id: params.shipmentId },
         include: { user: true },
@@ -406,7 +424,7 @@ const verifyPaymentStatus = async (params: {
     shipmentId: string;
     userId: string;
     userRole: string;
-}) => {
+}): Promise<VerifyPaymentStatusResult> => {
     const stripe = getStripeClient();
 
     const shipment = await prisma.shipment.findUnique({
@@ -479,14 +497,16 @@ const verifyPaymentStatus = async (params: {
         return {
             success: false,
             paymentStatus: "FAILED",
-            reason: paymentIntent.last_payment_error?.message,
+            ...(paymentIntent.last_payment_error?.message !== undefined && {
+                reason: paymentIntent.last_payment_error.message,
+            }),
         };
     }
 
     return {
         success: false,
         paymentStatus: shipment.paymentStatus,
-        stripeStatus: paymentIntent.status,
+        stripeStatus: paymentIntent.status as string,
     };
 };
 
