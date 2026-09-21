@@ -1,4 +1,4 @@
-import { LocationType } from "../src/generated/prisma";
+import { LocationType, Role } from "../src/generated/prisma";
 import { prisma } from "../src/lib/prisma";
 import { redis } from "../src/lib/redis";
 
@@ -12,6 +12,7 @@ export interface SeedLocation {
     latitude: number;
     longitude: number;
     type: LocationType;
+    createdBy?: string;
 }
 
 export const genuineLocations: SeedLocation[] = [
@@ -1214,8 +1215,53 @@ async function main() {
         seenCodes.add(loc.code);
     }
 
+    // 1. Ensure "Admin Infan" user exists to populate createdBy relation (location.prisma)
+    let admin = await prisma.user.findFirst({
+        where: {
+            OR: [
+                { email: "infanjiounrahman20606@gmail.com" },
+                { name: "Admin Infan" },
+                { name: { contains: "Infan", mode: "insensitive" } },
+                { email: "admin.infan@freightagent.com" },
+                { email: "admin@freightagent.com" },
+            ],
+        },
+    });
+
+    if (!admin) {
+        admin = await prisma.user.findFirst({
+            where: { role: Role.ADMIN },
+        });
+    }
+
+    if (!admin) {
+        admin = await prisma.user.create({
+            data: {
+                id: "admin-infan",
+                name: "Admin Infan",
+                email: "admin.infan@freightagent.com",
+                role: Role.ADMIN,
+                emailVerified: true,
+            },
+        });
+        console.log(`👤 Created Admin user: ${admin.name} (${admin.email}) [ID: ${admin.id}]`);
+    } else {
+        if (admin.name !== "Admin Infan" || admin.role !== Role.ADMIN) {
+            admin = await prisma.user.update({
+                where: { id: admin.id },
+                data: {
+                    name: "Admin Infan",
+                    role: Role.ADMIN,
+                },
+            });
+        }
+        console.log(`👤 Using Admin user for createdBy: ${admin.name} (${admin.email}) [ID: ${admin.id}]`);
+    }
+
     let createdCount = 0;
     let updatedCount = 0;
+
+    const seedDate = new Date();
 
     // Process in batches of 25 with upsert to guarantee idempotency and avoid duplicates
     const BATCH_SIZE = 25;
@@ -1242,6 +1288,8 @@ async function main() {
                             type: location.type,
                             isBlocked: false,
                             isDeleted: false,
+                            // Preserve original creator if added by another user, else default to Admin Infan
+                            createdById: existing.createdById ?? admin.id,
                         },
                     });
                     updatedCount++;
@@ -1259,6 +1307,10 @@ async function main() {
                             type: location.type,
                             isBlocked: false,
                             isDeleted: false,
+                            createdById: admin.id,
+                            updatedById: admin.id,
+                            createdAt: seedDate,
+                            updatedAt: seedDate,
                         },
                     });
                     createdCount++;
@@ -1285,6 +1337,7 @@ async function main() {
     console.log(`
 🎉 [Seed Complete]
 ────────────────────────────────────────
+Admin User (Created By) : ${admin.name} (${admin.email})
 Total Locations in Seed : ${genuineLocations.length}
 Newly Created           : ${createdCount}
 Updated/Verified        : ${updatedCount}

@@ -166,5 +166,69 @@ export const invalidateSignedDocumentUrlCache = async (publicId: string): Promis
     }
 };
 
+export const uploadPdfToCloudinary = async (
+    buffer: Buffer,
+    fileName: string,
+    folder = "freightagent/invoices"
+): Promise<string> => {
+    if (
+        !envConfig.CLOUDINARY_CLOUD_NAME ||
+        !envConfig.CLOUDINARY_API_KEY ||
+        !envConfig.CLOUDINARY_API_SECRET
+    ) {
+        throw new AppError(
+            status.INTERNAL_SERVER_ERROR,
+            "Cloudinary credentials are missing in .env"
+        );
+    }
+
+    const cleanName = fileName.replace(/\.pdf$/i, "").replace(/[^a-zA-Z0-9_-]/g, "_");
+
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder,
+                resource_type: "auto",
+                format: "pdf",
+                public_id: `${cleanName}_${Date.now()}`,
+                flags: "attachment:false",
+            },
+            (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
+                if (error || !result) {
+                    return reject(
+                        new AppError(
+                            status.INTERNAL_SERVER_ERROR,
+                            error?.message || "Failed to upload PDF document to Cloudinary"
+                        )
+                    );
+                }
+
+                // Generate signed Cloudinary URL with cryptographic signature to bypass PDF restriction
+                try {
+                    const signedUrl = cloudinary.url(result.public_id, {
+                        resource_type: result.resource_type || "image",
+                        format: "pdf",
+                        sign_url: true,
+                        secure: true,
+                    });
+                    if (signedUrl) {
+                        return resolve(signedUrl);
+                    }
+                } catch {
+                    // fallback to secure_url if signing throws
+                }
+
+                let url = result.secure_url;
+                if (!url.endsWith(".pdf")) {
+                    url = url + ".pdf";
+                }
+                resolve(url);
+            }
+        );
+
+        uploadStream.end(buffer);
+    });
+};
+
 export { cloudinary };
 

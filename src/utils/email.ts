@@ -35,10 +35,10 @@ interface SendEmailOption {
     templateName: string;
     templateData: Record<string, any>;
     attachments?: {
-        fileName: string,
-        content: string,
-        contentType: string
-    }[]
+        fileName: string;
+        content: string | Buffer;
+        contentType?: string;
+    }[];
 }
 export const sendEmail = async ({ subject, templateData, templateName, to, attachments }: SendEmailOption) => {
     try {
