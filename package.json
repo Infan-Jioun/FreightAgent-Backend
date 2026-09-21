@@ -7,7 +7,7 @@
     "dev": "npx tsx watch src/server.ts",
     "build": "tsup && shx mkdir -p dist/app && shx cp -r src/app/template dist/app/",
     "start": "node dist/server.js",
-    "seed": "npx tsx prisma/seed.ts",
+    "seed": "",
     "postinstall": "prisma generate"
   },
   "keywords": [],
