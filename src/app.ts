@@ -19,6 +19,8 @@ import { paymentRouter } from './app/module/payment/payment.router';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth';
 import { startCronJobs } from './app/jobs/cleanupJobs';
+import { locationRouter } from './app/module/location/location.router';
+
 
 dotenv.config();
 
@@ -97,7 +99,7 @@ app.use("/api/v1/agent", agentRouter);
 app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/shipment", shipmentRouter);
 app.use("/api/v1/user", userRouter);
-
+app.use("/api/v1/locations", locationRouter);
 //  Cron cleanup route
 app.post("/api/cron/cleanup", (req: Request, res: Response) => {
     if (req.headers["x-cron-secret"] !== envConfig.CRON_SECRET) {

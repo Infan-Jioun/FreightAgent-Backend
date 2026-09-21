@@ -6,6 +6,7 @@ import { startCronJobs } from "./app/jobs/cleanupJobs";
 import { redis } from "./lib/redis";
 import { createServer } from "http";
 import { initSocket } from "./lib/socket";
+import "./lib/emailQueue";
 
 // ✅ app থেকে httpServer বানাও
 const httpServer = createServer(app);

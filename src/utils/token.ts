@@ -52,8 +52,6 @@ const getBaseCookieOptions = (req?: Request): CookieOptions => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        // @ts-ignore
-        partitioned: true,
         path: "/",
     };
 };

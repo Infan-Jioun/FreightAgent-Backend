@@ -5,7 +5,15 @@ export interface IRegisterInput {
     name: string;
     email: string;
     password: string;
-    role?: Role
+    role?: Role;
+}
+
+export interface ICreateAgentInput {
+    name: string;
+    email: string;
+    password: string;
+    phone: string;
+    role?: Role;
 }
 
 export interface ILoginInput {

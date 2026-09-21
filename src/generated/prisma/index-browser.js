@@ -309,6 +309,7 @@ exports.Prisma.ShipmentScalarFieldEnum = {
   stripePaymentIntentId: 'stripePaymentIntentId',
   stripeRefundId: 'stripeRefundId',
   paidAt: 'paidAt',
+  invoiceUrl: 'invoiceUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   updateBy: 'updateBy'
@@ -349,6 +350,20 @@ exports.Prisma.StatusLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.WithdrawalScalarFieldEnum = {
+  id: 'id',
+  withdrawalNumber: 'withdrawalNumber',
+  agentId: 'agentId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  bankInfo: 'bankInfo',
+  receiptUrl: 'receiptUrl',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -374,7 +389,8 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   BLOCK_LOCATION: 'BLOCK_LOCATION',
   DELETE_LOCATION: 'DELETE_LOCATION',
   ASSIGN_AGENT: 'ASSIGN_AGENT',
-  PROCESS_REFUND: 'PROCESS_REFUND'
+  PROCESS_REFUND: 'PROCESS_REFUND',
+  AGENT_WITHDRAWAL: 'AGENT_WITHDRAWAL'
 };
 
 exports.Role = exports.$Enums.Role = {
@@ -434,6 +450,12 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   REFUNDED: 'REFUNDED'
 };
 
+exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
   AdminAuditLog: 'AdminAuditLog',
   User: 'User',
@@ -449,7 +471,8 @@ exports.Prisma.ModelName = {
   PhoneVerification: 'PhoneVerification',
   Shipment: 'Shipment',
   ShipmentCost: 'ShipmentCost',
-  StatusLog: 'StatusLog'
+  StatusLog: 'StatusLog',
+  Withdrawal: 'Withdrawal'
 };
 
 /**

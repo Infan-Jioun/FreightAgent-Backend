@@ -1,4 +1,5 @@
 import z from "zod";
+import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
 
 const requiredString = (fieldName: string) =>
     z.string({
@@ -6,6 +7,36 @@ const requiredString = (fieldName: string) =>
             issue.input === undefined
                 ? `${fieldName} is required`
                 : `${fieldName} must be a string`,
+    });
+
+const phoneSchema = requiredString("Phone number")
+    .trim()
+    .min(7, "Phone number is too short")
+    .max(20, "Phone number is too long")
+    .refine(
+        (val) => {
+            try {
+                if (isValidPhoneNumber(val)) return true;
+                if (isValidPhoneNumber(val, "BD")) return true;
+                return /^\+?[0-9\s\-()]{7,20}$/.test(val);
+            } catch {
+                return false;
+            }
+        },
+        "Invalid phone number. Please include valid country code (e.g. +8801XXXXXXXXX)"
+    )
+    .transform((val) => {
+        try {
+            if (isValidPhoneNumber(val)) {
+                return parsePhoneNumber(val).format("E.164");
+            }
+            if (isValidPhoneNumber(val, "BD")) {
+                return parsePhoneNumber(val, "BD").format("E.164");
+            }
+        } catch {
+            // fallback
+        }
+        return val.replace(/\s+/g, "");
     });
 
 export const registerSchema = z.object({
@@ -18,6 +49,20 @@ export const registerSchema = z.object({
         password: requiredString("Password")
             .min(8, "Password must be at least 8 characters"),
          
+        role: z.enum(["CUSTOMER", "AGENT", "ADMIN"]).optional(),
+    }),
+});
+
+export const createAgentSchema = z.object({
+    body: z.object({
+        name: requiredString("Name")
+            .min(2, "Name must be at least 2 characters")
+            .max(50, "Name too long"),
+        email: requiredString("Email")
+            .email("Invalid email address"),
+        phone: phoneSchema,
+        password: requiredString("Password")
+            .min(8, "Password must be at least 8 characters"),
         role: z.enum(["CUSTOMER", "AGENT", "ADMIN"]).optional(),
     }),
 });

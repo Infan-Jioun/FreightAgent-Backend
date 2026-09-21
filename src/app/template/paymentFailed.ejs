@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Notification - FreightAgent</title>
+</head>
+<body style="margin:0; padding:0; font-family: 'Segoe UI', Arial, sans-serif; background-color:#0a0f0f;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0f0f; padding: 40px 0;">
+        <tr>
+            <td align="center">
+                <table width="560" cellpadding="0" cellspacing="0" style="
+                    background: linear-gradient(145deg, #1f0d0d, #2a1111);
+                    border-radius: 16px;
+                    border: 1px solid #4a1a1a;
+                    overflow: hidden;
+                    box-shadow: 0 0 40px rgba(239,68,68,0.08);
+                ">
+                    <!-- Top accent bar -->
+                    <tr>
+                        <td style="
+                            height: 5px;
+                            background: linear-gradient(90deg, #ef4444, #f59e0b);
+                        "></td>
+                    </tr>
+
+                    <!-- Logo -->
+                    <tr>
+                        <td align="center" style="padding: 32px 40px 0;">
+                            <div style="
+                                display: inline-block;
+                                background: linear-gradient(135deg, #ef4444, #f59e0b);
+                                border-radius: 12px;
+                                padding: 10px 22px;
+                            ">
+                                <span style="
+                                    color: #ffffff;
+                                    font-size: 18px;
+                                    font-weight: 800;
+                                    letter-spacing: 1px;
+                                ">⚓ FreightAgent</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Alert Icon -->
+                    <tr>
+                        <td align="center" style="padding: 24px 40px 0;">
+                            <div style="
+                                width: 64px;
+                                height: 64px;
+                                line-height: 64px;
+                                border-radius: 50%;
+                                background: rgba(239, 68, 68, 0.15);
+                                border: 1px solid #ef4444;
+                                font-size: 30px;
+                                text-align: center;
+                                color: #ef4444;
+                            ">
+                                ✕
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Title -->
+                    <tr>
+                        <td align="center" style="padding: 16px 40px 0;">
+                            <h1 style="
+                                margin: 0;
+                                color: #fee2e2;
+                                font-size: 24px;
+                                font-weight: 700;
+                            ">Payment Failed or Cancelled</h1>
+                            <p style="
+                                margin: 8px 0 0;
+                                color: #f87171;
+                                font-size: 14px;
+                                line-height: 1.5;
+                            ">Hello <%= customerName %>, we were unable to process your freight payment.</p>
+                        </td>
+                    </tr>
+
+                    <!-- Details Card -->
+                    <tr>
+                        <td style="padding: 24px 40px 0;">
+                            <div style="
+                                background: rgba(0, 0, 0, 0.35);
+                                border: 1px solid #4a1a1a;
+                                border-radius: 12px;
+                                padding: 20px 24px;
+                            ">
+                                <table width="100%" cellpadding="6" cellspacing="0" style="color: #cbd5e1; font-size: 13.5px;">
+                                    <tr>
+                                        <td style="color: #f87171; width: 40%;">Tracking Number:</td>
+                                        <td style="color: #fee2e2; font-weight: 600; text-align: right;"><%= trackingId %></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #f87171;">Route:</td>
+                                        <td style="color: #fee2e2; text-align: right;"><%= origin %> ➔ <%= destination %></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #f87171;">Status:</td>
+                                        <td style="color: #ef4444; font-weight: 700; text-align: right;">FAILED / UNPAID</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #f87171;">Reason:</td>
+                                        <td style="color: #fca5a5; text-align: right; font-size: 12.5px;"><%= reason || "Payment attempt declined or session expired." %></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Note -->
+                    <tr>
+                        <td align="center" style="padding: 24px 40px 0;">
+                            <p style="
+                                margin: 0;
+                                color: #cbd5e1;
+                                font-size: 13px;
+                                line-height: 1.6;
+                            ">
+                                No funds were debited from your card. You can retry paying with another payment method or credit card from your customer shipment dashboard.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 32px 40px 24px; border-top: 1px solid #3b1414; margin-top: 24px;">
+                            <p style="
+                                margin: 0;
+                                color: #7f1d1d;
+                                font-size: 11.5px;
+                                text-align: center;
+                                line-height: 1.6;
+                            ">
+                                FreightAgent Global Logistics • Automated Billing Notification<br/>
+                                Need assistance? Contact support@freightagent.com
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
