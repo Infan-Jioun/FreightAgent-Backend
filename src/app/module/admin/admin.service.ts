@@ -1,7 +1,14 @@
 import status from "http-status";
 import AppError from "../../../errorHelper/AppError";
 import { prisma } from "../../../lib/prisma";
-import { IGetUserQuery, IRoleUpdate, IUserStatusUpdate, IRoadAgentQuery, IAssignRoadAgent } from "./admin.interface";
+import {
+    IGetUserQuery,
+    IRoleUpdate,
+    IUserStatusUpdate,
+    IRoadAgentQuery,
+    IAssignRoadAgent,
+    IAdminSessionsQuery,
+} from "./admin.interface";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { Prisma, Role, ShipmentStatus } from "../../../generated/prisma";
 import { sendEmail } from "../../../utils/email";
@@ -12,6 +19,8 @@ import { invalidateRoadAgentsCache, invalidateAgentCache } from "../../../utils/
 import { blacklistToken } from "../../../utils/tokenBlacklist";
 import { notifyAgent, notifyCustomer, notifyAdmin } from "../../../lib/socket";
 import { envConfig } from "../../../_config/env";
+import { parseUserAgent } from "../../../utils/deviceDetector";
+import { auth } from "../../../lib/auth";
 
 const USER_CACHE_TTL = 10 * 60; // 10 minutes in seconds
 
@@ -161,10 +170,67 @@ const getUserById = async (id: string, currentUser: IRequestUser) => {
         throw new AppError(status.NOT_FOUND, "User not found");
     }
 
+    const now = new Date();
+
+    // Clean up expired sessions for this user
+    await prisma.session.deleteMany({
+        where: {
+            userId: id,
+            expiresAt: { lte: now },
+        },
+    });
+
+    const rawSessions = await prisma.session.findMany({
+        where: {
+            userId: id,
+            expiresAt: { gt: now },
+        },
+        select: {
+            id: true,
+            userAgent: true,
+            deviceName: true,
+            deviceType: true,
+            browser: true,
+            os: true,
+            ipAddress: true,
+            createdAt: true,
+            expiresAt: true,
+            updatedAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+    });
+
+    const sessions = rawSessions.map((session) => {
+        const detected = parseUserAgent(session.userAgent);
+        return {
+            id: session.id,
+            deviceName: session.deviceName || detected.deviceName,
+            deviceType:
+                (session.deviceType as "desktop" | "mobile" | "tablet") ||
+                detected.deviceType,
+            browser: session.browser || detected.browser,
+            os: session.os || detected.os,
+            ipAddress: session.ipAddress || "127.0.0.1",
+            userAgent: session.userAgent,
+            createdAt: session.createdAt,
+            expiresAt: session.expiresAt,
+            lastActiveAt: session.updatedAt,
+        };
+    });
+
+    const sessionBreakdown = {
+        total: sessions.length,
+        mobile: sessions.filter((s) => s.deviceType === "mobile").length,
+        tablet: sessions.filter((s) => s.deviceType === "tablet").length,
+        desktop: sessions.filter((s) => s.deviceType === "desktop").length,
+    };
+
     const result = {
         user: {
             ...user,
             shipments: user.customerShipments,
+            sessions,
+            sessionBreakdown,
         },
     };
 
@@ -741,6 +807,282 @@ const assignRoadAgent = async (
     return updated;
 };
 
+const getUserActiveSessions = async (
+    userId: string,
+    currentUser: IRequestUser
+) => {
+    if (currentUser.role !== Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Only admin can view user sessions");
+    }
+
+    const targetUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            image: true,
+            isBlocked: true,
+            lastLoginAt: true,
+            lastLoginIp: true,
+        },
+    });
+
+    if (!targetUser) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    const now = new Date();
+
+    // Clean up expired sessions
+    await prisma.session.deleteMany({
+        where: {
+            userId,
+            expiresAt: { lte: now },
+        },
+    });
+
+    const rawSessions = await prisma.session.findMany({
+        where: {
+            userId,
+            expiresAt: { gt: now },
+        },
+        select: {
+            id: true,
+            userAgent: true,
+            deviceName: true,
+            deviceType: true,
+            browser: true,
+            os: true,
+            ipAddress: true,
+            createdAt: true,
+            expiresAt: true,
+            updatedAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+    });
+
+    const sessions = rawSessions.map((session) => {
+        const detected = parseUserAgent(session.userAgent);
+        return {
+            id: session.id,
+            deviceName: session.deviceName || detected.deviceName,
+            deviceType:
+                (session.deviceType as "desktop" | "mobile" | "tablet") ||
+                detected.deviceType,
+            browser: session.browser || detected.browser,
+            os: session.os || detected.os,
+            ipAddress: session.ipAddress || "127.0.0.1",
+            userAgent: session.userAgent,
+            createdAt: session.createdAt,
+            expiresAt: session.expiresAt,
+            lastActiveAt: session.updatedAt,
+        };
+    });
+
+    const breakdown = {
+        total: sessions.length,
+        mobile: sessions.filter((s) => s.deviceType === "mobile").length,
+        tablet: sessions.filter((s) => s.deviceType === "tablet").length,
+        desktop: sessions.filter((s) => s.deviceType === "desktop").length,
+    };
+
+    return {
+        user: targetUser,
+        sessions,
+        breakdown,
+    };
+};
+
+const revokeUserSession = async (
+    userId: string,
+    sessionId: string,
+    currentUser: IRequestUser
+) => {
+    if (currentUser.role !== Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Only admin can revoke user sessions");
+    }
+
+    const session = await prisma.session.findUnique({
+        where: { id: sessionId },
+        select: { id: true, userId: true, token: true, expiresAt: true },
+    });
+
+    if (!session || session.userId !== userId) {
+        throw new AppError(status.NOT_FOUND, "Session not found for this user");
+    }
+
+    // 1. Blacklist token in Redis
+    const ttl = Math.max(
+        60,
+        Math.floor((session.expiresAt.getTime() - Date.now()) / 1000)
+    );
+    await blacklistToken(`session:${session.token}`, ttl);
+
+    // 2. Revoke from BetterAuth if applicable
+    try {
+        await auth.api.revokeSession({
+            body: { token: session.token },
+            headers: { authorization: `Bearer ${session.token}` },
+        });
+    } catch (err) {
+        // ignore if already deleted or unsupported
+    }
+
+    // 3. Delete session record from Prisma
+    await prisma.session.deleteMany({
+        where: { id: sessionId, userId },
+    });
+
+    // Invalidate user detail cache if cached
+    await redis.del(`admin:users:detail:${userId}`);
+
+    return { message: "User session revoked successfully" };
+};
+
+const revokeAllUserSessions = async (
+    userId: string,
+    currentUser: IRequestUser
+) => {
+    if (currentUser.role !== Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Only admin can revoke user sessions");
+    }
+
+    const targetUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true },
+    });
+
+    if (!targetUser) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    const activeSessions = await prisma.session.findMany({
+        where: { userId },
+        select: { token: true, expiresAt: true },
+    });
+
+    if (activeSessions.length > 0) {
+        const currentTime = Date.now();
+        await Promise.all(
+            activeSessions.map((session) => {
+                const ttl = Math.max(
+                    60,
+                    Math.floor((session.expiresAt.getTime() - currentTime) / 1000)
+                );
+                return blacklistToken(`session:${session.token}`, ttl);
+            })
+        );
+
+        await prisma.session.deleteMany({
+            where: { userId },
+        });
+    }
+
+    await redis.del(`admin:users:detail:${userId}`);
+
+    return { message: "All sessions for this user revoked successfully" };
+};
+
+const getAllActiveSessions = async (
+    query: IAdminSessionsQuery,
+    currentUser: IRequestUser
+) => {
+    if (currentUser.role !== Role.ADMIN) {
+        throw new AppError(status.FORBIDDEN, "Only admin can view active sessions");
+    }
+
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const now = new Date();
+
+    const where: Prisma.SessionWhereInput = {
+        expiresAt: { gt: now },
+    };
+
+    if (query.deviceType) {
+        where.deviceType = query.deviceType;
+    }
+
+    if (query.role || query.search) {
+        where.user = {};
+        if (query.role) {
+            where.user.role = query.role;
+        }
+        if (query.search) {
+            const trimmed = query.search.trim();
+            where.user.OR = [
+                { name: { contains: trimmed, mode: "insensitive" } },
+                { email: { contains: trimmed, mode: "insensitive" } },
+            ];
+        }
+    }
+
+    const [rawSessions, total] = await Promise.all([
+        prisma.session.findMany({
+            where,
+            select: {
+                id: true,
+                userId: true,
+                deviceName: true,
+                deviceType: true,
+                browser: true,
+                os: true,
+                ipAddress: true,
+                userAgent: true,
+                createdAt: true,
+                expiresAt: true,
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        role: true,
+                        image: true,
+                        isBlocked: true,
+                    },
+                },
+            },
+            orderBy: { createdAt: "desc" },
+            skip,
+            take: limit,
+        }),
+        prisma.session.count({ where }),
+    ]);
+
+    const sessions = rawSessions.map((session) => {
+        const detected = parseUserAgent(session.userAgent);
+        return {
+            id: session.id,
+            userId: session.userId,
+            user: session.user,
+            deviceName: session.deviceName || detected.deviceName,
+            deviceType:
+                (session.deviceType as "desktop" | "mobile" | "tablet") ||
+                detected.deviceType,
+            browser: session.browser || detected.browser,
+            os: session.os || detected.os,
+            ipAddress: session.ipAddress || "127.0.0.1",
+            createdAt: session.createdAt,
+            expiresAt: session.expiresAt,
+            lastActiveAt: session.updatedAt,
+        };
+    });
+
+    return {
+        sessions,
+        meta: {
+            page,
+            limit,
+            total,
+            totalPage: Math.ceil(total / limit),
+        },
+    };
+};
+
 export const adminService = {
     getAlluser,
     getUserById,
@@ -749,4 +1091,8 @@ export const adminService = {
     deleteUser,
     getRoadAgents,
     assignRoadAgent,
-};
+    getUserActiveSessions,
+    revokeUserSession,
+    revokeAllUserSessions,
+    getAllActiveSessions,
+};

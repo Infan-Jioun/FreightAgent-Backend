@@ -110,6 +110,65 @@ const assignRoadAgent = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getUserActiveSessions = catchAsync(async (req: Request, res: Response) => {
+    const currentUser = req.user as IRequestUser;
+    const { id } = req.params;
+
+    const result = await adminService.getUserActiveSessions(id as string, currentUser);
+
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "User active sessions fetched successfully",
+        data: result,
+    });
+});
+
+const revokeUserSession = catchAsync(async (req: Request, res: Response) => {
+    const currentUser = req.user as IRequestUser;
+    const { id, sessionId } = req.params;
+
+    const result = await adminService.revokeUserSession(
+        id as string,
+        sessionId as string,
+        currentUser
+    );
+
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: result.message,
+        data: null,
+    });
+});
+
+const revokeAllUserSessions = catchAsync(async (req: Request, res: Response) => {
+    const currentUser = req.user as IRequestUser;
+    const { id } = req.params;
+
+    const result = await adminService.revokeAllUserSessions(id as string, currentUser);
+
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: result.message,
+        data: null,
+    });
+});
+
+const getAllActiveSessions = catchAsync(async (req: Request, res: Response) => {
+    const currentUser = req.user as IRequestUser;
+    const result = await adminService.getAllActiveSessions(req.query, currentUser);
+
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Active sessions fetched successfully",
+        data: result.sessions,
+        meta: result.meta,
+    });
+});
+
 export const adminController = {
     getAllUsers,
     getUserById,
@@ -118,4 +177,9 @@ export const adminController = {
     deleteUser,
     getRoadAgents,
     assignRoadAgent,
-};
+    getUserActiveSessions,
+    revokeUserSession,
+    revokeAllUserSessions,
+    getAllActiveSessions,
+};
+
