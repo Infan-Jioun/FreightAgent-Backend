@@ -16,7 +16,8 @@ import {
 const router = Router();
 
 // All agent routes require authentication and AGENT role
-router.use(authenticate, authorize(Role.AGENT));
+// router.use(authenticate, authorize(Role.AGENT));
+router.use(authenticate, authorize(Role.ADMIN, Role.AGENT));
 
 // ─── 1. Assigned Shipments ─────────────────────────────
 router.get("/assigned", getShipmentRateLimit, agentController.getAssignedShipments);
