@@ -21,6 +21,7 @@ import { auth } from './lib/auth';
 import { startCronJobs } from './app/jobs/cleanupJobs';
 import { locationRouter } from './app/module/location/location.router';
 import { notificationRouter } from './app/module/notification/notification.router';
+import { ragRouter } from './app/module/rag/rag.router';
 
 
 
@@ -103,6 +104,7 @@ app.use("/api/v1/shipment", shipmentRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/locations", locationRouter);
 app.use("/api/v1/notifications", notificationRouter);
+app.use("/api/v1/rag", ragRouter);
 //  Cron cleanup route
 app.post("/api/cron/cleanup", (req: Request, res: Response) => {
     if (req.headers["x-cron-secret"] !== envConfig.CRON_SECRET) {
