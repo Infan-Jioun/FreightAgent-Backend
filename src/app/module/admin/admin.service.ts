@@ -10,8 +10,10 @@ import {
     IAdminSessionsQuery,
 } from "./admin.interface";
 import { IRequestUser } from "../../interface/requestUserInterface";
-import { Prisma, Role, ShipmentStatus } from "../../../generated/prisma";
+import { Prisma, Role, ShipmentStatus, NotificationType } from "../../../generated/prisma";
 import { sendEmail } from "../../../utils/email";
+import { notificationService } from "../notification/notification.service";
+
 import { redis } from "../../../lib/redis";
 import { invalidateAdminUsersCache } from "../../../utils/invalidateUserCache";
 import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
@@ -284,6 +286,20 @@ const updateRole = async (payload: IRoleUpdate, currentUser: IRequestUser) => {
     } catch (error) {
         console.error("Role update email failed:", error);
     }
+
+    // In-app & real-time notification to the user whose role was updated
+    await notificationService.createAndSendNotification({
+        userId: user.id,
+        title: "Role Updated",
+        message: `Your account role has been updated from ${user.role} to ${payload.role}.`,
+        type: NotificationType.ROLE_UPDATED,
+        link: "/dashboard",
+        data: {
+            previousRole: user.role,
+            newRole: payload.role,
+        },
+    });
+
     await invalidateAdminUsersCache();
     return updated;
 };
@@ -437,6 +453,14 @@ const updateUserStatus = async (
             console.error("Suspension email dispatch failed:", error);
         }
 
+        // In-app & real-time notification to the suspended user
+        await notificationService.createAndSendNotification({
+            userId: user.id,
+            title: "Account Suspended",
+            message: reasonText || "Your account has been suspended by administration.",
+            type: NotificationType.ACCOUNT_SUSPENDED,
+        });
+
         // 4. Invalidate Redis admin users cache
         await invalidateAdminUsersCache();
 
@@ -459,6 +483,15 @@ const updateUserStatus = async (
                 blockedReason: true,
                 blockedAt: true,
             },
+        });
+
+        // In-app & real-time notification to the reactivated user
+        await notificationService.createAndSendNotification({
+            userId: updated.id,
+            title: "Account Reactivated",
+            message: "Your account has been reactivated successfully. You can now use all services.",
+            type: NotificationType.ACCOUNT_ACTIVATED,
+            link: "/dashboard",
         });
 
         // Invalidate Redis admin users cache
@@ -803,6 +836,34 @@ const assignRoadAgent = async (
     } catch (err) {
         console.error("Customer agent assignment email dispatch failed:", err);
     }
+
+    // ─── 3. In-App Persistent Notifications ──────────────
+    // Notify Agent
+    await notificationService.createAndSendNotification({
+        userId: agent.id,
+        title: `New Road Shipment Assigned: #${shipment.trackingId}`,
+        message: `Admin ${adminUser.name} assigned shipment #${shipment.trackingId} to you.`,
+        type: NotificationType.AGENT_ASSIGNED,
+        link: `/dashboard/shipments`,
+        data: {
+            trackingId: shipment.trackingId,
+            shipmentId: shipment.id,
+        },
+    });
+
+    // Notify Customer
+    await notificationService.createAndSendNotification({
+        userId: shipment.user.id,
+        title: `Road Agent Assigned: #${shipment.trackingId}`,
+        message: `Agent ${agent.name} has been assigned to handle your shipment #${shipment.trackingId}.`,
+        type: NotificationType.AGENT_ASSIGNED,
+        link: `/dashboard/tracking`,
+        data: {
+            trackingId: shipment.trackingId,
+            agentName: agent.name,
+            agentPhone: agent.phone,
+        },
+    });
 
     return updated;
 };

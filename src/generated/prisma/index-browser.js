@@ -277,6 +277,20 @@ exports.Prisma.AgentCorridorScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  message: 'message',
+  type: 'type',
+  link: 'link',
+  data: 'data',
+  isRead: 'isRead',
+  readAt: 'readAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PhoneVerificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -369,6 +383,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -377,6 +396,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.AuditAction = exports.$Enums.AuditAction = {
   VERIFY_CREDENTIAL: 'VERIFY_CREDENTIAL',
@@ -430,6 +455,17 @@ exports.LocationType = exports.$Enums.LocationType = {
   INLAND_CONTAINER_DEPOT: 'INLAND_CONTAINER_DEPOT'
 };
 
+exports.NotificationType = exports.$Enums.NotificationType = {
+  ROLE_UPDATED: 'ROLE_UPDATED',
+  SHIPMENT_CREATED: 'SHIPMENT_CREATED',
+  SHIPMENT_STATUS_UPDATED: 'SHIPMENT_STATUS_UPDATED',
+  AGENT_ASSIGNED: 'AGENT_ASSIGNED',
+  ACCOUNT_SUSPENDED: 'ACCOUNT_SUSPENDED',
+  ACCOUNT_ACTIVATED: 'ACCOUNT_ACTIVATED',
+  PAYMENT_SUCCESS: 'PAYMENT_SUCCESS',
+  GENERAL: 'GENERAL'
+};
+
 exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
   PENDING: 'PENDING',
   ASSIGNED: 'ASSIGNED',
@@ -468,6 +504,7 @@ exports.Prisma.ModelName = {
   AgentCredential: 'AgentCredential',
   Location: 'Location',
   AgentCorridor: 'AgentCorridor',
+  Notification: 'Notification',
   PhoneVerification: 'PhoneVerification',
   Shipment: 'Shipment',
   ShipmentCost: 'ShipmentCost',

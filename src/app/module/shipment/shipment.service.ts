@@ -1,6 +1,6 @@
 import status from "http-status";
 import AppError from "../../../errorHelper/AppError";
-import { Prisma, Role, ShipmentStatus } from "../../../generated/prisma";
+import { Prisma, Role, ShipmentStatus, NotificationType } from "../../../generated/prisma";
 import { prisma } from "../../../lib/prisma";
 import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
@@ -12,6 +12,8 @@ import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache"
 import { notifyCustomer, notifyAdmin, notifyAgent } from "../../../lib/socket";
 import { agentService } from "../agent/agent.service";
 import { calculateFreightCost } from "../payment/pricing.engine";
+import { notificationService } from "../notification/notification.service";
+
 
 const CACHE_TTL = 60;
 
@@ -129,6 +131,33 @@ const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
     } else {
         console.warn("User email not found, skipping email.");
     }
+
+    // ─── 3. In-App Persistent Notifications ──────────────
+    // Notify Customer
+    await notificationService.createAndSendNotification({
+        userId: user.userId,
+        title: "Shipment Created Successfully 📦",
+        message: `Your shipment request #${shipment.trackingId} from ${shipment.origin} to ${shipment.destination} has been submitted.`,
+        type: NotificationType.SHIPMENT_CREATED,
+        link: `/dashboard/tracking`,
+        data: {
+            trackingId: shipment.trackingId,
+            shipmentId: shipment.id,
+        },
+    });
+
+    // Notify Admins
+    await notificationService.createAndSendBroadcast({
+        role: Role.ADMIN,
+        title: "New Shipment Request",
+        message: `New shipment #${shipment.trackingId} created by ${user.name || "Customer"}.`,
+        type: NotificationType.SHIPMENT_CREATED,
+        link: `/dashboard/shipments`,
+        data: {
+            trackingId: shipment.trackingId,
+            shipmentId: shipment.id,
+        },
+    });
 
     return shipment;
 };
@@ -608,6 +637,36 @@ const updateShipmentStatus = async (
                 }),
             },
         });
+
+        // ─── In-App Persistent Notifications ──────────────
+        // Notify Customer
+        await notificationService.createAndSendNotification({
+            userId: shipment.userId,
+            title: `Shipment Status: ${payload.status}`,
+            message: `Your shipment #${shipment.trackingId} status has been updated to ${payload.status}.${payload.location ? ` Location: ${payload.location}` : ""}`,
+            type: NotificationType.SHIPMENT_STATUS_UPDATED,
+            link: `/dashboard/tracking`,
+            data: {
+                trackingId: shipment.trackingId,
+                status: payload.status,
+                location: payload.location,
+            },
+        });
+
+        // Notify Assigned Agent if updated by Admin/Other
+        if (shipment.agentId && user.userId !== shipment.agentId) {
+            await notificationService.createAndSendNotification({
+                userId: shipment.agentId,
+                title: `Shipment Status: ${payload.status}`,
+                message: `Shipment #${shipment.trackingId} status was updated to ${payload.status}.`,
+                type: NotificationType.SHIPMENT_STATUS_UPDATED,
+                link: `/dashboard/shipments`,
+                data: {
+                    trackingId: shipment.trackingId,
+                    status: payload.status,
+                },
+            });
+        }
     } catch (err) {
         console.error("Status update notifications failed:", err);
     }

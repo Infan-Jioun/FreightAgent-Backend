@@ -60,6 +60,7 @@ model User {
   locationsUpdated        Location[]              @relation("LocationsUpdated")
   locationsDeleted        Location[]              @relation("LocationsDeleted")
   withdrawals             Withdrawal[]            @relation("AgentWithdrawals")
+  notifications           Notification[]
 
   @@map("users")
 }
@@ -257,6 +258,17 @@ enum WithdrawalStatus {
   REJECTED
 }
 
+enum NotificationType {
+  ROLE_UPDATED
+  SHIPMENT_CREATED
+  SHIPMENT_STATUS_UPDATED
+  AGENT_ASSIGNED
+  ACCOUNT_SUSPENDED
+  ACCOUNT_ACTIVATED
+  PAYMENT_SUCCESS
+  GENERAL
+}
+
 model Location {
   id            String       @id @default(uuid())
   name          String
@@ -316,6 +328,26 @@ model AgentCorridor {
   @@index([originPortId])
   @@index([destinationPortId])
   @@map("agent_corridors")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(GENERAL)
+  link      String?
+  data      Json?
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }
 
 model PhoneVerification {
