@@ -44,4 +44,30 @@ export const assignRoadAgentSchema = z.object({
     }),
 });
 
-export type AssignRoadAgentInput = z.infer<typeof assignRoadAgentSchema>;
+export type AssignRoadAgentInput = z.infer<typeof assignRoadAgentSchema>;
+
+export const getUserSessionsSchema = z.object({
+    params: z.object({
+        id: z.string({ error: () => "User ID is required" }),
+    }),
+});
+
+export const revokeUserSessionSchema = z.object({
+    params: z.object({
+        id: z.string({ error: () => "User ID is required" }),
+        sessionId: z.string({ error: () => "Session ID is required" }),
+    }),
+});
+
+export const adminSessionsQuerySchema = z.object({
+    query: z
+        .object({
+            page: z.string().optional(),
+            limit: z.string().optional(),
+            search: z.string().optional(),
+            deviceType: z.enum(["desktop", "mobile", "tablet"]).optional(),
+            role: z.enum(["CUSTOMER", "AGENT", "ADMIN"]).optional(),
+        })
+        .optional(),
+});
+

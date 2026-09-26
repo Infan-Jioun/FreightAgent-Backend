@@ -134,6 +134,25 @@ const sendOtp = catchAsync(async (req: Request, res: Response) => {
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     const result = await authService.verifyEmail(otp, email);
+
+    const ip = getClientIp(req);
+    const userAgent = req.headers["user-agent"] || "";
+    const deviceInfo = parseUserAgent(userAgent);
+
+    if (result.sessionToken) {
+        await prisma.session.updateMany({
+            where: { token: result.sessionToken },
+            data: {
+                ipAddress: ip,
+                userAgent,
+                deviceName: deviceInfo.deviceName,
+                deviceType: deviceInfo.deviceType,
+                browser: deviceInfo.browser,
+                os: deviceInfo.os,
+            },
+        });
+    }
+
     tokenUtils.setAccessTokenCookie(res, req, result.accessToken);
     tokenUtils.setRefreshTokenCookie(res, req, result.refreshToken);
     tokenUtils.setBetterAuthSessionCookie(res, req, result.sessionToken as string);

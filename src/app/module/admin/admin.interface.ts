@@ -31,4 +31,32 @@ export interface IAssignRoadAgent {
     shipmentId: string;
     agentId: string;
     note?: string;
-}
+}
+
+export interface IDeviceBreakdown {
+    total: number;
+    mobile: number;
+    tablet: number;
+    desktop: number;
+}
+
+export interface IAdminUserSession {
+    id: string;
+    deviceName: string;
+    deviceType: "desktop" | "mobile" | "tablet";
+    browser: string;
+    os: string;
+    ipAddress: string;
+    userAgent: string | null;
+    createdAt: Date;
+    expiresAt: Date;
+}
+
+export interface IAdminSessionsQuery {
+    page?: number | string;
+    limit?: number | string;
+    search?: string;
+    deviceType?: "desktop" | "mobile" | "tablet";
+    role?: Role;
+}
+

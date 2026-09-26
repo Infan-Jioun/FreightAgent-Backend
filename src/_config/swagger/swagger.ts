@@ -4,6 +4,7 @@ import { adminSwaggerDocs } from "./admin.schema";
 import { agentSwaggerDocs } from "./agent.schema";
 import { shipmentSwaggerDocs } from "./shipment.schema";
 import { paymentSwaggerDocs } from "./payment.schema";
+import { ragSwaggerDocs } from "./rag.schema";
 import { envConfig } from "../env";
 
 const options = {
@@ -12,7 +13,7 @@ const options = {
         info: {
             title: "FreightAgent API",
             version: "1.0.0",
-            description: "Production API Documentation for FreightAgent backend services (Auth, Admin, Agent, Shipment, and Payment modules)",
+            description: "Production API Documentation for FreightAgent backend services (Auth, Admin, Agent, Shipment, Payment, and RAG AI Assistant modules)",
         },
         servers: [
             {
@@ -41,6 +42,10 @@ const options = {
                 name: "Payment",
                 description: "Freight pricing engine, Stripe payment intents, webhooks, and refunds",
             },
+            {
+                name: "RAG AI Assistant",
+                description: "Public RAG AI Assistant powered by OpenRouter, Redis Caching, and dynamic live database retrieval",
+            },
         ],
         components: {
             securitySchemes: {
@@ -63,6 +68,7 @@ const options = {
             ...agentSwaggerDocs,
             ...shipmentSwaggerDocs,
             ...paymentSwaggerDocs,
+            ...ragSwaggerDocs,
         },
     },
     apis: [], // static schemas loaded directly via paths

@@ -41,6 +41,7 @@ model User {
   locationsUpdated        Location[]              @relation("LocationsUpdated")
   locationsDeleted        Location[]              @relation("LocationsDeleted")
   withdrawals             Withdrawal[]            @relation("AgentWithdrawals")
+  notifications           Notification[]
 
   @@map("users")
 }

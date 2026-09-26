@@ -34,8 +34,8 @@ export const initSocket = (httpServer: HttpServer) => {
     });
 
     io.on('connection', (socket: Socket) => {
-        const userId = socket.handshake.query.userId as string;
-        const role = socket.handshake.query.role as string | undefined;
+        const userId = (socket.handshake.auth?.userId || socket.handshake.query?.userId) as string | undefined;
+        const role = (socket.handshake.auth?.role || socket.handshake.query?.role) as string | undefined;
 
         if (!userId) {
             socket.disconnect();
@@ -44,6 +44,11 @@ export const initSocket = (httpServer: HttpServer) => {
 
         // প্রতিটা user এর নিজস্ব room
         socket.join(`user_${userId}`);
+
+        // Role-based rooms
+        if (role) {
+            socket.join(`role_${role.toUpperCase()}`);
+        }
 
         // Admin room
         if (role === 'ADMIN') {
@@ -63,6 +68,17 @@ export const initSocket = (httpServer: HttpServer) => {
 export const getIO = (): Server | undefined => {
     return io;
 };
+
+export const emitToUser = (userId: string, event: string, payload: unknown) => {
+    if (!io) return;
+    io.to(`user_${userId}`).emit(event, payload);
+};
+
+export const emitToRole = (role: string, event: string, payload: unknown) => {
+    if (!io) return;
+    io.to(`role_${role.toUpperCase()}`).emit(event, payload);
+};
+
 
 export const notifyAgent = (agentId: string, data: object, event = 'new_shipment') => {
     if (!io) return;

@@ -192,3 +192,12 @@ export const deleteShipmentRateLimit = createRateLimit(
     5,
     "Too many delete requests. Try again after 1 hour."
 );
+
+// ─── RAG AI Rate Limits ────────────────────────────────────────────────────
+// Public AI query limit — 30 queries / 1 minute per IP/user
+export const ragRateLimit = createRateLimit(
+    "rag-query",
+    60 * 1000, // 1 minute
+    30,
+    "Too many AI queries. Please wait a minute before sending another request."
+);

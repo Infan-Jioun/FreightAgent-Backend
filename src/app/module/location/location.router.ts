@@ -54,7 +54,7 @@ router.get(
  */
 router.get(
     "/",
-    validateRequest(locationQuerySchema),
+    // validateRequest(locationQuerySchema),
     locationController.getAll
 );
 
