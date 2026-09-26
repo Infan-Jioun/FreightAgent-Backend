@@ -9,10 +9,10 @@ export class OpenRouterClient {
     private readonly defaultModel: string;
 
     constructor() {
-        this.defaultModel = envConfig.OPENROUTER_MODEL || "nvidia/nemotron-3-super-120b-a12b";
+        this.defaultModel = envConfig.OPENROUTER_MODEL || "deepseek/deepseek-v4-flash-0731";
     }
 
-    /**
+    /** 
      * Sends messages to OpenRouter chat completion API with resilient error handling.
      */
     public async generateCompletion(
@@ -40,7 +40,7 @@ export class OpenRouterClient {
                     model,
                     messages,
                     temperature,
-                    max_tokens: 1000,
+                    max_tokens: 650,
                 },
                 {
                     headers: {

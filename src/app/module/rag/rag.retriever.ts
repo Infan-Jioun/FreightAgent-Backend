@@ -29,10 +29,26 @@ export class RagRetriever {
         const sources: IRagContextSource[] = [];
         const contextSections: string[] = [];
 
-        // 1. Check for Shipment Tracking ID in user query
+        // Determine requirements beforehand for concurrent execution
         const trackingId = this.extractTrackingId(userQuery);
+        const shouldFetchAgents =
+            normalizedQuery.includes("agent") ||
+            normalizedQuery.includes("coverage") ||
+            normalizedQuery.includes("service") ||
+            normalizedQuery.includes("who") ||
+            normalizedQuery.includes("broker");
+
+        // Concurrent execution: all Redis cache and DB lookups run simultaneously
+        const [trackingData, locations, corridors, agentSummary, customChunks] = await Promise.all([
+            trackingId ? this.fetchPublicTrackingInfo(trackingId) : Promise.resolve(null),
+            this.getPublicLocations(),
+            this.getPublicCorridors(),
+            shouldFetchAgents ? this.getVerifiedAgentSummary() : Promise.resolve(null),
+            this.queryDynamicKnowledgeChunks(normalizedQuery),
+        ]);
+
+        // 1. Process Shipment Tracking Result
         if (trackingId) {
-            const trackingData = await this.fetchPublicTrackingInfo(trackingId);
             if (trackingData) {
                 sources.push({
                     type: "TRACKING",
@@ -66,8 +82,7 @@ export class RagRetriever {
             }
         }
 
-        // 2. Fetch Active Locations & Ports (Dynamic + Redis cached)
-        const locations = await this.getPublicLocations();
+        // 2. Process Matched Locations & Ports
         const matchedLocations = this.filterRelevantLocations(locations, normalizedQuery);
         if (matchedLocations.length > 0) {
             sources.push({
@@ -88,8 +103,7 @@ export class RagRetriever {
             );
         }
 
-        // 3. Fetch Active Corridors / Shipping Routes (Dynamic + Redis cached)
-        const corridors = await this.getPublicCorridors();
+        // 3. Process Matched Corridors
         const matchedCorridors = this.filterRelevantCorridors(corridors, normalizedQuery);
         if (matchedCorridors.length > 0) {
             sources.push({
@@ -110,7 +124,7 @@ export class RagRetriever {
             );
         }
 
-        // 4. Dynamic Pricing Engine Context (if user asks about cost/rate/quote/pricing)
+        // 4. Dynamic Pricing Engine Context
         if (this.isPricingQuery(normalizedQuery)) {
             sources.push({
                 type: "PRICING",
@@ -148,14 +162,7 @@ export class RagRetriever {
         }
 
         // 5. Active Verified Agents & Network Overview
-        if (
-            normalizedQuery.includes("agent") ||
-            normalizedQuery.includes("coverage") ||
-            normalizedQuery.includes("service") ||
-            normalizedQuery.includes("who") ||
-            normalizedQuery.includes("broker")
-        ) {
-            const agentSummary = await this.getVerifiedAgentSummary();
+        if (agentSummary) {
             sources.push({
                 type: "AGENT",
                 title: "Freight Agents Network",
@@ -170,8 +177,7 @@ export class RagRetriever {
             );
         }
 
-        // 6. Dynamic KnowledgeChunks from Database (if any exist)
-        const customChunks = await this.queryDynamicKnowledgeChunks(normalizedQuery);
+        // 6. Dynamic KnowledgeChunks from Database
         if (customChunks.length > 0) {
             sources.push({
                 type: "KNOWLEDGE_BASE",
