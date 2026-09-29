@@ -7,9 +7,16 @@ import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
 import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
 import { calculateFreightCost } from "./pricing.engine";
+import fs from "fs";
 import { notifyCustomer, notifyAdmin, notifyAgent } from "../../../lib/socket";
 import { generatePaymentReceiptPdf, generateWithdrawalSlipPdf } from "../../../utils/pdfGenerator";
-import { uploadPdfToCloudinary } from "../../../utils/cloudinary";
+import {
+    saveInvoicePdfLocally,
+    getLocalInvoiceFilePath,
+    saveWithdrawalSlipLocally,
+    getLocalWithdrawalSlipPath,
+    getBaseServerUrl,
+} from "../../../utils/invoiceStorage";
 import { sendEmail } from "../../../utils/email";
 import { AuditAction, Prisma } from "../../../generated/prisma";
 
@@ -218,7 +225,12 @@ export const settleSuccessfulPayment = async (params: {
         throw new AppError(status.NOT_FOUND, "Shipment not found");
     }
 
-    if (shipment.paymentStatus === "PAID" && shipment.invoiceUrl) {
+    if (
+        shipment.paymentStatus === "PAID" &&
+        shipment.invoiceUrl &&
+        !shipment.invoiceUrl.includes("cloudinary") &&
+        !shipment.invoiceUrl.includes("/api/v1/api/v1")
+    ) {
         return shipment;
     }
 
@@ -246,17 +258,8 @@ export const settleSuccessfulPayment = async (params: {
         },
     });
 
-    // 2. Direct streaming URL for 100% instant, reliable in-browser PDF viewing
-    const invoiceUrl = `${envConfig.BACKEND_URL}/api/v1/payment/invoice-pdf/${shipment.trackingId}`;
-    try {
-        await uploadPdfToCloudinary(
-            pdfBuffer,
-            `invoice_${shipment.trackingId}`,
-            "freightagent/invoices"
-        );
-    } catch (uploadErr) {
-        console.error("[Payment] Failed to upload PDF invoice to Cloudinary backup:", uploadErr);
-    }
+    // 2. Persist invoice PDF locally in uploads/invoices & obtain clean local streaming URL
+    const { localUrl: invoiceUrl } = await saveInvoicePdfLocally(shipment.trackingId, pdfBuffer);
 
     // 3. Update Database in a transaction
     const [updatedShipment] = await prisma.$transaction([
@@ -454,11 +457,22 @@ const verifyPaymentStatus = async (params: {
     }
 
     if (shipment.paymentStatus === "PAID") {
+        const localInvoiceUrl = `${getBaseServerUrl()}/api/v1/payment/invoice-pdf/${shipment.trackingId}`;
+        const finalInvoiceUrl =
+            shipment.invoiceUrl &&
+            !shipment.invoiceUrl.includes("cloudinary") &&
+            !shipment.invoiceUrl.includes("/api/v1/api/v1")
+                ? shipment.invoiceUrl
+                : localInvoiceUrl;
+
         return {
             success: true,
             paymentStatus: "PAID",
-            invoiceUrl: shipment.invoiceUrl,
-            shipment,
+            invoiceUrl: finalInvoiceUrl,
+            shipment: {
+                ...shipment,
+                invoiceUrl: finalInvoiceUrl,
+            },
         };
     }
 
@@ -994,17 +1008,8 @@ const requestAgentWithdrawal = async (params: {
         remainingBalance,
     });
 
-    // Direct streaming URL for 100% instant, reliable in-browser PDF viewing
-    const receiptUrl = `${envConfig.BACKEND_URL}/api/v1/payment/withdrawal-slip-pdf/${withdrawalNumber}`;
-    try {
-        await uploadPdfToCloudinary(
-            pdfBuffer,
-            `withdrawal_${withdrawalNumber}`,
-            "freightagent/withdrawals"
-        );
-    } catch (uploadErr) {
-        console.error("[Payment] Failed to upload withdrawal slip to Cloudinary backup:", uploadErr);
-    }
+    // Save withdrawal slip locally & obtain clean local streaming URL
+    const { localUrl: receiptUrl } = await saveWithdrawalSlipLocally(withdrawalNumber, pdfBuffer);
 
     // Create Withdrawal & Audit Log in database
     const [withdrawal] = await prisma.$transaction([
@@ -1116,6 +1121,18 @@ const getShipmentInvoicePdfBuffer = async (identifier: string): Promise<{ buffer
         throw new AppError(status.NOT_FOUND, "Shipment not found");
     }
 
+    // 1. Return cached local invoice PDF if already generated and saved on disk
+    const localPath = getLocalInvoiceFilePath(shipment.trackingId);
+    if (localPath) {
+        try {
+            const buffer = await fs.promises.readFile(localPath);
+            return { buffer, trackingId: shipment.trackingId };
+        } catch (err) {
+            console.warn(`[Payment] Failed to read cached local invoice at ${localPath}, regenerating:`, err);
+        }
+    }
+
+    // 2. Otherwise generate and cache to disk locally
     const buffer = generatePaymentReceiptPdf({
         shipment: {
             id: shipment.id,
@@ -1134,6 +1151,10 @@ const getShipmentInvoicePdfBuffer = async (identifier: string): Promise<{ buffer
             phone: shipment.user.phone,
             address: shipment.user.address,
         },
+    });
+
+    saveInvoicePdfLocally(shipment.trackingId, buffer).catch((err) => {
+        console.error("[Payment] Failed to cache invoice PDF locally:", err);
     });
 
     return { buffer, trackingId: shipment.trackingId };
@@ -1164,6 +1185,17 @@ const getWithdrawalSlipPdfBuffer = async (identifier: string): Promise<{ buffer:
         throw new AppError(status.NOT_FOUND, "Withdrawal voucher not found");
     }
 
+    // 1. Return cached local voucher PDF if already on disk
+    const localPath = getLocalWithdrawalSlipPath(withdrawal.withdrawalNumber);
+    if (localPath) {
+        try {
+            const buffer = await fs.promises.readFile(localPath);
+            return { buffer, withdrawalNumber: withdrawal.withdrawalNumber };
+        } catch (err) {
+            console.warn(`[Payment] Failed to read cached local voucher at ${localPath}, regenerating:`, err);
+        }
+    }
+
     const earnings = await getAgentEarnings(withdrawal.agentId);
 
     const buffer = generateWithdrawalSlipPdf({
@@ -1186,6 +1218,10 @@ const getWithdrawalSlipPdfBuffer = async (identifier: string): Promise<{ buffer:
         },
         balanceBefore: earnings.summary.availableBalanceUSD + withdrawal.amount,
         remainingBalance: earnings.summary.availableBalanceUSD,
+    });
+
+    saveWithdrawalSlipLocally(withdrawal.withdrawalNumber, buffer).catch((err) => {
+        console.error("[Payment] Failed to cache voucher PDF locally:", err);
     });
 
     return { buffer, withdrawalNumber: withdrawal.withdrawalNumber };

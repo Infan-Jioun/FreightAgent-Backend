@@ -6,6 +6,31 @@ import { canAccessConversation } from '../app/module/chat/chat.security';
 import { chatService } from '../app/module/chat/chat.service';
 import { Role } from '../generated/prisma';
 
+export interface SendMessagePayload {
+    conversationId: string;
+    content: string;
+    tempId?: string;
+}
+
+export interface SendMessageAckResponse {
+    success: boolean;
+    data?: unknown;
+    error?: string | undefined;
+    tempId?: string | undefined;
+}
+
+export interface EditMessagePayload {
+    conversationId: string;
+    messageId: string;
+    content: string;
+}
+
+export interface EditMessageAckResponse {
+    success: boolean;
+    data?: unknown;
+    error?: string | undefined;
+}
+
 let io: Server;
 
 const allowedOrigins = [
@@ -95,18 +120,107 @@ export const initSocket = (httpServer: HttpServer) => {
             socket.leave(`conversation_${conversationId}`);
         });
 
-        // 4. Secure Realtime Message Sender Handler
-        socket.on('send_message', async ({ conversationId, content }: { conversationId: string; content: string }) => {
-            if (!conversationId || !content) return;
+        // 4. Secure Realtime Message Sender Handler (Supports WhatsApp-style instant ACK with tempId)
+        socket.on(
+            'send_message',
+            async (
+                payload: SendMessagePayload,
+                ackCallback?: (res: SendMessageAckResponse) => void
+            ) => {
+                const { conversationId, content, tempId } = payload || {};
+                if (!conversationId || !content) {
+                    if (typeof ackCallback === 'function') {
+                        ackCallback({
+                            success: false,
+                            error: 'Invalid payload: conversationId and content are required',
+                            tempId,
+                        });
+                    }
+                    return;
+                }
 
+                try {
+                    // chatService.sendMessage enforces cached authorization, sub-ms rate limiting, concurrent DB writes, and instant broadcast
+                    const message = await chatService.sendMessage(userId, role, conversationId, content);
+
+                    if (typeof ackCallback === 'function') {
+                        ackCallback({ success: true, data: message, tempId });
+                    }
+                } catch (err: unknown) {
+                    const error = err as { statusCode?: number; message?: string };
+                    const errorMessage = error.message || 'Failed to deliver message.';
+
+                    if (typeof ackCallback === 'function') {
+                        ackCallback({
+                            success: false,
+                            error: errorMessage,
+                            tempId,
+                        });
+                    }
+                    socket.emit('chat_error', {
+                        statusCode: error.statusCode || 500,
+                        message: errorMessage,
+                        tempId,
+                    });
+                }
+            }
+        );
+
+        // 4b. Realtime Message Edit Handler
+        socket.on(
+            'edit_message',
+            async (
+                payload: EditMessagePayload,
+                ackCallback?: (res: EditMessageAckResponse) => void
+            ) => {
+                const { conversationId, messageId, content } = payload || {};
+                if (!conversationId || !messageId || !content) {
+                    if (typeof ackCallback === 'function') {
+                        ackCallback({
+                            success: false,
+                            error: 'Invalid payload: conversationId, messageId, and content are required',
+                        });
+                    }
+                    return;
+                }
+
+                try {
+                    const message = await chatService.editMessage(
+                        userId,
+                        role,
+                        conversationId,
+                        messageId,
+                        content
+                    );
+
+                    if (typeof ackCallback === 'function') {
+                        ackCallback({ success: true, data: message });
+                    }
+                } catch (err: unknown) {
+                    const error = err as { statusCode?: number; message?: string };
+                    const errorMessage = error.message || 'Failed to edit message.';
+
+                    if (typeof ackCallback === 'function') {
+                        ackCallback({
+                            success: false,
+                            error: errorMessage,
+                        });
+                    }
+                    socket.emit('chat_error', {
+                        statusCode: error.statusCode || 500,
+                        message: errorMessage,
+                    });
+                }
+            }
+        );
+
+        // Realtime mark as read handler (for WhatsApp-like double blue checkmarks)
+        socket.on('mark_read', async ({ conversationId }: { conversationId: string }) => {
+            if (!conversationId) return;
             try {
-                // chatService.sendMessage enforces canAccessConversation, rate limiting, and sanitization
-                await chatService.sendMessage(userId, role, conversationId, content);
-            } catch (err: any) {
-                socket.emit('chat_error', {
-                    statusCode: err.statusCode || 500,
-                    message: err.message || 'Failed to deliver message.',
-                });
+                await chatService.markMessagesAsRead(userId, role, conversationId);
+            } catch (err) {
+                console.error('[Socket] Failed to mark read:', err);
             }
         });
 

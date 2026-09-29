@@ -33,3 +33,23 @@ export const conversationParamsSchema = z.object({
             .trim(),
     }),
 });
+
+export const editMessageSchema = z.object({
+    params: z.object({
+        conversationId: z
+            .string({ error: "Conversation ID is required" })
+            .min(1, "Conversation ID cannot be empty")
+            .trim(),
+        messageId: z
+            .string({ error: "Message ID is required" })
+            .min(1, "Message ID cannot be empty")
+            .trim(),
+    }),
+    body: z.object({
+        content: z
+            .string({ error: "Message content is required" })
+            .min(1, "Message content cannot be empty")
+            .max(2000, "Message content cannot exceed 2000 characters")
+            .trim(),
+    }),
+});

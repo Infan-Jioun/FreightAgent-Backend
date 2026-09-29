@@ -10,7 +10,7 @@ import { envConfig } from "../../../_config/env";
 import { STATUS_ORDER } from "../../../utils/statusOrder";
 import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
 import { invalidateRoadAgentsCache } from "../../../utils/invalidateAgentCache";
-import { notifyCustomer, notifyAdmin } from "../../../lib/socket";
+import { notifyCustomer, notifyAdmin, getIO } from "../../../lib/socket";
 
 const CACHE_TTL = 60;
 
@@ -458,6 +458,25 @@ const updateShipmentStatus = async (
             email: user.email,
         },
     });
+
+    // If status is DELIVERED, broadcast conversation_closed to real-time chat room
+    if (payload.status === ShipmentStatus.DELIVERED) {
+        const conv = await prisma.conversation.findUnique({
+            where: { shipmentId: id },
+            select: { id: true },
+        });
+        if (conv) {
+            const io = getIO();
+            if (io) {
+                io.to(`conversation_${conv.id}`).emit("conversation_closed", {
+                    conversationId: conv.id,
+                    shipmentId: id,
+                    status: "DELIVERED",
+                    message: "Your shipment already delivered. Chat is now closed.",
+                });
+            }
+        }
+    }
 
     // Email to Customer
     try {

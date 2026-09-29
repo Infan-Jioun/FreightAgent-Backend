@@ -35,12 +35,18 @@ export interface IConversationSummary {
     unreadCount?: number;
 }
 
+export interface IEditMessagePayload {
+    content: string;
+}
+
 export interface IConversationMessageItem {
     id: string;
     conversationId: string;
     senderId: string;
     content: string;
     isRead: boolean;
+    isEdited: boolean;
     createdAt: Date;
+    updatedAt: Date;
     sender: IChatParticipant;
 }

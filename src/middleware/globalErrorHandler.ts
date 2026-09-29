@@ -26,6 +26,16 @@ const globalErrorHandler = (
         message = err.issues[0]?.message || "Validation error"; // errors → issues
     }
 
+    //  2.1 Multer error (File size limit 10MB, etc.)
+    else if (err?.name === "MulterError" || err?.code === "LIMIT_FILE_SIZE") {
+        statusCode = status.BAD_REQUEST;
+        if (err.code === "LIMIT_FILE_SIZE") {
+            message = "File size exceeds maximum allowed limit of 10MB";
+        } else {
+            message = err.message || "File upload error";
+        }
+    }
+
     //  3. BetterAuth validation error — JSON string এ আসে
     else if (typeof message === "string") {
         try {

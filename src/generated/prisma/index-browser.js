@@ -243,7 +243,9 @@ exports.Prisma.ConversationMessageScalarFieldEnum = {
   senderId: 'senderId',
   content: 'content',
   isRead: 'isRead',
-  createdAt: 'createdAt'
+  isEdited: 'isEdited',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.AgentCredentialScalarFieldEnum = {

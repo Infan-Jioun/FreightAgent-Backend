@@ -9,7 +9,7 @@ import { sendEmail } from "../../../utils/email";
 import { envConfig } from "../../../_config/env";
 import { STATUS_ORDER } from "../../../utils/statusOrder";
 import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
-import { notifyCustomer, notifyAdmin, notifyAgent } from "../../../lib/socket";
+import { notifyCustomer, notifyAdmin, notifyAgent, getIO } from "../../../lib/socket";
 import { agentService } from "../agent/agent.service";
 import { calculateFreightCost } from "../payment/pricing.engine";
 import { notificationService } from "../notification/notification.service";
@@ -614,6 +614,25 @@ const updateShipmentStatus = async (
                 trackingId: shipment.trackingId,
                 status: payload.status,
             });
+        }
+
+        // If shipment is DELIVERED, broadcast conversation_closed to real-time chat room
+        if (payload.status === ShipmentStatus.DELIVERED) {
+            const conv = await prisma.conversation.findUnique({
+                where: { shipmentId: shipment.id },
+                select: { id: true },
+            });
+            if (conv) {
+                const io = getIO();
+                if (io) {
+                    io.to(`conversation_${conv.id}`).emit("conversation_closed", {
+                        conversationId: conv.id,
+                        shipmentId: shipment.id,
+                        status: "DELIVERED",
+                        message: "Your shipment already delivered. Chat is now closed.",
+                    });
+                }
+            }
         }
 
         await sendEmail({
