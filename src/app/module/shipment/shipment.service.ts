@@ -13,6 +13,7 @@ import { notifyCustomer, notifyAdmin, notifyAgent, getIO } from "../../../lib/so
 import { agentService } from "../agent/agent.service";
 import { calculateFreightCost } from "../payment/pricing.engine";
 import { notificationService } from "../notification/notification.service";
+import { resolveInvoiceUrl } from "../../../utils/invoiceStorage";
 
 
 const CACHE_TTL = 60;
@@ -264,8 +265,13 @@ const getAllShipments = async (query: IQueryShipment) => {
         prisma.shipment.count({ where }),
     ]);
 
+    const mappedShipments = shipment.map((s) => ({
+        ...s,
+        invoiceUrl: s.invoiceUrl ? resolveInvoiceUrl(s.trackingId, s.invoiceUrl) : null,
+    }));
+
     const result = {
-        shipment,
+        shipment: mappedShipments,
         meta: {
             page,
             limit,
@@ -364,8 +370,13 @@ const getMyShipments = async (query: IQueryShipment, user: IRequestUser) => {
         prisma.shipment.count({ where }),
     ]);
 
+    const mappedShipments = shipments.map((s) => ({
+        ...s,
+        invoiceUrl: s.invoiceUrl ? resolveInvoiceUrl(s.trackingId, s.invoiceUrl) : null,
+    }));
+
     const result = {
-        shipments,
+        shipments: mappedShipments,
         meta: {
             page,
             limit,
@@ -477,9 +488,14 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
         throw new AppError(status.FORBIDDEN, "Access denied");
     }
 
-    await redis.set(cacheKey, JSON.stringify(shipment), { ex: CACHE_TTL });
+    const mappedShipment = {
+        ...shipment,
+        invoiceUrl: shipment.invoiceUrl ? resolveInvoiceUrl(shipment.trackingId, shipment.invoiceUrl) : null,
+    };
 
-    return shipment;
+    await redis.set(cacheKey, JSON.stringify(mappedShipment), { ex: CACHE_TTL });
+
+    return mappedShipment;
 };
 
 const updateShipmentStatus = async (

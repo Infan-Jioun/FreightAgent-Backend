@@ -11,6 +11,7 @@ import { STATUS_ORDER } from "../../../utils/statusOrder";
 import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
 import { invalidateRoadAgentsCache } from "../../../utils/invalidateAgentCache";
 import { notifyCustomer, notifyAdmin, getIO } from "../../../lib/socket";
+import { resolveInvoiceUrl } from "../../../utils/invoiceStorage";
 
 const CACHE_TTL = 60;
 
@@ -110,8 +111,13 @@ const getAssignedShipments = async (query: IAgentShipmentQuery, user: IRequestUs
         prisma.shipment.count({ where }),
     ]);
 
+    const mappedShipments = shipments.map((s) => ({
+        ...s,
+        invoiceUrl: s.invoiceUrl ? resolveInvoiceUrl(s.trackingId, s.invoiceUrl) : null,
+    }));
+
     const result = {
-        shipments,
+        shipments: mappedShipments,
         meta: {
             page,
             limit,
@@ -205,9 +211,14 @@ const getAssignedShipmentById = async (id: string, user: IRequestUser) => {
         throw new AppError(status.FORBIDDEN, "This shipment is not assigned to you");
     }
 
-    await redis.set(cacheKey, JSON.stringify(shipment), { ex: CACHE_TTL });
+    const mappedShipment = {
+        ...shipment,
+        invoiceUrl: shipment.invoiceUrl ? resolveInvoiceUrl(shipment.trackingId, shipment.invoiceUrl) : null,
+    };
 
-    return shipment;
+    await redis.set(cacheKey, JSON.stringify(mappedShipment), { ex: CACHE_TTL });
+
+    return mappedShipment;
 };
 
 const acceptShipment = async (

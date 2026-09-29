@@ -4,6 +4,7 @@ import crypto from "crypto";
 import AppError from "../errorHelper/AppError";
 import status from "http-status";
 import { envConfig } from "../_config/env";
+import { getBaseServerUrl } from "./invoiceStorage";
 
 const UPLOADS_DIR = path.resolve(process.cwd(), "uploads", "chat");
 
@@ -57,8 +58,7 @@ export const saveChatFileLocally = async (
 
     await fs.promises.writeFile(destinationPath, file.buffer);
 
-    const rawUrl = envConfig.BACKEND_URL || "http://localhost:5000";
-    const baseUrl = rawUrl.replace(/\/api\/v1\/?$/, "").replace(/\/$/, "");
+    const baseUrl = getBaseServerUrl();
     const fileUrl = `${baseUrl}/api/v1/chat/files/${uniqueFileName}`;
 
     return {

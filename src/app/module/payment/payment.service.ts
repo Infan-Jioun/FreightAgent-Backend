@@ -16,6 +16,8 @@ import {
     saveWithdrawalSlipLocally,
     getLocalWithdrawalSlipPath,
     getBaseServerUrl,
+    resolveInvoiceUrl,
+    resolveWithdrawalSlipUrl,
 } from "../../../utils/invoiceStorage";
 import { sendEmail } from "../../../utils/email";
 import { AuditAction, Prisma } from "../../../generated/prisma";
@@ -229,9 +231,13 @@ export const settleSuccessfulPayment = async (params: {
         shipment.paymentStatus === "PAID" &&
         shipment.invoiceUrl &&
         !shipment.invoiceUrl.includes("cloudinary") &&
-        !shipment.invoiceUrl.includes("/api/v1/api/v1")
+        !shipment.invoiceUrl.includes("/api/v1/api/v1") &&
+        !shipment.invoiceUrl.includes("localhost")
     ) {
-        return shipment;
+        return {
+            ...shipment,
+            invoiceUrl: resolveInvoiceUrl(shipment.trackingId, shipment.invoiceUrl),
+        };
     }
 
     const totalUSD = params.amountUSD || shipment.cost?.totalCost || 0;
@@ -358,7 +364,10 @@ export const settleSuccessfulPayment = async (params: {
         console.error("[Payment] Failed to send payment confirmation email:", mailErr);
     }
 
-    return updatedShipment;
+    return {
+        ...updatedShipment,
+        invoiceUrl: resolveInvoiceUrl(updatedShipment.trackingId, updatedShipment.invoiceUrl),
+    };
 };
 
 /**
@@ -457,13 +466,7 @@ const verifyPaymentStatus = async (params: {
     }
 
     if (shipment.paymentStatus === "PAID") {
-        const localInvoiceUrl = `${getBaseServerUrl()}/api/v1/payment/invoice-pdf/${shipment.trackingId}`;
-        const finalInvoiceUrl =
-            shipment.invoiceUrl &&
-            !shipment.invoiceUrl.includes("cloudinary") &&
-            !shipment.invoiceUrl.includes("/api/v1/api/v1")
-                ? shipment.invoiceUrl
-                : localInvoiceUrl;
+        const finalInvoiceUrl = resolveInvoiceUrl(shipment.trackingId, shipment.invoiceUrl);
 
         return {
             success: true,
@@ -832,7 +835,10 @@ const getAdminPaymentStats = async () => {
             totalWithdrawalsPendingUSD,
             netPlatformBalanceUSD,
         },
-        recentTransactions: recentPaidShipments,
+        recentTransactions: recentPaidShipments.map((s) => ({
+            ...s,
+            invoiceUrl: resolveInvoiceUrl(s.trackingId, s.invoiceUrl),
+        })),
     };
 };
 
@@ -865,6 +871,7 @@ const getAdminWithdrawals = async (page = 1, limit = 10) => {
     return {
         withdrawals: withdrawals.map((w) => ({
             ...w,
+            receiptUrl: resolveWithdrawalSlipUrl(w.withdrawalNumber, w.receiptUrl),
             voucherNumber: w.withdrawalNumber,
         })),
         meta: {
@@ -939,7 +946,10 @@ const getAgentEarnings = async (agentId: string) => {
             availableBalanceUSD,
             paidShipmentsCount: paidShipments.length,
         },
-        shipmentEarnings: paidShipments,
+        shipmentEarnings: paidShipments.map((s) => ({
+            ...s,
+            invoiceUrl: resolveInvoiceUrl(s.trackingId, s.invoiceUrl),
+        })),
     };
 };
 
@@ -1062,9 +1072,10 @@ const requestAgentWithdrawal = async (params: {
     return {
         withdrawal: {
             ...withdrawal,
+            receiptUrl: resolveWithdrawalSlipUrl(withdrawal.withdrawalNumber, withdrawal.receiptUrl),
             voucherNumber: withdrawal.withdrawalNumber,
         },
-        receiptUrl,
+        receiptUrl: resolveWithdrawalSlipUrl(withdrawalNumber, receiptUrl),
         balanceBefore: availableBalance,
         remainingBalance,
     };
@@ -1089,6 +1100,7 @@ const getAgentWithdrawals = async (agentId: string, page = 1, limit = 10) => {
     return {
         withdrawals: withdrawals.map((w) => ({
             ...w,
+            receiptUrl: resolveWithdrawalSlipUrl(w.withdrawalNumber, w.receiptUrl),
             voucherNumber: w.withdrawalNumber,
         })),
         meta: {
