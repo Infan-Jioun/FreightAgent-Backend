@@ -6,6 +6,12 @@ export interface ICreateConversationPayload {
     shipmentId: string;
 }
 
+export interface IGetConversationMessagesOptions {
+    cursor?: string | undefined;
+    limit?: number | undefined;
+    after?: string | undefined;
+}
+
 export interface IChatParticipant {
     id: string;
     name: string;

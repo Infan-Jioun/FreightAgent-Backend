@@ -232,7 +232,10 @@ exports.Prisma.ConversationScalarFieldEnum = {
   customerId: 'customerId',
   agentId: 'agentId',
   lastMessage: 'lastMessage',
+  lastMessageId: 'lastMessageId',
   lastMessageAt: 'lastMessageAt',
+  customerUnread: 'customerUnread',
+  agentUnread: 'agentUnread',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -241,9 +244,15 @@ exports.Prisma.ConversationMessageScalarFieldEnum = {
   id: 'id',
   conversationId: 'conversationId',
   senderId: 'senderId',
+  clientMessageId: 'clientMessageId',
+  type: 'type',
   content: 'content',
+  attachmentUrl: 'attachmentUrl',
+  attachmentName: 'attachmentName',
   isRead: 'isRead',
   isEdited: 'isEdited',
+  deliveredAt: 'deliveredAt',
+  readAt: 'readAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -452,6 +461,11 @@ exports.AgentVerificationStatus = exports.$Enums.AgentVerificationStatus = {
   VERIFIED: 'VERIFIED',
   REJECTED: 'REJECTED',
   SUSPENDED: 'SUSPENDED'
+};
+
+exports.MessageType = exports.$Enums.MessageType = {
+  TEXT: 'TEXT',
+  FILE: 'FILE'
 };
 
 exports.CredentialType = exports.$Enums.CredentialType = {

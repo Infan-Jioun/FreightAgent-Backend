@@ -231,6 +231,14 @@ export const NotificationType: {
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
 
+
+export const MessageType: {
+  TEXT: 'TEXT',
+  FILE: 'FILE'
+};
+
+export type MessageType = (typeof MessageType)[keyof typeof MessageType]
+
 }
 
 export type Role = $Enums.Role
@@ -272,6 +280,10 @@ export const WithdrawalStatus: typeof $Enums.WithdrawalStatus
 export type NotificationType = $Enums.NotificationType
 
 export const NotificationType: typeof $Enums.NotificationType
+
+export type MessageType = $Enums.MessageType
+
+export const MessageType: typeof $Enums.MessageType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -12586,8 +12598,20 @@ export namespace Prisma {
 
   export type AggregateConversation = {
     _count: ConversationCountAggregateOutputType | null
+    _avg: ConversationAvgAggregateOutputType | null
+    _sum: ConversationSumAggregateOutputType | null
     _min: ConversationMinAggregateOutputType | null
     _max: ConversationMaxAggregateOutputType | null
+  }
+
+  export type ConversationAvgAggregateOutputType = {
+    customerUnread: number | null
+    agentUnread: number | null
+  }
+
+  export type ConversationSumAggregateOutputType = {
+    customerUnread: number | null
+    agentUnread: number | null
   }
 
   export type ConversationMinAggregateOutputType = {
@@ -12596,7 +12620,10 @@ export namespace Prisma {
     customerId: string | null
     agentId: string | null
     lastMessage: string | null
+    lastMessageId: string | null
     lastMessageAt: Date | null
+    customerUnread: number | null
+    agentUnread: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -12607,7 +12634,10 @@ export namespace Prisma {
     customerId: string | null
     agentId: string | null
     lastMessage: string | null
+    lastMessageId: string | null
     lastMessageAt: Date | null
+    customerUnread: number | null
+    agentUnread: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -12618,12 +12648,25 @@ export namespace Prisma {
     customerId: number
     agentId: number
     lastMessage: number
+    lastMessageId: number
     lastMessageAt: number
+    customerUnread: number
+    agentUnread: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
+
+  export type ConversationAvgAggregateInputType = {
+    customerUnread?: true
+    agentUnread?: true
+  }
+
+  export type ConversationSumAggregateInputType = {
+    customerUnread?: true
+    agentUnread?: true
+  }
 
   export type ConversationMinAggregateInputType = {
     id?: true
@@ -12631,7 +12674,10 @@ export namespace Prisma {
     customerId?: true
     agentId?: true
     lastMessage?: true
+    lastMessageId?: true
     lastMessageAt?: true
+    customerUnread?: true
+    agentUnread?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -12642,7 +12688,10 @@ export namespace Prisma {
     customerId?: true
     agentId?: true
     lastMessage?: true
+    lastMessageId?: true
     lastMessageAt?: true
+    customerUnread?: true
+    agentUnread?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -12653,7 +12702,10 @@ export namespace Prisma {
     customerId?: true
     agentId?: true
     lastMessage?: true
+    lastMessageId?: true
     lastMessageAt?: true
+    customerUnread?: true
+    agentUnread?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -12697,6 +12749,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ConversationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ConversationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ConversationMinAggregateInputType
@@ -12727,6 +12791,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ConversationCountAggregateInputType | true
+    _avg?: ConversationAvgAggregateInputType
+    _sum?: ConversationSumAggregateInputType
     _min?: ConversationMinAggregateInputType
     _max?: ConversationMaxAggregateInputType
   }
@@ -12737,10 +12803,15 @@ export namespace Prisma {
     customerId: string
     agentId: string
     lastMessage: string | null
+    lastMessageId: string | null
     lastMessageAt: Date
+    customerUnread: number
+    agentUnread: number
     createdAt: Date
     updatedAt: Date
     _count: ConversationCountAggregateOutputType | null
+    _avg: ConversationAvgAggregateOutputType | null
+    _sum: ConversationSumAggregateOutputType | null
     _min: ConversationMinAggregateOutputType | null
     _max: ConversationMaxAggregateOutputType | null
   }
@@ -12765,7 +12836,10 @@ export namespace Prisma {
     customerId?: boolean
     agentId?: boolean
     lastMessage?: boolean
+    lastMessageId?: boolean
     lastMessageAt?: boolean
+    customerUnread?: boolean
+    agentUnread?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     customer?: boolean | UserDefaultArgs<ExtArgs>
@@ -12781,7 +12855,10 @@ export namespace Prisma {
     customerId?: boolean
     agentId?: boolean
     lastMessage?: boolean
+    lastMessageId?: boolean
     lastMessageAt?: boolean
+    customerUnread?: boolean
+    agentUnread?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     customer?: boolean | UserDefaultArgs<ExtArgs>
@@ -12795,7 +12872,10 @@ export namespace Prisma {
     customerId?: boolean
     agentId?: boolean
     lastMessage?: boolean
+    lastMessageId?: boolean
     lastMessageAt?: boolean
+    customerUnread?: boolean
+    agentUnread?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     customer?: boolean | UserDefaultArgs<ExtArgs>
@@ -12809,12 +12889,15 @@ export namespace Prisma {
     customerId?: boolean
     agentId?: boolean
     lastMessage?: boolean
+    lastMessageId?: boolean
     lastMessageAt?: boolean
+    customerUnread?: boolean
+    agentUnread?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ConversationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "customerId" | "agentId" | "lastMessage" | "lastMessageAt" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
+  export type ConversationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "customerId" | "agentId" | "lastMessage" | "lastMessageId" | "lastMessageAt" | "customerUnread" | "agentUnread" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
   export type ConversationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customer?: boolean | UserDefaultArgs<ExtArgs>
     agent?: boolean | UserDefaultArgs<ExtArgs>
@@ -12847,7 +12930,10 @@ export namespace Prisma {
       customerId: string
       agentId: string
       lastMessage: string | null
+      lastMessageId: string | null
       lastMessageAt: Date
+      customerUnread: number
+      agentUnread: number
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["conversation"]>
@@ -13282,7 +13368,10 @@ export namespace Prisma {
     readonly customerId: FieldRef<"Conversation", 'String'>
     readonly agentId: FieldRef<"Conversation", 'String'>
     readonly lastMessage: FieldRef<"Conversation", 'String'>
+    readonly lastMessageId: FieldRef<"Conversation", 'String'>
     readonly lastMessageAt: FieldRef<"Conversation", 'DateTime'>
+    readonly customerUnread: FieldRef<"Conversation", 'Int'>
+    readonly agentUnread: FieldRef<"Conversation", 'Int'>
     readonly createdAt: FieldRef<"Conversation", 'DateTime'>
     readonly updatedAt: FieldRef<"Conversation", 'DateTime'>
   }
@@ -13761,9 +13850,15 @@ export namespace Prisma {
     id: string | null
     conversationId: string | null
     senderId: string | null
+    clientMessageId: string | null
+    type: $Enums.MessageType | null
     content: string | null
+    attachmentUrl: string | null
+    attachmentName: string | null
     isRead: boolean | null
     isEdited: boolean | null
+    deliveredAt: Date | null
+    readAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -13772,9 +13867,15 @@ export namespace Prisma {
     id: string | null
     conversationId: string | null
     senderId: string | null
+    clientMessageId: string | null
+    type: $Enums.MessageType | null
     content: string | null
+    attachmentUrl: string | null
+    attachmentName: string | null
     isRead: boolean | null
     isEdited: boolean | null
+    deliveredAt: Date | null
+    readAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -13783,9 +13884,15 @@ export namespace Prisma {
     id: number
     conversationId: number
     senderId: number
+    clientMessageId: number
+    type: number
     content: number
+    attachmentUrl: number
+    attachmentName: number
     isRead: number
     isEdited: number
+    deliveredAt: number
+    readAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -13796,9 +13903,15 @@ export namespace Prisma {
     id?: true
     conversationId?: true
     senderId?: true
+    clientMessageId?: true
+    type?: true
     content?: true
+    attachmentUrl?: true
+    attachmentName?: true
     isRead?: true
     isEdited?: true
+    deliveredAt?: true
+    readAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -13807,9 +13920,15 @@ export namespace Prisma {
     id?: true
     conversationId?: true
     senderId?: true
+    clientMessageId?: true
+    type?: true
     content?: true
+    attachmentUrl?: true
+    attachmentName?: true
     isRead?: true
     isEdited?: true
+    deliveredAt?: true
+    readAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -13818,9 +13937,15 @@ export namespace Prisma {
     id?: true
     conversationId?: true
     senderId?: true
+    clientMessageId?: true
+    type?: true
     content?: true
+    attachmentUrl?: true
+    attachmentName?: true
     isRead?: true
     isEdited?: true
+    deliveredAt?: true
+    readAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -13902,9 +14027,15 @@ export namespace Prisma {
     id: string
     conversationId: string
     senderId: string
+    clientMessageId: string | null
+    type: $Enums.MessageType
     content: string
+    attachmentUrl: string | null
+    attachmentName: string | null
     isRead: boolean
     isEdited: boolean
+    deliveredAt: Date | null
+    readAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: ConversationMessageCountAggregateOutputType | null
@@ -13930,9 +14061,15 @@ export namespace Prisma {
     id?: boolean
     conversationId?: boolean
     senderId?: boolean
+    clientMessageId?: boolean
+    type?: boolean
     content?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: boolean
+    readAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     conversation?: boolean | ConversationDefaultArgs<ExtArgs>
@@ -13943,9 +14080,15 @@ export namespace Prisma {
     id?: boolean
     conversationId?: boolean
     senderId?: boolean
+    clientMessageId?: boolean
+    type?: boolean
     content?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: boolean
+    readAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     conversation?: boolean | ConversationDefaultArgs<ExtArgs>
@@ -13956,9 +14099,15 @@ export namespace Prisma {
     id?: boolean
     conversationId?: boolean
     senderId?: boolean
+    clientMessageId?: boolean
+    type?: boolean
     content?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: boolean
+    readAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     conversation?: boolean | ConversationDefaultArgs<ExtArgs>
@@ -13969,14 +14118,20 @@ export namespace Prisma {
     id?: boolean
     conversationId?: boolean
     senderId?: boolean
+    clientMessageId?: boolean
+    type?: boolean
     content?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: boolean
+    readAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ConversationMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "conversationId" | "senderId" | "content" | "isRead" | "isEdited" | "createdAt" | "updatedAt", ExtArgs["result"]["conversationMessage"]>
+  export type ConversationMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "conversationId" | "senderId" | "clientMessageId" | "type" | "content" | "attachmentUrl" | "attachmentName" | "isRead" | "isEdited" | "deliveredAt" | "readAt" | "createdAt" | "updatedAt", ExtArgs["result"]["conversationMessage"]>
   export type ConversationMessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     conversation?: boolean | ConversationDefaultArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
@@ -14000,9 +14155,15 @@ export namespace Prisma {
       id: string
       conversationId: string
       senderId: string
+      clientMessageId: string | null
+      type: $Enums.MessageType
       content: string
+      attachmentUrl: string | null
+      attachmentName: string | null
       isRead: boolean
       isEdited: boolean
+      deliveredAt: Date | null
+      readAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["conversationMessage"]>
@@ -14433,9 +14594,15 @@ export namespace Prisma {
     readonly id: FieldRef<"ConversationMessage", 'String'>
     readonly conversationId: FieldRef<"ConversationMessage", 'String'>
     readonly senderId: FieldRef<"ConversationMessage", 'String'>
+    readonly clientMessageId: FieldRef<"ConversationMessage", 'String'>
+    readonly type: FieldRef<"ConversationMessage", 'MessageType'>
     readonly content: FieldRef<"ConversationMessage", 'String'>
+    readonly attachmentUrl: FieldRef<"ConversationMessage", 'String'>
+    readonly attachmentName: FieldRef<"ConversationMessage", 'String'>
     readonly isRead: FieldRef<"ConversationMessage", 'Boolean'>
     readonly isEdited: FieldRef<"ConversationMessage", 'Boolean'>
+    readonly deliveredAt: FieldRef<"ConversationMessage", 'DateTime'>
+    readonly readAt: FieldRef<"ConversationMessage", 'DateTime'>
     readonly createdAt: FieldRef<"ConversationMessage", 'DateTime'>
     readonly updatedAt: FieldRef<"ConversationMessage", 'DateTime'>
   }
@@ -26293,7 +26460,10 @@ export namespace Prisma {
     customerId: 'customerId',
     agentId: 'agentId',
     lastMessage: 'lastMessage',
+    lastMessageId: 'lastMessageId',
     lastMessageAt: 'lastMessageAt',
+    customerUnread: 'customerUnread',
+    agentUnread: 'agentUnread',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -26305,9 +26475,15 @@ export namespace Prisma {
     id: 'id',
     conversationId: 'conversationId',
     senderId: 'senderId',
+    clientMessageId: 'clientMessageId',
+    type: 'type',
     content: 'content',
+    attachmentUrl: 'attachmentUrl',
+    attachmentName: 'attachmentName',
     isRead: 'isRead',
     isEdited: 'isEdited',
+    deliveredAt: 'deliveredAt',
+    readAt: 'readAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -26628,6 +26804,20 @@ export namespace Prisma {
    * Reference to a field of type 'AgentVerificationStatus[]'
    */
   export type ListEnumAgentVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AgentVerificationStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType'
+   */
+  export type EnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType[]'
+   */
+  export type ListEnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType[]'>
     
 
 
@@ -27475,7 +27665,10 @@ export namespace Prisma {
     customerId?: StringFilter<"Conversation"> | string
     agentId?: StringFilter<"Conversation"> | string
     lastMessage?: StringNullableFilter<"Conversation"> | string | null
+    lastMessageId?: StringNullableFilter<"Conversation"> | string | null
     lastMessageAt?: DateTimeFilter<"Conversation"> | Date | string
+    customerUnread?: IntFilter<"Conversation"> | number
+    agentUnread?: IntFilter<"Conversation"> | number
     createdAt?: DateTimeFilter<"Conversation"> | Date | string
     updatedAt?: DateTimeFilter<"Conversation"> | Date | string
     customer?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -27490,7 +27683,10 @@ export namespace Prisma {
     customerId?: SortOrder
     agentId?: SortOrder
     lastMessage?: SortOrderInput | SortOrder
+    lastMessageId?: SortOrderInput | SortOrder
     lastMessageAt?: SortOrder
+    customerUnread?: SortOrder
+    agentUnread?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     customer?: UserOrderByWithRelationInput
@@ -27509,7 +27705,10 @@ export namespace Prisma {
     customerId?: StringFilter<"Conversation"> | string
     agentId?: StringFilter<"Conversation"> | string
     lastMessage?: StringNullableFilter<"Conversation"> | string | null
+    lastMessageId?: StringNullableFilter<"Conversation"> | string | null
     lastMessageAt?: DateTimeFilter<"Conversation"> | Date | string
+    customerUnread?: IntFilter<"Conversation"> | number
+    agentUnread?: IntFilter<"Conversation"> | number
     createdAt?: DateTimeFilter<"Conversation"> | Date | string
     updatedAt?: DateTimeFilter<"Conversation"> | Date | string
     customer?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -27524,12 +27723,17 @@ export namespace Prisma {
     customerId?: SortOrder
     agentId?: SortOrder
     lastMessage?: SortOrderInput | SortOrder
+    lastMessageId?: SortOrderInput | SortOrder
     lastMessageAt?: SortOrder
+    customerUnread?: SortOrder
+    agentUnread?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ConversationCountOrderByAggregateInput
+    _avg?: ConversationAvgOrderByAggregateInput
     _max?: ConversationMaxOrderByAggregateInput
     _min?: ConversationMinOrderByAggregateInput
+    _sum?: ConversationSumOrderByAggregateInput
   }
 
   export type ConversationScalarWhereWithAggregatesInput = {
@@ -27541,7 +27745,10 @@ export namespace Prisma {
     customerId?: StringWithAggregatesFilter<"Conversation"> | string
     agentId?: StringWithAggregatesFilter<"Conversation"> | string
     lastMessage?: StringNullableWithAggregatesFilter<"Conversation"> | string | null
+    lastMessageId?: StringNullableWithAggregatesFilter<"Conversation"> | string | null
     lastMessageAt?: DateTimeWithAggregatesFilter<"Conversation"> | Date | string
+    customerUnread?: IntWithAggregatesFilter<"Conversation"> | number
+    agentUnread?: IntWithAggregatesFilter<"Conversation"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Conversation"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Conversation"> | Date | string
   }
@@ -27553,9 +27760,15 @@ export namespace Prisma {
     id?: StringFilter<"ConversationMessage"> | string
     conversationId?: StringFilter<"ConversationMessage"> | string
     senderId?: StringFilter<"ConversationMessage"> | string
+    clientMessageId?: StringNullableFilter<"ConversationMessage"> | string | null
+    type?: EnumMessageTypeFilter<"ConversationMessage"> | $Enums.MessageType
     content?: StringFilter<"ConversationMessage"> | string
+    attachmentUrl?: StringNullableFilter<"ConversationMessage"> | string | null
+    attachmentName?: StringNullableFilter<"ConversationMessage"> | string | null
     isRead?: BoolFilter<"ConversationMessage"> | boolean
     isEdited?: BoolFilter<"ConversationMessage"> | boolean
+    deliveredAt?: DateTimeNullableFilter<"ConversationMessage"> | Date | string | null
+    readAt?: DateTimeNullableFilter<"ConversationMessage"> | Date | string | null
     createdAt?: DateTimeFilter<"ConversationMessage"> | Date | string
     updatedAt?: DateTimeFilter<"ConversationMessage"> | Date | string
     conversation?: XOR<ConversationScalarRelationFilter, ConversationWhereInput>
@@ -27566,9 +27779,15 @@ export namespace Prisma {
     id?: SortOrder
     conversationId?: SortOrder
     senderId?: SortOrder
+    clientMessageId?: SortOrderInput | SortOrder
+    type?: SortOrder
     content?: SortOrder
+    attachmentUrl?: SortOrderInput | SortOrder
+    attachmentName?: SortOrderInput | SortOrder
     isRead?: SortOrder
     isEdited?: SortOrder
+    deliveredAt?: SortOrderInput | SortOrder
+    readAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     conversation?: ConversationOrderByWithRelationInput
@@ -27577,27 +27796,40 @@ export namespace Prisma {
 
   export type ConversationMessageWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    conversationId_senderId_clientMessageId?: ConversationMessageConversationIdSenderIdClientMessageIdCompoundUniqueInput
     AND?: ConversationMessageWhereInput | ConversationMessageWhereInput[]
     OR?: ConversationMessageWhereInput[]
     NOT?: ConversationMessageWhereInput | ConversationMessageWhereInput[]
     conversationId?: StringFilter<"ConversationMessage"> | string
     senderId?: StringFilter<"ConversationMessage"> | string
+    clientMessageId?: StringNullableFilter<"ConversationMessage"> | string | null
+    type?: EnumMessageTypeFilter<"ConversationMessage"> | $Enums.MessageType
     content?: StringFilter<"ConversationMessage"> | string
+    attachmentUrl?: StringNullableFilter<"ConversationMessage"> | string | null
+    attachmentName?: StringNullableFilter<"ConversationMessage"> | string | null
     isRead?: BoolFilter<"ConversationMessage"> | boolean
     isEdited?: BoolFilter<"ConversationMessage"> | boolean
+    deliveredAt?: DateTimeNullableFilter<"ConversationMessage"> | Date | string | null
+    readAt?: DateTimeNullableFilter<"ConversationMessage"> | Date | string | null
     createdAt?: DateTimeFilter<"ConversationMessage"> | Date | string
     updatedAt?: DateTimeFilter<"ConversationMessage"> | Date | string
     conversation?: XOR<ConversationScalarRelationFilter, ConversationWhereInput>
     sender?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "conversationId_senderId_clientMessageId">
 
   export type ConversationMessageOrderByWithAggregationInput = {
     id?: SortOrder
     conversationId?: SortOrder
     senderId?: SortOrder
+    clientMessageId?: SortOrderInput | SortOrder
+    type?: SortOrder
     content?: SortOrder
+    attachmentUrl?: SortOrderInput | SortOrder
+    attachmentName?: SortOrderInput | SortOrder
     isRead?: SortOrder
     isEdited?: SortOrder
+    deliveredAt?: SortOrderInput | SortOrder
+    readAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ConversationMessageCountOrderByAggregateInput
@@ -27612,9 +27844,15 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"ConversationMessage"> | string
     conversationId?: StringWithAggregatesFilter<"ConversationMessage"> | string
     senderId?: StringWithAggregatesFilter<"ConversationMessage"> | string
+    clientMessageId?: StringNullableWithAggregatesFilter<"ConversationMessage"> | string | null
+    type?: EnumMessageTypeWithAggregatesFilter<"ConversationMessage"> | $Enums.MessageType
     content?: StringWithAggregatesFilter<"ConversationMessage"> | string
+    attachmentUrl?: StringNullableWithAggregatesFilter<"ConversationMessage"> | string | null
+    attachmentName?: StringNullableWithAggregatesFilter<"ConversationMessage"> | string | null
     isRead?: BoolWithAggregatesFilter<"ConversationMessage"> | boolean
     isEdited?: BoolWithAggregatesFilter<"ConversationMessage"> | boolean
+    deliveredAt?: DateTimeNullableWithAggregatesFilter<"ConversationMessage"> | Date | string | null
+    readAt?: DateTimeNullableWithAggregatesFilter<"ConversationMessage"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ConversationMessage"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ConversationMessage"> | Date | string
   }
@@ -29401,7 +29639,10 @@ export namespace Prisma {
   export type ConversationCreateInput = {
     id?: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     customer: UserCreateNestedOneWithoutCustomerConversationsInput
@@ -29416,7 +29657,10 @@ export namespace Prisma {
     customerId: string
     agentId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: ConversationMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -29425,7 +29669,10 @@ export namespace Prisma {
   export type ConversationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: UserUpdateOneRequiredWithoutCustomerConversationsNestedInput
@@ -29440,7 +29687,10 @@ export namespace Prisma {
     customerId?: StringFieldUpdateOperationsInput | string
     agentId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: ConversationMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -29452,7 +29702,10 @@ export namespace Prisma {
     customerId: string
     agentId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -29460,7 +29713,10 @@ export namespace Prisma {
   export type ConversationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29471,16 +29727,25 @@ export namespace Prisma {
     customerId?: StringFieldUpdateOperationsInput | string
     agentId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ConversationMessageCreateInput = {
     id?: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     conversation: ConversationCreateNestedOneWithoutMessagesInput
@@ -29491,18 +29756,30 @@ export namespace Prisma {
     id?: string
     conversationId: string
     senderId: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type ConversationMessageUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     conversation?: ConversationUpdateOneRequiredWithoutMessagesNestedInput
@@ -29513,9 +29790,15 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29524,18 +29807,30 @@ export namespace Prisma {
     id?: string
     conversationId: string
     senderId: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type ConversationMessageUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29544,9 +29839,15 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31339,9 +31640,17 @@ export namespace Prisma {
     customerId?: SortOrder
     agentId?: SortOrder
     lastMessage?: SortOrder
+    lastMessageId?: SortOrder
     lastMessageAt?: SortOrder
+    customerUnread?: SortOrder
+    agentUnread?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ConversationAvgOrderByAggregateInput = {
+    customerUnread?: SortOrder
+    agentUnread?: SortOrder
   }
 
   export type ConversationMaxOrderByAggregateInput = {
@@ -31350,7 +31659,10 @@ export namespace Prisma {
     customerId?: SortOrder
     agentId?: SortOrder
     lastMessage?: SortOrder
+    lastMessageId?: SortOrder
     lastMessageAt?: SortOrder
+    customerUnread?: SortOrder
+    agentUnread?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -31361,9 +31673,24 @@ export namespace Prisma {
     customerId?: SortOrder
     agentId?: SortOrder
     lastMessage?: SortOrder
+    lastMessageId?: SortOrder
     lastMessageAt?: SortOrder
+    customerUnread?: SortOrder
+    agentUnread?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ConversationSumOrderByAggregateInput = {
+    customerUnread?: SortOrder
+    agentUnread?: SortOrder
+  }
+
+  export type EnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
   }
 
   export type ConversationScalarRelationFilter = {
@@ -31371,13 +31698,25 @@ export namespace Prisma {
     isNot?: ConversationWhereInput
   }
 
+  export type ConversationMessageConversationIdSenderIdClientMessageIdCompoundUniqueInput = {
+    conversationId: string
+    senderId: string
+    clientMessageId: string
+  }
+
   export type ConversationMessageCountOrderByAggregateInput = {
     id?: SortOrder
     conversationId?: SortOrder
     senderId?: SortOrder
+    clientMessageId?: SortOrder
+    type?: SortOrder
     content?: SortOrder
+    attachmentUrl?: SortOrder
+    attachmentName?: SortOrder
     isRead?: SortOrder
     isEdited?: SortOrder
+    deliveredAt?: SortOrder
+    readAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -31386,9 +31725,15 @@ export namespace Prisma {
     id?: SortOrder
     conversationId?: SortOrder
     senderId?: SortOrder
+    clientMessageId?: SortOrder
+    type?: SortOrder
     content?: SortOrder
+    attachmentUrl?: SortOrder
+    attachmentName?: SortOrder
     isRead?: SortOrder
     isEdited?: SortOrder
+    deliveredAt?: SortOrder
+    readAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -31397,11 +31742,27 @@ export namespace Prisma {
     id?: SortOrder
     conversationId?: SortOrder
     senderId?: SortOrder
+    clientMessageId?: SortOrder
+    type?: SortOrder
     content?: SortOrder
+    attachmentUrl?: SortOrder
+    attachmentName?: SortOrder
     isRead?: SortOrder
     isEdited?: SortOrder
+    deliveredAt?: SortOrder
+    readAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type EnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
   }
 
   export type EnumCredentialTypeFilter<$PrismaModel = never> = {
@@ -33260,6 +33621,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type EnumMessageTypeFieldUpdateOperationsInput = {
+    set?: $Enums.MessageType
+  }
+
   export type ConversationUpdateOneRequiredWithoutMessagesNestedInput = {
     create?: XOR<ConversationCreateWithoutMessagesInput, ConversationUncheckedCreateWithoutMessagesInput>
     connectOrCreate?: ConversationCreateOrConnectWithoutMessagesInput
@@ -34093,6 +34458,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAgentVerificationStatusFilter<$PrismaModel>
     _max?: NestedEnumAgentVerificationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
+  }
+
+  export type NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumCredentialTypeFilter<$PrismaModel = never> = {
@@ -35234,7 +35616,10 @@ export namespace Prisma {
   export type ConversationCreateWithoutCustomerInput = {
     id?: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     agent: UserCreateNestedOneWithoutAgentConversationsInput
@@ -35247,7 +35632,10 @@ export namespace Prisma {
     shipmentId?: string | null
     agentId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: ConversationMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -35266,7 +35654,10 @@ export namespace Prisma {
   export type ConversationCreateWithoutAgentInput = {
     id?: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     customer: UserCreateNestedOneWithoutCustomerConversationsInput
@@ -35279,7 +35670,10 @@ export namespace Prisma {
     shipmentId?: string | null
     customerId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: ConversationMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -35297,9 +35691,15 @@ export namespace Prisma {
 
   export type ConversationMessageCreateWithoutSenderInput = {
     id?: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     conversation: ConversationCreateNestedOneWithoutMessagesInput
@@ -35308,9 +35708,15 @@ export namespace Prisma {
   export type ConversationMessageUncheckedCreateWithoutSenderInput = {
     id?: string
     conversationId: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -35837,7 +36243,10 @@ export namespace Prisma {
     customerId?: StringFilter<"Conversation"> | string
     agentId?: StringFilter<"Conversation"> | string
     lastMessage?: StringNullableFilter<"Conversation"> | string | null
+    lastMessageId?: StringNullableFilter<"Conversation"> | string | null
     lastMessageAt?: DateTimeFilter<"Conversation"> | Date | string
+    customerUnread?: IntFilter<"Conversation"> | number
+    agentUnread?: IntFilter<"Conversation"> | number
     createdAt?: DateTimeFilter<"Conversation"> | Date | string
     updatedAt?: DateTimeFilter<"Conversation"> | Date | string
   }
@@ -35881,9 +36290,15 @@ export namespace Prisma {
     id?: StringFilter<"ConversationMessage"> | string
     conversationId?: StringFilter<"ConversationMessage"> | string
     senderId?: StringFilter<"ConversationMessage"> | string
+    clientMessageId?: StringNullableFilter<"ConversationMessage"> | string | null
+    type?: EnumMessageTypeFilter<"ConversationMessage"> | $Enums.MessageType
     content?: StringFilter<"ConversationMessage"> | string
+    attachmentUrl?: StringNullableFilter<"ConversationMessage"> | string | null
+    attachmentName?: StringNullableFilter<"ConversationMessage"> | string | null
     isRead?: BoolFilter<"ConversationMessage"> | boolean
     isEdited?: BoolFilter<"ConversationMessage"> | boolean
+    deliveredAt?: DateTimeNullableFilter<"ConversationMessage"> | Date | string | null
+    readAt?: DateTimeNullableFilter<"ConversationMessage"> | Date | string | null
     createdAt?: DateTimeFilter<"ConversationMessage"> | Date | string
     updatedAt?: DateTimeFilter<"ConversationMessage"> | Date | string
   }
@@ -36878,9 +37293,15 @@ export namespace Prisma {
 
   export type ConversationMessageCreateWithoutConversationInput = {
     id?: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sender: UserCreateNestedOneWithoutSentMessagesInput
@@ -36889,9 +37310,15 @@ export namespace Prisma {
   export type ConversationMessageUncheckedCreateWithoutConversationInput = {
     id?: string
     senderId: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37208,7 +37635,10 @@ export namespace Prisma {
   export type ConversationCreateWithoutMessagesInput = {
     id?: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     customer: UserCreateNestedOneWithoutCustomerConversationsInput
@@ -37222,7 +37652,10 @@ export namespace Prisma {
     customerId: string
     agentId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37347,7 +37780,10 @@ export namespace Prisma {
   export type ConversationUpdateWithoutMessagesInput = {
     id?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: UserUpdateOneRequiredWithoutCustomerConversationsNestedInput
@@ -37361,7 +37797,10 @@ export namespace Prisma {
     customerId?: StringFieldUpdateOperationsInput | string
     agentId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40126,7 +40565,10 @@ export namespace Prisma {
   export type ConversationCreateWithoutShipmentInput = {
     id?: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     customer: UserCreateNestedOneWithoutCustomerConversationsInput
@@ -40139,7 +40581,10 @@ export namespace Prisma {
     customerId: string
     agentId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: ConversationMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -40682,7 +41127,10 @@ export namespace Prisma {
   export type ConversationUpdateWithoutShipmentInput = {
     id?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: UserUpdateOneRequiredWithoutCustomerConversationsNestedInput
@@ -40695,7 +41143,10 @@ export namespace Prisma {
     customerId?: StringFieldUpdateOperationsInput | string
     agentId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: ConversationMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -41664,7 +42115,10 @@ export namespace Prisma {
     shipmentId?: string | null
     agentId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -41674,7 +42128,10 @@ export namespace Prisma {
     shipmentId?: string | null
     customerId: string
     lastMessage?: string | null
+    lastMessageId?: string | null
     lastMessageAt?: Date | string
+    customerUnread?: number
+    agentUnread?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -41682,9 +42139,15 @@ export namespace Prisma {
   export type ConversationMessageCreateManySenderInput = {
     id?: string
     conversationId: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -42570,7 +43033,10 @@ export namespace Prisma {
   export type ConversationUpdateWithoutCustomerInput = {
     id?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     agent?: UserUpdateOneRequiredWithoutAgentConversationsNestedInput
@@ -42583,7 +43049,10 @@ export namespace Prisma {
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     agentId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: ConversationMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -42594,7 +43063,10 @@ export namespace Prisma {
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     agentId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42602,7 +43074,10 @@ export namespace Prisma {
   export type ConversationUpdateWithoutAgentInput = {
     id?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: UserUpdateOneRequiredWithoutCustomerConversationsNestedInput
@@ -42615,7 +43090,10 @@ export namespace Prisma {
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: ConversationMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -42626,16 +43104,25 @@ export namespace Prisma {
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: StringFieldUpdateOperationsInput | string
     lastMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    lastMessageId?: NullableStringFieldUpdateOperationsInput | string | null
     lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerUnread?: IntFieldUpdateOperationsInput | number
+    agentUnread?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ConversationMessageUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     conversation?: ConversationUpdateOneRequiredWithoutMessagesNestedInput
@@ -42644,9 +43131,15 @@ export namespace Prisma {
   export type ConversationMessageUncheckedUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42654,9 +43147,15 @@ export namespace Prisma {
   export type ConversationMessageUncheckedUpdateManyWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42692,18 +43191,30 @@ export namespace Prisma {
   export type ConversationMessageCreateManyConversationInput = {
     id?: string
     senderId: string
+    clientMessageId?: string | null
+    type?: $Enums.MessageType
     content: string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
     isRead?: boolean
     isEdited?: boolean
+    deliveredAt?: Date | string | null
+    readAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type ConversationMessageUpdateWithoutConversationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sender?: UserUpdateOneRequiredWithoutSentMessagesNestedInput
@@ -42712,9 +43223,15 @@ export namespace Prisma {
   export type ConversationMessageUncheckedUpdateWithoutConversationInput = {
     id?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42722,9 +43239,15 @@ export namespace Prisma {
   export type ConversationMessageUncheckedUpdateManyWithoutConversationInput = {
     id?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
+    clientMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

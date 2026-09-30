@@ -1,5 +1,4 @@
 import { prisma } from "../../../lib/prisma";
-import { redis } from "../../../lib/redis";
 import { Role, ShipmentStatus } from "../../../generated/prisma";
 import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
@@ -23,7 +22,7 @@ interface ICachedConversation {
 }
 
 const CONVERSATION_ACCESS_CACHE = new Map<string, ICachedConversation>();
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+const CACHE_TTL_MS = 15 * 1000; // 15 seconds L1 in-memory cache (amendment 2)
 
 export function cacheConversationAccess(conversation: {
     id: string;
@@ -199,14 +198,12 @@ export async function checkChatRateLimit(userId: string): Promise<boolean> {
 }
 
 /**
- * XSS Content Sanitizer:
- * Strips dangerous HTML tags, javascript directives, and trims length.
+ * Content Sanitizer:
+ * Enforces length limit (<= 2000 chars) and trims leading/trailing whitespace.
+ * Preserves raw user text intact without regex stripping '<...>' (which corrupts math like 'a < b').
+ * Safe rendering is guaranteed by frontend rendering plain text without dangerouslySetInnerHTML.
  */
 export function sanitizeMessageContent(content: string): string {
     if (!content) return "";
-    return content
-        .replace(/<[^>]*>/g, "") // Strip all HTML tags
-        .replace(/javascript:/gi, "") // Remove javascript protocol injections
-        .trim()
-        .slice(0, 2000); // 2000 character maximum
+    return content.trim().slice(0, 2000);
 }

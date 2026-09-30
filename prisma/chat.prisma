@@ -36,19 +36,22 @@ model KnowledgeChunk {
 }
 
 model Conversation {
-  id            String                @id @default(uuid())
-  shipmentId    String?               @unique
-  customerId    String
-  agentId       String
-  lastMessage   String?
-  lastMessageAt DateTime              @default(now())
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
+  id             String                @id @default(uuid())
+  shipmentId     String?               @unique
+  customerId     String
+  agentId        String
+  lastMessage    String?
+  lastMessageId  String?
+  lastMessageAt  DateTime              @default(now())
+  customerUnread Int                   @default(0)
+  agentUnread    Int                   @default(0)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
 
-  customer      User                  @relation("CustomerConversations", fields: [customerId], references: [id], onDelete: Cascade)
-  agent         User                  @relation("AgentConversations", fields: [agentId], references: [id], onDelete: Cascade)
-  shipment      Shipment?             @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
-  messages      ConversationMessage[]
+  customer User                  @relation("CustomerConversations", fields: [customerId], references: [id], onDelete: Cascade)
+  agent    User                  @relation("AgentConversations", fields: [agentId], references: [id], onDelete: Cascade)
+  shipment Shipment?             @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  messages ConversationMessage[]
 
   @@unique([customerId, agentId, shipmentId])
   @@index([customerId])
@@ -60,19 +63,27 @@ model Conversation {
 }
 
 model ConversationMessage {
-  id             String       @id @default(uuid())
-  conversationId String
-  senderId       String
-  content        String
-  isRead         Boolean      @default(false)
-  isEdited       Boolean      @default(false)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @default(now()) @updatedAt
+  id              String       @id @default(uuid())
+  conversationId  String
+  senderId        String
+  clientMessageId String?
+  type            MessageType  @default(TEXT)
+  content         String
+  attachmentUrl   String?
+  attachmentName  String?
+  isRead          Boolean      @default(false)
+  isEdited        Boolean      @default(false)
+  deliveredAt     DateTime?
+  readAt          DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now()) @updatedAt
 
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender         User         @relation("SentConversationMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("SentConversationMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
+  @@unique([conversationId, senderId, clientMessageId])
   @@index([conversationId, createdAt])
+  @@index([conversationId, readAt, senderId])
   @@index([conversationId, isRead, senderId])
   @@index([senderId])
   @@map("conversation_messages")
