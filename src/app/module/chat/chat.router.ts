@@ -8,16 +8,16 @@ import {
     sendMessageSchema,
     editMessageSchema,
     conversationParamsSchema,
+    getConversationMessagesSchema,
 } from "./chat.validation";
 
 const router = Router();
 
-// Public streaming endpoint for chat attachments (PDFs, manifests, images)
-// Allows direct browser viewing without requiring Authorization headers
-router.get("/files/:filename", chatController.streamChatFile);
-
-// All chat conversation routes below require authenticated session
+// All chat conversation routes require authenticated session (Amendment 3)
 router.use(authenticate);
+
+// Protected streaming endpoint for chat attachments (PDFs, manifests, images)
+router.get("/files/:filename", chatController.streamChatFile);
 
 // 1. Get or create conversation for an assigned consignment
 router.post(
@@ -32,10 +32,10 @@ router.get(
     chatController.getUserConversations
 );
 
-// 3. Get messages for a specific conversation
+// 3. Get messages for a specific conversation with cursor pagination & ?after= support
 router.get(
     "/conversations/:conversationId/messages",
-    validateRequest(conversationParamsSchema),
+    validateRequest(getConversationMessagesSchema),
     chatController.getConversationMessages
 );
 

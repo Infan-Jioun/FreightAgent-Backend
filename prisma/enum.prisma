@@ -87,3 +87,8 @@ enum NotificationType {
   GENERAL
 }
 
+enum MessageType {
+  TEXT
+  FILE
+}
+

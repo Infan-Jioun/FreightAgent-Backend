@@ -1,7 +1,7 @@
 import status from "http-status";
 import AppError from "../../../errorHelper/AppError";
 import { prisma } from "../../../lib/prisma";
-import { Role, ShipmentStatus } from "../../../generated/prisma";
+import { Role, ShipmentStatus, MessageType } from "../../../generated/prisma";
 import { getIO } from "../../../lib/socket";
 import {
     assertConversationAccess,
@@ -13,6 +13,7 @@ import {
 import { saveChatFileLocally } from "../../../utils/chatFileStorage";
 import { uploadChatAttachmentToCloudinary } from "../../../utils/cloudinary";
 import { envConfig } from "../../../_config/env";
+import { IGetConversationMessagesOptions } from "./chat.interface";
 
 export class ChatService {
     /**
@@ -160,63 +161,103 @@ export class ChatService {
     }
 
     /**
-     * Retrieves messages for an authorized conversation with asynchronous non-blocking read-receipts.
+     * Retrieves messages for an authorized conversation with cursor pagination and ?after= support.
+     * Guaranteed no read-marking side effect on GET (Amendment 5).
      */
     public async getConversationMessages(
         userId: string,
         userRole: Role | string,
-        conversationId: string
+        conversationId: string,
+        options?: IGetConversationMessagesOptions
     ) {
         // Enforce strict authorization check (uses O(1) in-memory cache)
         await assertConversationAccess(userId, userRole, conversationId);
 
+        // Catch-up mode via ?after=<messageId>
+        if (options?.after) {
+            const pivotMessage = await prisma.conversationMessage.findUnique({
+                where: { id: options.after },
+                select: { createdAt: true },
+            });
+
+            if (pivotMessage) {
+                // Query messages created strictly after the pivot message
+                const messages = await prisma.conversationMessage.findMany({
+                    where: {
+                        conversationId,
+                        createdAt: { gt: pivotMessage.createdAt },
+                    },
+                    orderBy: { createdAt: "asc" },
+                    include: {
+                        sender: {
+                            select: { id: true, name: true, role: true, image: true },
+                        },
+                    },
+                    take: 201, // 200 cap + 1 to detect overflow
+                });
+
+                // Cap ?after= at 200 messages (Amendment 7)
+                if (messages.length > 200) {
+                    return {
+                        messages: [],
+                        nextCursor: null,
+                        resetRequired: true,
+                    };
+                }
+
+                return {
+                    messages,
+                    nextCursor: null,
+                    resetRequired: false,
+                };
+            }
+        }
+
+        // Standard cursor-based pagination (Newest-first, reversed for chronological display)
+        const limit = Math.min(Math.max(Number(options?.limit) || 30, 1), 100);
         const messages = await prisma.conversationMessage.findMany({
             where: { conversationId },
-            orderBy: { createdAt: "asc" },
+            orderBy: { createdAt: "desc" },
+            take: limit + 1,
+            ...(options?.cursor
+                ? {
+                      cursor: { id: options.cursor },
+                      skip: 1,
+                  }
+                : {}),
             include: {
                 sender: {
                     select: { id: true, name: true, role: true, image: true },
                 },
             },
-            take: 100,
         });
 
-        // Mark unread messages from counterparty as read asynchronously (non-blocking)
-        prisma.conversationMessage
-            .updateMany({
-                where: {
-                    conversationId,
-                    isRead: false,
-                    senderId: { not: userId },
-                },
-                data: { isRead: true },
-            })
-            .then((result) => {
-                if (result.count > 0) {
-                    const io = getIO();
-                    if (io) {
-                        io.to(`conversation_${conversationId}`).emit("messages_read", {
-                            conversationId,
-                            readBy: userId,
-                        });
-                    }
-                }
-            })
-            .catch((err) => {
-                console.error("[ChatService] Asynchronous read receipt error:", err);
-            });
+        let nextCursor: string | null = null;
+        if (messages.length > limit) {
+            const nextItem = messages.pop();
+            nextCursor = nextItem ? nextItem.id : null;
+        }
 
-        return messages;
+        // Reverse to display chronological (oldest to newest within this page)
+        messages.reverse();
+
+        return {
+            messages,
+            nextCursor,
+            resetRequired: false,
+        };
     }
 
     /**
-     * Stores a new message with rate-limiting, content sanitization, concurrent persistence, and immediate socket emit.
+     * Stores a new message with rate-limiting, raw content preservation, idempotency, concurrent persistence, and immediate socket emit.
      */
     public async sendMessage(
         userId: string,
         userRole: Role | string,
         conversationId: string,
-        rawContent: string
+        rawContent: string,
+        clientMessageId?: string,
+        type: MessageType = MessageType.TEXT
     ) {
         // 1. Authorize conversation participation (In-memory cached, O(1))
         const conversation = await assertConversationAccess(userId, userRole, conversationId);
@@ -224,7 +265,7 @@ export class ChatService {
         // 2. Enforce active chat condition (disabled if shipment DELIVERED)
         await assertChatActiveForShipment(conversationId);
 
-        // 3. High-speed rate limiting (<0.001ms)
+        // 3. High-speed rate limiting (<0.001ms in-memory)
         const isAllowed = await checkChatRateLimit(userId);
         if (!isAllowed) {
             throw new AppError(
@@ -233,20 +274,44 @@ export class ChatService {
             );
         }
 
-        // 3. Sanitize content against XSS
+        // 4. Content validation & trimming (preserves raw chars like <, >)
         const content = sanitizeMessageContent(rawContent);
         if (!content) {
             throw new AppError(status.BAD_REQUEST, "Message content cannot be empty.");
         }
 
+        // 5. Idempotency check if clientMessageId provided
+        if (clientMessageId) {
+            const existingMessage = await prisma.conversationMessage.findUnique({
+                where: {
+                    conversationId_senderId_clientMessageId: {
+                        conversationId,
+                        senderId: userId,
+                        clientMessageId,
+                    },
+                },
+                include: {
+                    sender: {
+                        select: { id: true, name: true, role: true, image: true },
+                    },
+                },
+            });
+
+            if (existingMessage) {
+                return existingMessage;
+            }
+        }
+
         const now = new Date();
 
-        // 4. Concurrently persist message and update conversation metadata
+        // 6. Concurrently persist message and update conversation metadata
         const [message] = await Promise.all([
             prisma.conversationMessage.create({
                 data: {
                     conversationId,
                     senderId: userId,
+                    clientMessageId: clientMessageId || null,
+                    type,
                     content,
                 },
                 include: {
@@ -264,7 +329,7 @@ export class ChatService {
             }),
         ]);
 
-        // 5. Broadcast to Socket.io room IMMEDIATELY (sub-50ms WhatsApp speed)
+        // 7. Broadcast to Socket.io room IMMEDIATELY (sub-50ms WhatsApp speed)
         const io = getIO();
         if (io) {
             io.to(`conversation_${conversationId}`).emit("new_message", message);
@@ -295,6 +360,7 @@ export class ChatService {
 
     /**
      * Explicitly marks messages as read in real time and broadcasts read receipt to the conversation room.
+     * Admin cannot mark messages as read (no-op, preserves participant read state).
      */
     public async markMessagesAsRead(
         userId: string,
@@ -303,21 +369,51 @@ export class ChatService {
     ) {
         await assertConversationAccess(userId, userRole, conversationId);
 
+        // Admin cannot mark messages read (no-op for admin, preserves participant unread state)
+        if (userRole === Role.ADMIN || userRole === "ADMIN") {
+            return { success: true, count: 0 };
+        }
+
+        const now = new Date();
         const result = await prisma.conversationMessage.updateMany({
             where: {
                 conversationId,
-                isRead: false,
+                readAt: null,
                 senderId: { not: userId },
             },
-            data: { isRead: true },
+            data: {
+                isRead: true,
+                readAt: now,
+            },
         });
 
         if (result.count > 0) {
+            // Reset recipient unread counter on Conversation
+            const conversation = await prisma.conversation.findUnique({
+                where: { id: conversationId },
+                select: { customerId: true, agentId: true },
+            });
+
+            if (conversation) {
+                if (conversation.customerId === userId) {
+                    await prisma.conversation.update({
+                        where: { id: conversationId },
+                        data: { customerUnread: 0 },
+                    });
+                } else if (conversation.agentId === userId) {
+                    await prisma.conversation.update({
+                        where: { id: conversationId },
+                        data: { agentUnread: 0 },
+                    });
+                }
+            }
+
             const io = getIO();
             if (io) {
                 io.to(`conversation_${conversationId}`).emit("messages_read", {
                     conversationId,
                     readBy: userId,
+                    readAt: now,
                 });
             }
         }
@@ -326,8 +422,9 @@ export class ChatService {
     }
 
     /**
-     * Uploads a file attachment (max 10MB), persists the message with attachment URL,
+     * Uploads a file attachment (max 10MB), sets type=FILE, attachmentUrl, attachmentName,
      * updates conversation lastMessage, and broadcasts to the socket room.
+     * Stops relying on local-disk storage in production (Amendment 3).
      */
     public async uploadChatAttachment(
         userId: string,
@@ -350,7 +447,7 @@ export class ChatService {
             );
         }
 
-        // 3. Strict 10MB limit enforcement
+        // 4. Strict 10MB limit enforcement
         const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
         if (!file || !file.buffer) {
             throw new AppError(status.BAD_REQUEST, "No file provided for upload.");
@@ -362,15 +459,23 @@ export class ChatService {
             );
         }
 
-        // 4. Upload file to Cloudinary (production-ready managed cloud storage) with graceful local fallback
+        // 5. Upload file to Cloudinary in production (no local-disk storage reliance in production)
         let fileUrl: string;
         const originalName = file.originalname || "Attachment";
 
-        if (
-            envConfig.CLOUDINARY_CLOUD_NAME &&
-            envConfig.CLOUDINARY_API_KEY &&
-            envConfig.CLOUDINARY_API_SECRET
-        ) {
+        const hasCloudinary =
+            Boolean(envConfig.CLOUDINARY_CLOUD_NAME) &&
+            Boolean(envConfig.CLOUDINARY_API_KEY) &&
+            Boolean(envConfig.CLOUDINARY_API_SECRET);
+
+        if (envConfig.NODE_ENV === "production" && !hasCloudinary) {
+            throw new AppError(
+                status.INTERNAL_SERVER_ERROR,
+                "Cloudinary credentials missing in production environment."
+            );
+        }
+
+        if (hasCloudinary) {
             try {
                 const cloudResult = await uploadChatAttachmentToCloudinary(
                     file.buffer,
@@ -378,7 +483,13 @@ export class ChatService {
                 );
                 fileUrl = cloudResult.url;
             } catch (cloudErr) {
-                console.warn("[ChatService] Cloudinary upload failed, falling back to local disk storage:", cloudErr);
+                if (envConfig.NODE_ENV === "production") {
+                    throw new AppError(
+                        status.INTERNAL_SERVER_ERROR,
+                        "Failed to upload attachment to cloud storage."
+                    );
+                }
+                console.warn("[ChatService] Cloudinary upload failed in dev, falling back to local disk storage:", cloudErr);
                 const savedFile = await saveChatFileLocally(file);
                 fileUrl = savedFile.url;
             }
@@ -387,17 +498,19 @@ export class ChatService {
             fileUrl = savedFile.url;
         }
 
-        const content = fileUrl;
         const now = new Date();
         const displayLabel = `📎 ${originalName}`;
 
-        // 5. Concurrently persist message and update conversation metadata
+        // 6. Concurrently persist message and update conversation metadata
         const [message] = await Promise.all([
             prisma.conversationMessage.create({
                 data: {
                     conversationId,
                     senderId: userId,
-                    content,
+                    type: MessageType.FILE,
+                    content: fileUrl,
+                    attachmentUrl: fileUrl,
+                    attachmentName: originalName,
                 },
                 include: {
                     sender: {
@@ -414,7 +527,7 @@ export class ChatService {
             }),
         ]);
 
-        // 6. Broadcast to Socket.io room IMMEDIATELY
+        // 7. Broadcast to Socket.io room IMMEDIATELY
         const io = getIO();
         if (io) {
             io.to(`conversation_${conversationId}`).emit("new_message", message);
@@ -505,6 +618,8 @@ export class ChatService {
 
         // 5. Guard against editing file attachments
         const isAttachment =
+            existingMessage.type === MessageType.FILE ||
+            Boolean(existingMessage.attachmentUrl) ||
             existingMessage.content.includes("/chat_attachments/") ||
             existingMessage.content.includes("/api/v1/chat/files/") ||
             /\.(pdf|png|jpg|jpeg|webp|gif|docx?|xlsx?)$/i.test(existingMessage.content);

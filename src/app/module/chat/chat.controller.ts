@@ -39,31 +39,42 @@ const getUserConversations = catchAsync(async (req: Request, res: Response) => {
 const getConversationMessages = catchAsync(async (req: Request, res: Response) => {
     const user = req.user!;
     const { conversationId } = req.params;
+    const { cursor, limit, after } = req.query as {
+        cursor?: string;
+        limit?: string;
+        after?: string;
+    };
 
-    const messages = await chatService.getConversationMessages(
+    const result = await chatService.getConversationMessages(
         user.id,
         user.role,
-        conversationId as string
+        conversationId as string,
+        {
+            cursor,
+            limit: limit ? Number(limit) : undefined,
+            after,
+        }
     );
 
     sendResponse(res, {
         httpStatusCode: status.OK,
         success: true,
         message: "Conversation messages retrieved successfully",
-        data: messages,
+        data: result,
     });
 });
 
 const sendMessage = catchAsync(async (req: Request, res: Response) => {
     const user = req.user!;
     const { conversationId } = req.params;
-    const { content } = req.body;
+    const { content, clientMessageId } = req.body;
 
     const message = await chatService.sendMessage(
         user.id,
         user.role,
         conversationId as string,
-        content
+        content,
+        clientMessageId
     );
 
     sendResponse(res, {
