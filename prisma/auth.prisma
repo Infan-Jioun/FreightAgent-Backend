@@ -42,6 +42,9 @@ model User {
   locationsDeleted        Location[]              @relation("LocationsDeleted")
   withdrawals             Withdrawal[]            @relation("AgentWithdrawals")
   notifications           Notification[]
+  customerConversations   Conversation[]          @relation("CustomerConversations")
+  agentConversations      Conversation[]          @relation("AgentConversations")
+  sentMessages            ConversationMessage[]   @relation("SentConversationMessages")
 
   @@map("users")
 }

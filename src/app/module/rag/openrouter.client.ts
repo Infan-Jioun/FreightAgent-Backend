@@ -3,13 +3,13 @@ import { envConfig } from "../../../_config/env";
 import { IOpenRouterMessage, IOpenRouterResponse } from "./rag.interface";
 
 const OPENROUTER_API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-const REQUEST_TIMEOUT_MS = 30000;
+const REQUEST_TIMEOUT_MS = 10000;
 
 export class OpenRouterClient {
     private readonly defaultModel: string;
 
     constructor() {
-        this.defaultModel = envConfig.OPENROUTER_MODEL || "deepseek/deepseek-v4-flash-0731";
+        this.defaultModel = envConfig.OPENROUTER_MODEL || "google/gemini-2.0-flash-001";
     }
 
     /** 

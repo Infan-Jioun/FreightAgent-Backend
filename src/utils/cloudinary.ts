@@ -230,5 +230,95 @@ export const uploadPdfToCloudinary = async (
     });
 };
 
+export const uploadChatAttachmentToCloudinary = async (
+    buffer: Buffer,
+    originalName: string,
+    folder = "freightagent/chat"
+): Promise<{
+    url: string;
+    publicId: string;
+    originalName: string;
+    bytes: number;
+    resourceType: string;
+    format?: string;
+}> => {
+    if (
+        !envConfig.CLOUDINARY_CLOUD_NAME ||
+        !envConfig.CLOUDINARY_API_KEY ||
+        !envConfig.CLOUDINARY_API_SECRET
+    ) {
+        throw new AppError(
+            status.INTERNAL_SERVER_ERROR,
+            "Cloudinary credentials are missing in .env"
+        );
+    }
+
+    const isPdfFile = (originalName || "").toLowerCase().endsWith(".pdf");
+    const sanitizedBase = (originalName || "attachment")
+        .substring(0, 40)
+        .replace(/[^a-zA-Z0-9_-]/g, "_");
+
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder,
+                resource_type: "auto",
+                ...(isPdfFile ? { format: "pdf", flags: "attachment:false" } : {}),
+                public_id: `${sanitizedBase}_${Date.now()}`,
+            },
+            (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
+                if (error || !result) {
+                    return reject(
+                        new AppError(
+                            status.INTERNAL_SERVER_ERROR,
+                            error?.message || "Failed to upload chat attachment to Cloudinary"
+                        )
+                    );
+                }
+
+                const isPdf =
+                    isPdfFile ||
+                    (result.format && result.format.toLowerCase() === "pdf") ||
+                    (result.resource_type === "image" && result.public_id.endsWith(".pdf"));
+
+                let finalUrl = result.secure_url;
+
+                // Sign PDF URLs with cryptographic signature to bypass Cloudinary default PDF restrictions
+                if (isPdf) {
+                    try {
+                        const signedUrl = cloudinary.url(result.public_id, {
+                            resource_type: result.resource_type || "image",
+                            format: "pdf",
+                            sign_url: true,
+                            secure: true,
+                        });
+                        if (signedUrl) {
+                            finalUrl = signedUrl;
+                        }
+                    } catch (signErr) {
+                        console.warn("[Cloudinary] Failed to generate signed PDF URL:", signErr);
+                    }
+
+                    if (!finalUrl.endsWith(".pdf") && !finalUrl.includes(".pdf?")) {
+                        finalUrl = finalUrl + ".pdf";
+                    }
+                }
+
+                resolve({
+                    url: finalUrl,
+                    publicId: result.public_id,
+                    originalName,
+                    bytes: result.bytes,
+                    resourceType: result.resource_type,
+                    format: result.format,
+                });
+            }
+        );
+
+        uploadStream.end(buffer);
+    });
+};
+
 export { cloudinary };
+
 

@@ -226,6 +226,28 @@ exports.Prisma.KnowledgeChunkScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ConversationScalarFieldEnum = {
+  id: 'id',
+  shipmentId: 'shipmentId',
+  customerId: 'customerId',
+  agentId: 'agentId',
+  lastMessage: 'lastMessage',
+  lastMessageAt: 'lastMessageAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ConversationMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  senderId: 'senderId',
+  content: 'content',
+  isRead: 'isRead',
+  isEdited: 'isEdited',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AgentCredentialScalarFieldEnum = {
   id: 'id',
   agentId: 'agentId',
@@ -501,6 +523,8 @@ exports.Prisma.ModelName = {
   ChatSession: 'ChatSession',
   ChatMessage: 'ChatMessage',
   KnowledgeChunk: 'KnowledgeChunk',
+  Conversation: 'Conversation',
+  ConversationMessage: 'ConversationMessage',
   AgentCredential: 'AgentCredential',
   Location: 'Location',
   AgentCorridor: 'AgentCorridor',

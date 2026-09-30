@@ -30,6 +30,7 @@ model Shipment {
   statusLogs            StatusLog[]
   originLocation        Location?      @relation("ShipmentOriginLocation", fields: [originLocationId], references: [id], onDelete: SetNull)
   destinationLocation   Location?      @relation("ShipmentDestinationLocation", fields: [destinationLocationId], references: [id], onDelete: SetNull)
+  conversation          Conversation?
 
   @@index([userId])
   @@index([agentId])
