@@ -10,6 +10,7 @@ interface IResponseData<T> {
         limit: number,
         total: number,
         totalPage: number
+        
     }
 }
 export const sendResponse = <T>(res: Response, responseData: IResponseData<T>) => {

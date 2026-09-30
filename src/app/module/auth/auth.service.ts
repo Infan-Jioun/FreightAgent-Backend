@@ -1,6 +1,6 @@
 import { Request } from "express";
 import crypto from "crypto";
-import { IChangePassword, ICreateAdmin, ILoginInput, IRegisterInput } from "./auth.interface";
+import { IChangePassword, ICreateAdmin, ICreateAgentInput, ILoginInput, IRegisterInput } from "./auth.interface";
 import AppError from "../../../errorHelper/AppError";
 import status from "http-status";
 import { prisma } from "../../../lib/prisma";
@@ -692,16 +692,24 @@ const createAdmin = async (payload: IRegisterInput) => {
     };
 
 }
-const createAgent = async (payload: IRegisterInput) => {
+const createAgent = async (payload: ICreateAgentInput) => {
     if (await isTempEmail(payload.email)) {
         throw new AppError(status.BAD_REQUEST, "Temporary emails are not allowed");
-    };
+    }
     const existingUser = await prisma.user.findUnique({
         where: { email: payload.email }
     });
     if (existingUser) {
         throw new AppError(status.CONFLICT, "User already exists with this email");
-    };
+    }
+    if (payload.phone) {
+        const existingPhone = await prisma.user.findFirst({
+            where: { phone: payload.phone, isDeleted: false }
+        });
+        if (existingPhone) {
+            throw new AppError(status.CONFLICT, "Phone number already in use by another account");
+        }
+    }
     const data = await auth.api.signUpEmail({
         body: {
             name: payload.name,
@@ -714,7 +722,10 @@ const createAgent = async (payload: IRegisterInput) => {
     }
     await prisma.user.update({
         where: { id: data.user.id },
-        data: { role: Role.AGENT }
+        data: {
+            role: Role.AGENT,
+            phone: payload.phone,
+        }
     });
     await auth.api.sendVerificationOTP({
         body: {
@@ -727,10 +738,10 @@ const createAgent = async (payload: IRegisterInput) => {
         id: data.user.id,
         name: data.user.name,
         email: data.user.email,
+        phone: payload.phone,
         role: Role.AGENT,
         emailVerified: false,
     };
-
 }
 const googleCallback = async (
     googleUser: any,

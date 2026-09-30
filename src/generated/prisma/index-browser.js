@@ -226,6 +226,37 @@ exports.Prisma.KnowledgeChunkScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ConversationScalarFieldEnum = {
+  id: 'id',
+  shipmentId: 'shipmentId',
+  customerId: 'customerId',
+  agentId: 'agentId',
+  lastMessage: 'lastMessage',
+  lastMessageId: 'lastMessageId',
+  lastMessageAt: 'lastMessageAt',
+  customerUnread: 'customerUnread',
+  agentUnread: 'agentUnread',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ConversationMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  senderId: 'senderId',
+  clientMessageId: 'clientMessageId',
+  type: 'type',
+  content: 'content',
+  attachmentUrl: 'attachmentUrl',
+  attachmentName: 'attachmentName',
+  isRead: 'isRead',
+  isEdited: 'isEdited',
+  deliveredAt: 'deliveredAt',
+  readAt: 'readAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AgentCredentialScalarFieldEnum = {
   id: 'id',
   agentId: 'agentId',
@@ -277,6 +308,20 @@ exports.Prisma.AgentCorridorScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  message: 'message',
+  type: 'type',
+  link: 'link',
+  data: 'data',
+  isRead: 'isRead',
+  readAt: 'readAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PhoneVerificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -309,6 +354,7 @@ exports.Prisma.ShipmentScalarFieldEnum = {
   stripePaymentIntentId: 'stripePaymentIntentId',
   stripeRefundId: 'stripeRefundId',
   paidAt: 'paidAt',
+  invoiceUrl: 'invoiceUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   updateBy: 'updateBy'
@@ -349,9 +395,28 @@ exports.Prisma.StatusLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.WithdrawalScalarFieldEnum = {
+  id: 'id',
+  withdrawalNumber: 'withdrawalNumber',
+  agentId: 'agentId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  bankInfo: 'bankInfo',
+  receiptUrl: 'receiptUrl',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -362,6 +427,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.AuditAction = exports.$Enums.AuditAction = {
   VERIFY_CREDENTIAL: 'VERIFY_CREDENTIAL',
@@ -374,7 +445,8 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   BLOCK_LOCATION: 'BLOCK_LOCATION',
   DELETE_LOCATION: 'DELETE_LOCATION',
   ASSIGN_AGENT: 'ASSIGN_AGENT',
-  PROCESS_REFUND: 'PROCESS_REFUND'
+  PROCESS_REFUND: 'PROCESS_REFUND',
+  AGENT_WITHDRAWAL: 'AGENT_WITHDRAWAL'
 };
 
 exports.Role = exports.$Enums.Role = {
@@ -389,6 +461,11 @@ exports.AgentVerificationStatus = exports.$Enums.AgentVerificationStatus = {
   VERIFIED: 'VERIFIED',
   REJECTED: 'REJECTED',
   SUSPENDED: 'SUSPENDED'
+};
+
+exports.MessageType = exports.$Enums.MessageType = {
+  TEXT: 'TEXT',
+  FILE: 'FILE'
 };
 
 exports.CredentialType = exports.$Enums.CredentialType = {
@@ -414,6 +491,17 @@ exports.LocationType = exports.$Enums.LocationType = {
   INLAND_CONTAINER_DEPOT: 'INLAND_CONTAINER_DEPOT'
 };
 
+exports.NotificationType = exports.$Enums.NotificationType = {
+  ROLE_UPDATED: 'ROLE_UPDATED',
+  SHIPMENT_CREATED: 'SHIPMENT_CREATED',
+  SHIPMENT_STATUS_UPDATED: 'SHIPMENT_STATUS_UPDATED',
+  AGENT_ASSIGNED: 'AGENT_ASSIGNED',
+  ACCOUNT_SUSPENDED: 'ACCOUNT_SUSPENDED',
+  ACCOUNT_ACTIVATED: 'ACCOUNT_ACTIVATED',
+  PAYMENT_SUCCESS: 'PAYMENT_SUCCESS',
+  GENERAL: 'GENERAL'
+};
+
 exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
   PENDING: 'PENDING',
   ASSIGNED: 'ASSIGNED',
@@ -434,6 +522,12 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   REFUNDED: 'REFUNDED'
 };
 
+exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
   AdminAuditLog: 'AdminAuditLog',
   User: 'User',
@@ -443,13 +537,17 @@ exports.Prisma.ModelName = {
   ChatSession: 'ChatSession',
   ChatMessage: 'ChatMessage',
   KnowledgeChunk: 'KnowledgeChunk',
+  Conversation: 'Conversation',
+  ConversationMessage: 'ConversationMessage',
   AgentCredential: 'AgentCredential',
   Location: 'Location',
   AgentCorridor: 'AgentCorridor',
+  Notification: 'Notification',
   PhoneVerification: 'PhoneVerification',
   Shipment: 'Shipment',
   ShipmentCost: 'ShipmentCost',
-  StatusLog: 'StatusLog'
+  StatusLog: 'StatusLog',
+  Withdrawal: 'Withdrawal'
 };
 
 /**

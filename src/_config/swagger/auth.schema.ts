@@ -258,10 +258,11 @@ export const authSwaggerDocs = {
                     "application/json": {
                         schema: {
                             type: "object",
-                            required: ["name", "email", "password"],
+                            required: ["name", "email", "phone", "password"],
                             properties: {
                                 name: { type: "string", example: "Agent User" },
                                 email: { type: "string", example: "agent@example.com" },
+                                phone: { type: "string", example: "+8801811111111" },
                                 password: { type: "string", example: "AgentPass@123" },
                                 role: { type: "string", example: "AGENT" },
                             },

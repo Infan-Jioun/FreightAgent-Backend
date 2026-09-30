@@ -54,7 +54,7 @@ router.get(
 // GET /api/v1/shipment/agent/assigned
 router.get(
     "/agent/assigned",
-    authorize(Role.AGENT),
+    authorize(Role.ADMIN, Role.AGENT),
     getShipmentRateLimit,
     shipmentController.getAgentShipments
 );

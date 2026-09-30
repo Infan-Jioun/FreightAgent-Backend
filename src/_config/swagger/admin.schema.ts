@@ -432,4 +432,156 @@ export const adminSwaggerDocs = {
             },
         },
     },
+    "/admin/users/{id}/sessions": {
+        get: {
+            tags: ["Admin"],
+            summary: "Get user active login devices & sessions",
+            description: "Allows admin to inspect which devices, browsers, and IPs a specific user is currently logged into.",
+            security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    required: true,
+                    description: "Target user ID",
+                    schema: { type: "string" },
+                },
+            ],
+            responses: {
+                200: {
+                    description: "User active sessions and device breakdown fetched successfully",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    httpStatusCode: { type: "integer", example: 200 },
+                                    success: { type: "boolean", example: true },
+                                    message: { type: "string", example: "User active sessions fetched successfully" },
+                                    data: {
+                                        type: "object",
+                                        properties: {
+                                            user: {
+                                                type: "object",
+                                                properties: {
+                                                    id: { type: "string" },
+                                                    name: { type: "string" },
+                                                    email: { type: "string" },
+                                                    role: { type: "string" },
+                                                    isBlocked: { type: "boolean" },
+                                                },
+                                            },
+                                            sessions: {
+                                                type: "array",
+                                                items: {
+                                                    type: "object",
+                                                    properties: {
+                                                        id: { type: "string" },
+                                                        deviceName: { type: "string", example: "Windows 10/11 (Google Chrome)" },
+                                                        deviceType: { type: "string", example: "desktop" },
+                                                        browser: { type: "string", example: "Google Chrome" },
+                                                        os: { type: "string", example: "Windows 10/11" },
+                                                        ipAddress: { type: "string", example: "103.145.23.1" },
+                                                        createdAt: { type: "string", format: "date-time" },
+                                                        expiresAt: { type: "string", format: "date-time" },
+                                                    },
+                                                },
+                                            },
+                                            breakdown: {
+                                                type: "object",
+                                                properties: {
+                                                    total: { type: "integer", example: 2 },
+                                                    desktop: { type: "integer", example: 1 },
+                                                    mobile: { type: "integer", example: 1 },
+                                                    tablet: { type: "integer", example: 0 },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                401: { description: "Unauthorized" },
+                403: { description: "Forbidden - Admin access only" },
+                404: { description: "User not found" },
+            },
+        },
+        delete: {
+            tags: ["Admin"],
+            summary: "Force logout user from all devices",
+            description: "Terminates and blacklists all active sessions for this user.",
+            security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    required: true,
+                    schema: { type: "string" },
+                },
+            ],
+            responses: {
+                200: {
+                    description: "All active sessions revoked successfully",
+                },
+                401: { description: "Unauthorized" },
+                403: { description: "Forbidden - Admin access only" },
+                404: { description: "User not found" },
+            },
+        },
+    },
+    "/admin/users/{id}/sessions/{sessionId}": {
+        delete: {
+            tags: ["Admin"],
+            summary: "Terminate/Revoke a specific device session for a user",
+            description: "Allows admin to forcibly log out a user from a specific device.",
+            security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    required: true,
+                    schema: { type: "string" },
+                },
+                {
+                    name: "sessionId",
+                    in: "path",
+                    required: true,
+                    schema: { type: "string" },
+                },
+            ],
+            responses: {
+                200: {
+                    description: "User session revoked successfully",
+                },
+                401: { description: "Unauthorized" },
+                403: { description: "Forbidden - Admin access only" },
+                404: { description: "Session not found for this user" },
+            },
+        },
+    },
+    "/admin/sessions": {
+        get: {
+            tags: ["Admin"],
+            summary: "System-wide active sessions & devices list",
+            description: "Allows admin to monitor active sessions across all platform users.",
+            security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+            parameters: [
+                { name: "page", in: "query", schema: { type: "integer", default: 1 } },
+                { name: "limit", in: "query", schema: { type: "integer", default: 10 } },
+                { name: "search", in: "query", schema: { type: "string" } },
+                { name: "deviceType", in: "query", schema: { type: "string", enum: ["desktop", "mobile", "tablet"] } },
+                { name: "role", in: "query", schema: { type: "string", enum: ["CUSTOMER", "AGENT", "ADMIN"] } },
+            ],
+            responses: {
+                200: {
+                    description: "Active sessions retrieved successfully",
+                },
+                401: { description: "Unauthorized" },
+                403: { description: "Forbidden - Admin access only" },
+            },
+        },
+    },
 };
+

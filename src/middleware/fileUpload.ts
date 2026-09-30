@@ -31,3 +31,45 @@ export const uploadSingleImage = (fieldName = "image") => {
         },
     }).single(fieldName);
 };
+
+export const uploadChatAttachment = (fieldName = "file") => {
+    return multer({
+        storage,
+        limits: {
+            fileSize: 10 * 1024 * 1024, // 10 MB limit
+        },
+        fileFilter: (_req, file, cb) => {
+            const allowedMimeTypes = [
+                // Images
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/jpg",
+                "image/gif",
+                "image/svg+xml",
+                // Documents & PDFs
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "text/plain",
+                "text/csv",
+                "application/zip",
+                "application/x-zip-compressed",
+            ];
+
+            if (!allowedMimeTypes.includes(file.mimetype)) {
+                return cb(
+                    new AppError(
+                        status.BAD_REQUEST,
+                        "Unsupported file format. Please upload standard document or image files (PDF, DOCX, XLSX, TXT, CSV, JPG, PNG, WEBP) up to 10MB."
+                    )
+                );
+            }
+
+            cb(null, true);
+        },
+    }).single(fieldName);
+};
+

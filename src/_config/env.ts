@@ -33,6 +33,8 @@ interface EnvConfig {
     CLOUDINARY_API_SECRET: string;
     STRIPE_SECRET_KEY: string;
     STRIPE_WEBHOOK_SECRET: string;
+    OPENROUTER_API_KEY: string;
+    OPENROUTER_MODEL: string;
 }
 
 const loadVariabales = (): EnvConfig => {
@@ -102,6 +104,8 @@ const loadVariabales = (): EnvConfig => {
         CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "",
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
         STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
+        OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY || "",
+        OPENROUTER_MODEL: process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free",
     };
 };
 
@@ -114,4 +118,9 @@ if (!envConfig.STRIPE_SECRET_KEY || !envConfig.STRIPE_WEBHOOK_SECRET) {
     } else {
         console.warn("⚠️ [Config Warning] STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET is not configured in .env. Stripe features will require valid API keys before live processing.");
     }
+}
+
+// Startup check for OpenRouter configuration
+if (!envConfig.OPENROUTER_API_KEY) {
+    console.warn("⚠️ [Config Warning] OPENROUTER_API_KEY is not configured in .env. RAG features will run with dynamic context fallback mode.");
 }

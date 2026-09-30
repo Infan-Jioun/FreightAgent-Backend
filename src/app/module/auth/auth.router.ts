@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authController } from "./auth.controller";
-import { adminRegisterSchema, changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyOtpSchema } from "./auth.validations";
+import { adminRegisterSchema, changePasswordSchema, createAgentSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyOtpSchema } from "./auth.validations";
 import { validateRequest } from "../../../middleware/validateRequest";
 import { authenticate, authorize } from "../../../middleware/auth";
 import {
@@ -25,7 +25,7 @@ router.get("/me", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT)
 router.post("/change-password/send-otp", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), changePasswordOtpRateLimit, authController.sendChangePasswordOTP);
 router.post("/change-password", authenticate, authorize(Role.CUSTOMER, Role.ADMIN, Role.AGENT), validateRequest(changePasswordSchema), changePasswordRateLimit, authController.changePassword);
 router.post("/create-admin", adminRegisterRateLimit, validateRequest(adminRegisterSchema), authController.createAdmin)
-router.post("/create-agent", registerRateLimit, validateRequest(registerSchema), authController.createAgent)
+router.post("/create-agent", registerRateLimit, validateRequest(createAgentSchema), authController.createAgent)
 router.get("/google", authController.googleLogin);
 router.get("/google/agent", authController.googleLogin);
 router.get("/google/callback", authController.googleCallback);

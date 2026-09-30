@@ -1,18 +1,18 @@
 model AdminAuditLog {
-    id         String      @id @default(uuid())
-    adminId    String
-    admin      User        @relation("AdminAudits", fields: [adminId], references: [id], onDelete: Cascade)
-    action     AuditAction
-    targetType String
-    targetId   String
-    details    String
-    ipAddress  String?
-    userAgent  String?
-    createdAt  DateTime    @default(now())
+  id         String      @id @default(uuid())
+  adminId    String
+  action     AuditAction
+  targetType String
+  targetId   String
+  details    String
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+  admin      User        @relation("AdminAudits", fields: [adminId], references: [id], onDelete: Cascade)
 
-    @@index([adminId])
-    @@index([action])
-    @@index([targetType, targetId])
-    @@index([createdAt])
-    @@map("admin_audit_logs")
+  @@index([adminId])
+  @@index([action])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
 }

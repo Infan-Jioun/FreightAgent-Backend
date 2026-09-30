@@ -6,6 +6,9 @@ import {
     assignRoadAgentSchema,
     updateRoleSchema,
     updateUserStatusSchema,
+    getUserSessionsSchema,
+    revokeUserSessionSchema,
+    adminSessionsQuerySchema,
 } from "./admin.validation";
 import { validateRequest } from "../../../middleware/validateRequest";
 
@@ -20,6 +23,13 @@ router.patch("/users/:id/role", validateRequest(updateRoleSchema), adminControll
 router.patch("/users/:id/status", validateRequest(updateUserStatusSchema), adminController.updateUserStatus);
 router.patch("/users/:id/block", validateRequest(updateUserStatusSchema), adminController.updateUserStatus);
 router.delete("/users/:id", adminController.deleteUser);
+
+// ─── User Device & Session Management ─────────────────
+router.get("/users/:id/sessions", validateRequest(getUserSessionsSchema), adminController.getUserActiveSessions);
+router.delete("/users/:id/sessions/:sessionId", validateRequest(revokeUserSessionSchema), adminController.revokeUserSession);
+router.delete("/users/:id/sessions", validateRequest(getUserSessionsSchema), adminController.revokeAllUserSessions);
+router.get("/sessions", validateRequest(adminSessionsQuerySchema), adminController.getAllActiveSessions);
+
 
 // ─── Road Agents & Shipments Management ───────────────
 router.get("/agents", adminController.getRoadAgents);

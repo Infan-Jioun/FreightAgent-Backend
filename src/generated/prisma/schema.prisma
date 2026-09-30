@@ -1,7 +1,6 @@
 model AdminAuditLog {
   id         String      @id @default(uuid())
   adminId    String
-  admin      User        @relation("AdminAudits", fields: [adminId], references: [id], onDelete: Cascade)
   action     AuditAction
   targetType String
   targetId   String
@@ -9,6 +8,7 @@ model AdminAuditLog {
   ipAddress  String?
   userAgent  String?
   createdAt  DateTime    @default(now())
+  admin      User        @relation("AdminAudits", fields: [adminId], references: [id], onDelete: Cascade)
 
   @@index([adminId])
   @@index([action])
@@ -18,77 +18,72 @@ model AdminAuditLog {
 }
 
 model User {
-  id                  String    @id
-  email               String    @unique
-  name                String
-  role                Role      @default(CUSTOMER)
-  emailVerified       Boolean   @default(false)
-  image               String?
-  address             String?
-  phone               String?
-  assignedArea        String?
-  isAvailable         Boolean   @default(true)
-  isBlocked           Boolean   @default(false)
-  isDeleted           Boolean   @default(false)
-  blockedReason       String?
-  blockedAt           DateTime?
-  deletedAt           DateTime?
-  twoFactorEnabled    Boolean   @default(false)
-  lastLoginAt         DateTime?
-  lastLoginIp         String?
-  passwordChangedAt   DateTime?
-  failedLoginAttempts Int       @default(0)
-  lockedUntil         DateTime?
-
-  // Agent Verification
+  id                      String                  @id
+  email                   String                  @unique
+  name                    String
+  role                    Role                    @default(CUSTOMER)
+  emailVerified           Boolean                 @default(false)
+  image                   String?
+  address                 String?
+  phone                   String?
+  assignedArea            String?
+  isAvailable             Boolean                 @default(true)
+  isBlocked               Boolean                 @default(false)
+  isDeleted               Boolean                 @default(false)
+  blockedReason           String?
+  blockedAt               DateTime?
+  deletedAt               DateTime?
+  twoFactorEnabled        Boolean                 @default(false)
+  lastLoginAt             DateTime?
+  lastLoginIp             String?
+  passwordChangedAt       DateTime?
+  failedLoginAttempts     Int                     @default(0)
+  lockedUntil             DateTime?
   agentVerificationStatus AgentVerificationStatus @default(NOT_APPLICABLE)
   verifiedAt              DateTime?
   verifiedById            String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  phoneVerifications PhoneVerification[]
-  agentShipments     Shipment[]          @relation("AgentShipments")
-  customerShipments  Shipment[]          @relation("CustomerShipments")
-  assignedShipments  Shipment[]          @relation("AssignedShipments")
-  sessions           Session[]
-  accounts           Account[]
-  chatSessions       ChatSession[]
-  statusLogs         StatusLog[]         @relation("StatusLogUpdater")
-
-  // Corridors & Credentials
-  agentCorridors      AgentCorridor[]   @relation("AgentCorridors")
-  agentCredentials    AgentCredential[] @relation("AgentCredentials")
-  verifiedCredentials AgentCredential[] @relation("CredentialsVerified")
-
-  // Admin Audits & Location Management
-  adminAuditLogs   AdminAuditLog[] @relation("AdminAudits")
-  locationsCreated Location[]      @relation("LocationsCreated")
-  locationsUpdated Location[]      @relation("LocationsUpdated")
-  locationsDeleted Location[]      @relation("LocationsDeleted")
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+  accounts                Account[]
+  adminAuditLogs          AdminAuditLog[]         @relation("AdminAudits")
+  agentCorridors          AgentCorridor[]         @relation("AgentCorridors")
+  agentCredentials        AgentCredential[]       @relation("AgentCredentials")
+  verifiedCredentials     AgentCredential[]       @relation("CredentialsVerified")
+  chatSessions            ChatSession[]
+  phoneVerifications      PhoneVerification[]
+  sessions                Session[]
+  agentShipments          Shipment[]              @relation("AgentShipments")
+  assignedShipments       Shipment[]              @relation("AssignedShipments")
+  customerShipments       Shipment[]              @relation("CustomerShipments")
+  statusLogs              StatusLog[]             @relation("StatusLogUpdater")
+  locationsCreated        Location[]              @relation("LocationsCreated")
+  locationsUpdated        Location[]              @relation("LocationsUpdated")
+  locationsDeleted        Location[]              @relation("LocationsDeleted")
+  withdrawals             Withdrawal[]            @relation("AgentWithdrawals")
+  notifications           Notification[]
+  customerConversations   Conversation[]          @relation("CustomerConversations")
+  agentConversations      Conversation[]          @relation("AgentConversations")
+  sentMessages            ConversationMessage[]   @relation("SentConversationMessages")
 
   @@map("users")
 }
 
 model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id         String   @id
+  expiresAt  DateTime
+  token      String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  ipAddress  String?
+  userAgent  String?
+  userId     String
   deviceName String?
   deviceType String?
   browser    String?
   os         String?
-  isCurrent  Boolean @default(false)
+  isCurrent  Boolean  @default(false)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@index([userId])
   @@map("session")
 }
@@ -98,7 +93,6 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -108,6 +102,7 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("account")
@@ -126,40 +121,35 @@ model Verification {
 }
 
 model ChatSession {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  messages ChatMessage[] //  JSON থেকে proper relation এ নিলাম
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("chat_sessions")
 }
 
-//  নতুন — JSON এর বদলে proper Message model
-// sort, paginate, delete individual message সব easy হবে
 model ChatMessage {
   id        String      @id @default(uuid())
   sessionId String
-  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  role      String // "user" | "assistant" | "system"
-  content   String      @db.Text
+  role      String
+  content   String
   createdAt DateTime    @default(now())
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  @@index([sessionId, createdAt]) //  chronological fetch fast হবে
+  @@index([sessionId, createdAt])
   @@map("chat_messages")
 }
 
-//  KnowledgeChunk — embedding column add করা (pgvector)
 model KnowledgeChunk {
   id        String   @id @default(uuid())
-  content   String   @db.Text
+  content   String
   source    String
   category  String?
-  // embedding  Unsupported("vector(1536)")?   // pgvector enable করলে uncomment করো
   createdAt DateTime @default(now())
 
   @@index([source])
@@ -167,10 +157,63 @@ model KnowledgeChunk {
   @@map("knowledge_chunks")
 }
 
+model Conversation {
+  id             String   @id @default(uuid())
+  shipmentId     String?  @unique
+  customerId     String
+  agentId        String
+  lastMessage    String?
+  lastMessageId  String?
+  lastMessageAt  DateTime @default(now())
+  customerUnread Int      @default(0)
+  agentUnread    Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  customer User                  @relation("CustomerConversations", fields: [customerId], references: [id], onDelete: Cascade)
+  agent    User                  @relation("AgentConversations", fields: [agentId], references: [id], onDelete: Cascade)
+  shipment Shipment?             @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  messages ConversationMessage[]
+
+  @@unique([customerId, agentId, shipmentId])
+  @@index([customerId])
+  @@index([agentId])
+  @@index([shipmentId])
+  @@index([customerId, lastMessageAt])
+  @@index([agentId, lastMessageAt])
+  @@map("conversations")
+}
+
+model ConversationMessage {
+  id              String      @id @default(uuid())
+  conversationId  String
+  senderId        String
+  clientMessageId String?
+  type            MessageType @default(TEXT)
+  content         String
+  attachmentUrl   String?
+  attachmentName  String?
+  isRead          Boolean     @default(false)
+  isEdited        Boolean     @default(false)
+  deliveredAt     DateTime?
+  readAt          DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @default(now()) @updatedAt
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("SentConversationMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, senderId, clientMessageId])
+  @@index([conversationId, createdAt])
+  @@index([conversationId, readAt, senderId])
+  @@index([conversationId, isRead, senderId])
+  @@index([senderId])
+  @@map("conversation_messages")
+}
+
 model AgentCredential {
   id                 String           @id @default(uuid())
   agentId            String
-  agent              User             @relation("AgentCredentials", fields: [agentId], references: [id], onDelete: Cascade)
   type               CredentialType
   documentNumber     String
   cloudinaryPublicId String
@@ -181,10 +224,11 @@ model AgentCredential {
   status             CredentialStatus @default(PENDING)
   rejectionReason    String?
   verifiedById       String?
-  verifiedBy         User?            @relation("CredentialsVerified", fields: [verifiedById], references: [id], onDelete: SetNull)
   verifiedAt         DateTime?
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
+  agent              User             @relation("AgentCredentials", fields: [agentId], references: [id], onDelete: Cascade)
+  verifiedBy         User?            @relation("CredentialsVerified", fields: [verifiedById], references: [id])
 
   @@unique([agentId, type])
   @@index([agentId])
@@ -262,6 +306,29 @@ enum AuditAction {
   DELETE_LOCATION
   ASSIGN_AGENT
   PROCESS_REFUND
+  AGENT_WITHDRAWAL
+}
+
+enum WithdrawalStatus {
+  PENDING
+  COMPLETED
+  REJECTED
+}
+
+enum NotificationType {
+  ROLE_UPDATED
+  SHIPMENT_CREATED
+  SHIPMENT_STATUS_UPDATED
+  AGENT_ASSIGNED
+  ACCOUNT_SUSPENDED
+  ACCOUNT_ACTIVATED
+  PAYMENT_SUCCESS
+  GENERAL
+}
+
+enum MessageType {
+  TEXT
+  FILE
 }
 
 model Location {
@@ -325,6 +392,26 @@ model AgentCorridor {
   @@map("agent_corridors")
 }
 
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(GENERAL)
+  link      String?
+  data      Json?
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
 model PhoneVerification {
   id        String   @id @default(uuid())
   userId    String
@@ -334,8 +421,7 @@ model PhoneVerification {
   attempts  Int      @default(0)
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([phone])
@@ -345,7 +431,6 @@ model PhoneVerification {
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
-  // previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -353,48 +438,38 @@ datasource db {
 }
 
 model Shipment {
-  id         String @id @default(uuid())
-  trackingId String @unique @default(uuid())
-
-  // Customer
-  userId String
-  user   User   @relation("CustomerShipments", fields: [userId], references: [id], onDelete: Cascade)
-
-  // Agent
-  agentId String?
-  agent   User?   @relation("AgentShipments", fields: [agentId], references: [id], onDelete: SetNull)
-
-  // Admin who assigned the shipment
-  assignedById String?
-  assignedBy   User?     @relation("AssignedShipments", fields: [assignedById], references: [id], onDelete: SetNull)
-  assignedAt   DateTime?
-
+  id                    String         @id @default(uuid())
+  trackingId            String         @unique @default(uuid())
+  userId                String
+  agentId               String?
+  assignedById          String?
+  assignedAt            DateTime?
   origin                String
   destination           String
   originLocationId      String?
-  originLocation        Location? @relation("ShipmentOriginLocation", fields: [originLocationId], references: [id], onDelete: SetNull)
   destinationLocationId String?
-  destinationLocation   Location? @relation("ShipmentDestinationLocation", fields: [destinationLocationId], references: [id], onDelete: SetNull)
-
-  weight             Float
-  declaredCargoValue Float          @default(0)
-  description        String?
-  status             ShipmentStatus @default(PENDING)
-  estimatedDate      DateTime?
-  acceptedAt         DateTime?
-
-  // Payment & Stripe
-  paymentStatus         PaymentStatus @default(UNPAID)
-  stripePaymentIntentId String?       @unique
+  weight                Float
+  declaredCargoValue    Float          @default(0)
+  description           String?
+  status                ShipmentStatus @default(PENDING)
+  estimatedDate         DateTime?
+  acceptedAt            DateTime?
+  paymentStatus         PaymentStatus  @default(UNPAID)
+  stripePaymentIntentId String?        @unique
   stripeRefundId        String?
   paidAt                DateTime?
-
-  cost ShipmentCost?
-
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  updateBy   String?
-  statusLogs StatusLog[]
+  invoiceUrl            String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  updateBy              String?
+  cost                  ShipmentCost?
+  agent                 User?          @relation("AgentShipments", fields: [agentId], references: [id])
+  assignedBy            User?          @relation("AssignedShipments", fields: [assignedById], references: [id])
+  user                  User           @relation("CustomerShipments", fields: [userId], references: [id], onDelete: Cascade)
+  statusLogs            StatusLog[]
+  originLocation        Location?      @relation("ShipmentOriginLocation", fields: [originLocationId], references: [id], onDelete: SetNull)
+  destinationLocation   Location?      @relation("ShipmentDestinationLocation", fields: [destinationLocationId], references: [id], onDelete: SetNull)
+  conversation          Conversation?
 
   @@index([userId])
   @@index([agentId])
@@ -408,7 +483,6 @@ model Shipment {
 model ShipmentCost {
   id                  String   @id @default(uuid())
   shipmentId          String   @unique
-  shipment            Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
   originHandling      Float
   oceanFreight        Float
   bafSurcharge        Float
@@ -429,6 +503,7 @@ model ShipmentCost {
   convertedTotal      Float
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  shipment            Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
 
   @@index([shipmentId])
   @@index([currency])
@@ -438,14 +513,33 @@ model ShipmentCost {
 model StatusLog {
   id            String         @id @default(uuid())
   shipmentId    String
-  shipment      Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
   status        ShipmentStatus
   location      String
   note          String?
   updateBy      String?
-  updatedByUser User?          @relation("StatusLogUpdater", fields: [updateBy], references: [id], onDelete: SetNull)
   createdAt     DateTime       @default(now())
+  shipment      Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  updatedByUser User?          @relation("StatusLogUpdater", fields: [updateBy], references: [id])
 
   @@index([shipmentId, createdAt])
   @@map("status_logs")
+}
+
+model Withdrawal {
+  id               String           @id @default(uuid())
+  withdrawalNumber String           @unique @default(uuid())
+  agentId          String
+  amount           Float
+  currency         String           @default("USD")
+  status           WithdrawalStatus @default(COMPLETED)
+  bankInfo         String?
+  receiptUrl       String?
+  note             String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  agent            User             @relation("AgentWithdrawals", fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+  @@index([status])
+  @@map("withdrawals")
 }

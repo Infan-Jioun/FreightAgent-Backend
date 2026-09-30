@@ -1,6 +1,6 @@
 import status from "http-status";
 import AppError from "../../../errorHelper/AppError";
-import { Prisma, Role, ShipmentStatus } from "../../../generated/prisma";
+import { Prisma, Role, ShipmentStatus, NotificationType } from "../../../generated/prisma";
 import { prisma } from "../../../lib/prisma";
 import { redis } from "../../../lib/redis";
 import { IRequestUser } from "../../interface/requestUserInterface";
@@ -9,9 +9,12 @@ import { sendEmail } from "../../../utils/email";
 import { envConfig } from "../../../_config/env";
 import { STATUS_ORDER } from "../../../utils/statusOrder";
 import { invalidateShipmentCache } from "../../../utils/invalidateShipmentCache";
-import { notifyCustomer, notifyAdmin, notifyAgent } from "../../../lib/socket";
+import { notifyCustomer, notifyAdmin, notifyAgent, getIO } from "../../../lib/socket";
 import { agentService } from "../agent/agent.service";
 import { calculateFreightCost } from "../payment/pricing.engine";
+import { notificationService } from "../notification/notification.service";
+import { resolveInvoiceUrl } from "../../../utils/invoiceStorage";
+
 
 const CACHE_TTL = 60;
 
@@ -130,6 +133,33 @@ const createShipment = async (payload: ICreateShipment, user: IRequestUser) => {
         console.warn("User email not found, skipping email.");
     }
 
+    // ─── 3. In-App Persistent Notifications ──────────────
+    // Notify Customer
+    await notificationService.createAndSendNotification({
+        userId: user.userId,
+        title: "Shipment Created Successfully 📦",
+        message: `Your shipment request #${shipment.trackingId} from ${shipment.origin} to ${shipment.destination} has been submitted.`,
+        type: NotificationType.SHIPMENT_CREATED,
+        link: `/dashboard/tracking`,
+        data: {
+            trackingId: shipment.trackingId,
+            shipmentId: shipment.id,
+        },
+    });
+
+    // Notify Admins
+    await notificationService.createAndSendBroadcast({
+        role: Role.ADMIN,
+        title: "New Shipment Request",
+        message: `New shipment #${shipment.trackingId} created by ${user.name || "Customer"}.`,
+        type: NotificationType.SHIPMENT_CREATED,
+        link: `/dashboard/shipments`,
+        data: {
+            trackingId: shipment.trackingId,
+            shipmentId: shipment.id,
+        },
+    });
+
     return shipment;
 };
 
@@ -168,8 +198,13 @@ const getAllShipments = async (query: IQueryShipment) => {
                 origin: true,
                 destination: true,
                 weight: true,
+                declaredCargoValue: true,
                 description: true,
                 status: true,
+                paymentStatus: true,
+                paidAt: true,
+                invoiceUrl: true,
+                cost: true,
                 estimatedDate: true,
                 acceptedAt: true,
                 assignedAt: true,
@@ -230,8 +265,13 @@ const getAllShipments = async (query: IQueryShipment) => {
         prisma.shipment.count({ where }),
     ]);
 
+    const mappedShipments = shipment.map((s) => ({
+        ...s,
+        invoiceUrl: s.invoiceUrl ? resolveInvoiceUrl(s.trackingId, s.invoiceUrl) : null,
+    }));
+
     const result = {
-        shipment,
+        shipment: mappedShipments,
         meta: {
             page,
             limit,
@@ -274,8 +314,13 @@ const getMyShipments = async (query: IQueryShipment, user: IRequestUser) => {
                 origin: true,
                 destination: true,
                 weight: true,
+                declaredCargoValue: true,
                 description: true,
                 status: true,
+                paymentStatus: true,
+                paidAt: true,
+                invoiceUrl: true,
+                cost: true,
                 estimatedDate: true,
                 acceptedAt: true,
                 assignedAt: true,
@@ -325,8 +370,13 @@ const getMyShipments = async (query: IQueryShipment, user: IRequestUser) => {
         prisma.shipment.count({ where }),
     ]);
 
+    const mappedShipments = shipments.map((s) => ({
+        ...s,
+        invoiceUrl: s.invoiceUrl ? resolveInvoiceUrl(s.trackingId, s.invoiceUrl) : null,
+    }));
+
     const result = {
-        shipments,
+        shipments: mappedShipments,
         meta: {
             page,
             limit,
@@ -373,6 +423,7 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
             paymentStatus: true,
             declaredCargoValue: true,
             paidAt: true,
+            invoiceUrl: true,
             cost: true,
             estimatedDate: true,
             acceptedAt: true,
@@ -437,9 +488,14 @@ const getShipmentById = async (id: string, user: IRequestUser) => {
         throw new AppError(status.FORBIDDEN, "Access denied");
     }
 
-    await redis.set(cacheKey, JSON.stringify(shipment), { ex: CACHE_TTL });
+    const mappedShipment = {
+        ...shipment,
+        invoiceUrl: shipment.invoiceUrl ? resolveInvoiceUrl(shipment.trackingId, shipment.invoiceUrl) : null,
+    };
 
-    return shipment;
+    await redis.set(cacheKey, JSON.stringify(mappedShipment), { ex: CACHE_TTL });
+
+    return mappedShipment;
 };
 
 const updateShipmentStatus = async (
@@ -576,6 +632,25 @@ const updateShipmentStatus = async (
             });
         }
 
+        // If shipment is DELIVERED, broadcast conversation_closed to real-time chat room
+        if (payload.status === ShipmentStatus.DELIVERED) {
+            const conv = await prisma.conversation.findUnique({
+                where: { shipmentId: shipment.id },
+                select: { id: true },
+            });
+            if (conv) {
+                const io = getIO();
+                if (io) {
+                    io.to(`conversation_${conv.id}`).emit("conversation_closed", {
+                        conversationId: conv.id,
+                        shipmentId: shipment.id,
+                        status: "DELIVERED",
+                        message: "Your shipment already delivered. Chat is now closed.",
+                    });
+                }
+            }
+        }
+
         await sendEmail({
             to: shipment.user.email,
             subject: `Shipment Status Updated: ${payload.status} - FreightAgent`,
@@ -597,6 +672,36 @@ const updateShipmentStatus = async (
                 }),
             },
         });
+
+        // ─── In-App Persistent Notifications ──────────────
+        // Notify Customer
+        await notificationService.createAndSendNotification({
+            userId: shipment.userId,
+            title: `Shipment Status: ${payload.status}`,
+            message: `Your shipment #${shipment.trackingId} status has been updated to ${payload.status}.${payload.location ? ` Location: ${payload.location}` : ""}`,
+            type: NotificationType.SHIPMENT_STATUS_UPDATED,
+            link: `/dashboard/tracking`,
+            data: {
+                trackingId: shipment.trackingId,
+                status: payload.status,
+                location: payload.location,
+            },
+        });
+
+        // Notify Assigned Agent if updated by Admin/Other
+        if (shipment.agentId && user.userId !== shipment.agentId) {
+            await notificationService.createAndSendNotification({
+                userId: shipment.agentId,
+                title: `Shipment Status: ${payload.status}`,
+                message: `Shipment #${shipment.trackingId} status was updated to ${payload.status}.`,
+                type: NotificationType.SHIPMENT_STATUS_UPDATED,
+                link: `/dashboard/shipments`,
+                data: {
+                    trackingId: shipment.trackingId,
+                    status: payload.status,
+                },
+            });
+        }
     } catch (err) {
         console.error("Status update notifications failed:", err);
     }

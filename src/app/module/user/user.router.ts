@@ -51,4 +51,3 @@ router.get("/sessions", userController.getActiveSessions);
 router.delete("/sessions/:sessionId", userController.revokeSession);
 
 export const userRouter = router;
-export const userRoutes = router;
