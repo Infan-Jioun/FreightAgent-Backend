@@ -220,6 +220,7 @@ export const settleSuccessfulPayment = async (params: {
             cost: true,
             user: true,
             agent: true,
+            assignedBy: true,
         },
     });
 
@@ -243,7 +244,7 @@ export const settleSuccessfulPayment = async (params: {
     const totalUSD = params.amountUSD || shipment.cost?.totalCost || 0;
     const paidAt = new Date();
 
-    // 1. Generate Vector PDF Invoice
+    // 1. Generate Vector PDF Invoice with real dynamic agent, admin, and customer data
     const pdfBuffer = generatePaymentReceiptPdf({
         shipment: {
             id: shipment.id,
@@ -255,6 +256,7 @@ export const settleSuccessfulPayment = async (params: {
             description: shipment.description,
             stripePaymentIntentId: params.stripePaymentIntentId || shipment.stripePaymentIntentId,
             paidAt,
+            assignedAt: shipment.assignedAt,
         },
         cost: shipment.cost,
         user: {
@@ -263,6 +265,21 @@ export const settleSuccessfulPayment = async (params: {
             phone: shipment.user.phone,
             address: shipment.user.address,
         },
+        agent: shipment.agent
+            ? {
+                  name: shipment.agent.name,
+                  email: shipment.agent.email,
+                  phone: shipment.agent.phone,
+                  assignedArea: shipment.agent.assignedArea,
+              }
+            : null,
+        assignedBy: shipment.assignedBy
+            ? {
+                  name: shipment.assignedBy.name,
+                  email: shipment.assignedBy.email,
+                  role: shipment.assignedBy.role,
+              }
+            : null,
     });
 
     // 2. Persist invoice PDF locally in uploads/invoices & obtain clean local streaming URL
@@ -282,6 +299,7 @@ export const settleSuccessfulPayment = async (params: {
                 cost: true,
                 user: true,
                 agent: true,
+                assignedBy: true,
             },
         }),
         prisma.statusLog.create({
@@ -1127,6 +1145,8 @@ const getShipmentInvoicePdfBuffer = async (identifier: string): Promise<{ buffer
         include: {
             cost: true,
             user: true,
+            agent: true,
+            assignedBy: true,
         },
     });
 
@@ -1134,18 +1154,21 @@ const getShipmentInvoicePdfBuffer = async (identifier: string): Promise<{ buffer
         throw new AppError(status.NOT_FOUND, "Shipment not found");
     }
 
-    // 1. Return cached local invoice PDF if already generated and saved on disk
+    // 1. Return cached local invoice PDF only if it exists AND was generated after the latest shipment update
     const localPath = getLocalInvoiceFilePath(shipment.trackingId);
     if (localPath) {
         try {
-            const buffer = await fs.promises.readFile(localPath);
-            return { buffer, trackingId: shipment.trackingId };
+            const stats = await fs.promises.stat(localPath);
+            if (stats.mtime >= shipment.updatedAt) {
+                const buffer = await fs.promises.readFile(localPath);
+                return { buffer, trackingId: shipment.trackingId };
+            }
         } catch (err) {
-            console.warn(`[Payment] Failed to read cached local invoice at ${localPath}, regenerating:`, err);
+            console.warn(`[Payment] Failed to check cached local invoice at ${localPath}, regenerating:`, err);
         }
     }
 
-    // 2. Otherwise generate and cache to disk locally
+    // 2. Otherwise generate dynamically with all real data and cache to disk
     const buffer = generatePaymentReceiptPdf({
         shipment: {
             id: shipment.id,
@@ -1157,6 +1180,7 @@ const getShipmentInvoicePdfBuffer = async (identifier: string): Promise<{ buffer
             description: shipment.description,
             stripePaymentIntentId: shipment.stripePaymentIntentId,
             paidAt: shipment.paidAt || shipment.createdAt,
+            assignedAt: shipment.assignedAt,
         },
         cost: shipment.cost,
         user: {
@@ -1165,6 +1189,21 @@ const getShipmentInvoicePdfBuffer = async (identifier: string): Promise<{ buffer
             phone: shipment.user.phone,
             address: shipment.user.address,
         },
+        agent: shipment.agent
+            ? {
+                  name: shipment.agent.name,
+                  email: shipment.agent.email,
+                  phone: shipment.agent.phone,
+                  assignedArea: shipment.agent.assignedArea,
+              }
+            : null,
+        assignedBy: shipment.assignedBy
+            ? {
+                  name: shipment.assignedBy.name,
+                  email: shipment.assignedBy.email,
+                  role: shipment.assignedBy.role,
+              }
+            : null,
     });
 
     saveInvoicePdfLocally(shipment.trackingId, buffer).catch((err) => {
