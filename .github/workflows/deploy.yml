@@ -121,6 +121,9 @@ jobs:
           key: ${{ secrets.AWS_SSH_PRIVATE_KEY || secrets.AWS_SSH_KEY || secrets.SSH_PRIVATE_KEY || secrets.AWS_PRIVATE_KEY || secrets.EC2_SSH_KEY }}
           script: |
             set -e
+            # Fix Docker socket permissions for non-root SSH user
+            sudo chmod 666 /var/run/docker.sock || true
+
             cd /home/ubuntu/freightagent-backend || cd ~/freightagent-backend
 
             echo " Pulling latest Docker image from Docker Hub..."
