@@ -106,19 +106,19 @@ jobs:
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
-          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY || secrets.AWS_SSH_KEY || secrets.SSH_PRIVATE_KEY || secrets.AWS_PRIVATE_KEY || secrets.EC2_SSH_KEY }}
           source: "docker-compose.prod.yml"
-          target: "~/freightagent-backend/"
+          target: "/home/ubuntu/freightagent-backend/"
 
       - name: 2. Execute Deployment Script on AWS EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
-          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY || secrets.AWS_SSH_KEY || secrets.SSH_PRIVATE_KEY || secrets.AWS_PRIVATE_KEY || secrets.EC2_SSH_KEY }}
           script: |
             set -e
-            cd ~/freightagent-backend
+            cd /home/ubuntu/freightagent-backend || cd ~/freightagent-backend
 
             echo " Pulling latest Docker image from Docker Hub..."
             export DOCKER_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/freightagent-backend:latest"
