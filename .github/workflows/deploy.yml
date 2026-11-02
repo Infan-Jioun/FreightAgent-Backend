@@ -31,10 +31,14 @@ jobs:
           cache: "npm"
 
       - name: 3. Install Dependencies
-        run: npm ci
+        run: npm install
+        env:
+          DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
 
       - name: 4. Generate Prisma Client
         run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
 
       - name: 5. Run Type Check (Test Stage)
         run: npx tsc --noEmit
