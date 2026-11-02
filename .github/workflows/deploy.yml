@@ -126,6 +126,16 @@ jobs:
 
             cd /home/ubuntu/freightagent-backend || cd ~/freightagent-backend
 
+            # Auto-sync .env from home directory if created there
+            if [ -f ~/.env ] && [ ! -f .env ]; then
+              cp ~/.env .env
+            fi
+
+            if [ ! -f .env ]; then
+              echo "Error: .env file is missing in $(pwd)! Creating empty .env to prevent crash..."
+              touch .env
+            fi
+
             echo " Pulling latest Docker image from Docker Hub..."
             export DOCKER_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/freightagent-backend:latest"
             docker pull $DOCKER_IMAGE
