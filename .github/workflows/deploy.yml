@@ -101,7 +101,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1. Copy docker-compose.prod.yml to AWS Server
+      - name: 1. Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 2. Copy docker-compose.prod.yml to AWS Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.AWS_HOST }}
@@ -110,7 +113,7 @@ jobs:
           source: "docker-compose.prod.yml"
           target: "/home/ubuntu/freightagent-backend/"
 
-      - name: 2. Execute Deployment Script on AWS EC2
+      - name: 3. Execute Deployment Script on AWS EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AWS_HOST }}
