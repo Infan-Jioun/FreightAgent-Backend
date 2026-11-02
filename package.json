@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
     "build": "tsup && shx mkdir -p dist/app && shx cp -r src/app/template dist/app/",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc --noEmit",
     "start": "node dist/server.js",
     "seed": "",
     "postinstall": "prisma generate"

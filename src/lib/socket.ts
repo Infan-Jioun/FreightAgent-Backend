@@ -57,13 +57,18 @@ function parseCookies(cookieHeader?: string): Record<string, string> {
 
 const isProduction = envConfig.NODE_ENV === "production";
 
+const configuredFrontendOrigins = (envConfig.FRONTEND_URL || "")
+    .split(",")
+    .map((url) => url.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+
 const allowedOrigins = [
-    envConfig.FRONTEND_URL?.replace(/\/$/, ""),
-    !isProduction ? "http://localhost:3000" : null,
-    !isProduction ? "http://localhost:5000" : null,
-    !isProduction ? "http://127.0.0.1:3000" : null,
-    !isProduction ? "http://127.0.0.1:5000" : null,
-].filter(Boolean) as string[];
+    ...configuredFrontendOrigins,
+    "http://localhost:3000",
+    "http://localhost:5000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5000",
+];
 
 // Per-socket typing throttle map: key = `${socket.id}_${conversationId}`, value = timestamp
 const typingThrottleMap = new Map<string, number>();
@@ -76,33 +81,31 @@ export const initSocket = (httpServer: HttpServer) => {
                     return callback(null, true);
                 }
                 const normalized = origin.replace(/\/$/, "");
-                if (allowedOrigins.includes(normalized)) {
+                if (
+                    allowedOrigins.includes(normalized) ||
+                    normalized.endsWith(".vercel.app") ||
+                    normalized.startsWith("http://localhost:") ||
+                    normalized.startsWith("http://127.0.0.1:")
+                ) {
                     return callback(null, true);
-                }
-                if (!isProduction) {
-                    if (
-                        normalized.startsWith("http://localhost:") ||
-                        normalized.startsWith("http://127.0.0.1:")
-                    ) {
-                        return callback(null, true);
-                    }
                 }
                 return callback(new Error(`CORS policy does not allow access from origin: ${origin}`));
             },
             methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
             credentials: true,
         },
-        transports: ['websocket'],
+        transports: ['websocket', 'polling'],
         perMessageDeflate: false,
     });
 
-    // Handshake Authentication Middleware (Dual support: auth.token / Bearer header OR httpOnly cookie)
+    // Handshake Authentication Middleware (Dual support: auth.token / Bearer header OR httpOnly cookie OR query param)
     io.use(async (socket: Socket, next) => {
         try {
             const cookies = parseCookies(socket.handshake.headers?.cookie);
             const token =
                 (socket.handshake.auth?.token as string | undefined) ||
                 socket.handshake.headers?.authorization?.split(" ")[1] ||
+                (typeof socket.handshake.query?.token === "string" ? socket.handshake.query.token : undefined) ||
                 cookies.accessToken;
 
             if (!token) {
