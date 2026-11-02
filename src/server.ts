@@ -47,10 +47,21 @@ const startServer = async () => {
 };
 
 
-if (envConfig.NODE_ENV !== "production") {
-  httpServer.listen(envConfig.PORT, () => {
+// Check if running inside Vercel Serverless environment
+const isVercel = Boolean(
+  process.env.VERCEL ||
+  process.env.VERCEL_ENV ||
+  process.env.NOW_REGION
+);
+
+// Start server on persistent environments (Render, Railway, VPS, Docker, Localhost)
+// even in production mode so WebSocket and cron jobs run on-time.
+if (!isVercel) {
+  const port = Number(envConfig.PORT) || 5000;
+  httpServer.listen(port, () => {
     startServer();
   });
 }
 
+export { httpServer, startServer };
 export default app;

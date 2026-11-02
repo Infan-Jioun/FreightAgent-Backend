@@ -135,18 +135,26 @@ const checkAgentCredentialExpirations = async () => {
     }
 };
 
+/**
+ * Runs the daily maintenance and notification routines immediately with Redis lock protection.
+ * Can be called directly by external/Vercel cron webhooks.
+ */
+export const runDailyMaintenanceJobs = async (): Promise<void> => {
+    console.log("⏰ [Cron] Executing daily maintenance routines...");
+
+    await withCronLock("cron:lock:delete_unverified_users", 1800, async () => {
+        await deleteUnverifiedUsers();
+    });
+
+    await withCronLock("cron:lock:credential_expirations", 1800, async () => {
+        await checkAgentCredentialExpirations();
+    });
+};
+
 export const startCronJobs = () => {
     // Daily at 00:00 UTC with Redis overlap protection (Lock TTL: 30 minutes = 1800s)
     cron.schedule("0 0 * * *", async () => {
-        console.log("⏰ [Cron] Triggering daily maintenance routines...");
-
-        await withCronLock("cron:lock:delete_unverified_users", 1800, async () => {
-            await deleteUnverifiedUsers();
-        });
-
-        await withCronLock("cron:lock:credential_expirations", 1800, async () => {
-            await checkAgentCredentialExpirations();
-        });
+        await runDailyMaintenanceJobs();
     });
 
     console.log("✅ Cron jobs initialized with Redis overlap protection.");

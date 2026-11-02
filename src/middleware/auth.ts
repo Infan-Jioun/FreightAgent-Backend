@@ -17,7 +17,8 @@ export const authenticate = async (
     try {
         const accessToken =
             req.cookies?.accessToken ||
-            req.headers.authorization?.split(" ")[1];
+            req.headers.authorization?.split(" ")[1] ||
+            (typeof req.query?.token === "string" ? req.query.token : undefined);
 
         if (!accessToken) {
             throw new AppError(status.UNAUTHORIZED, "Authentication required");
