@@ -5,14 +5,50 @@ import { envConfig } from "../_config/env";
 
 // ─── Redis Connection for BullMQ ──────────────────────────
 // BullMQ requires a stateful TCP connection (ioredis) with `maxRetriesPerRequest: null`.
-// Upstash provides standard Redis over TLS on port 6379.
-const redisConnection = {
-    host: new URL(envConfig.UPSTASH_REDIS_REST_URL).hostname,
-    port: 6379,
-    password: envConfig.UPSTASH_REDIS_REST_TOKEN,
-    tls: {},
-    maxRetriesPerRequest: null,
+const getBullMQRedisConnection = () => {
+    if (envConfig.REDIS_HOST) {
+        return {
+            host: envConfig.REDIS_HOST,
+            port: Number(envConfig.REDIS_PORT) || 6379,
+            password: envConfig.REDIS_PASSWORD || undefined,
+            maxRetriesPerRequest: null,
+        };
+    }
+    if (envConfig.REDIS_URL) {
+        try {
+            const parsed = new URL(envConfig.REDIS_URL);
+            return {
+                host: parsed.hostname,
+                port: Number(parsed.port) || 6379,
+                password: parsed.password || undefined,
+                tls: parsed.protocol === "rediss:" ? {} : undefined,
+                maxRetriesPerRequest: null,
+            };
+        } catch (e) {
+            console.error("Invalid REDIS_URL, falling back to localhost:", e);
+        }
+    }
+    if (envConfig.UPSTASH_REDIS_REST_URL && envConfig.UPSTASH_REDIS_REST_TOKEN) {
+        try {
+            return {
+                host: new URL(envConfig.UPSTASH_REDIS_REST_URL).hostname,
+                port: 6379,
+                password: envConfig.UPSTASH_REDIS_REST_TOKEN,
+                tls: {},
+                maxRetriesPerRequest: null,
+            };
+        } catch (e) {
+            console.error("Invalid UPSTASH_REDIS_REST_URL:", e);
+        }
+    }
+    return {
+        host: "127.0.0.1",
+        port: 6379,
+        maxRetriesPerRequest: null,
+    };
 };
+
+const redisConnection = getBullMQRedisConnection();
 
 // ─── Queue ────────────────────────────────────────────────
 export const locationEmailQueue = new Queue("location-email", {

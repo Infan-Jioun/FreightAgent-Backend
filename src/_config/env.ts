@@ -25,6 +25,10 @@ interface EnvConfig {
     SWAGGER_PASS: string;
     UPSTASH_REDIS_REST_URL: string;
     UPSTASH_REDIS_REST_TOKEN: string;
+    REDIS_HOST?: string;
+    REDIS_PORT?: string;
+    REDIS_PASSWORD?: string;
+    REDIS_URL?: string;
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
     CRON_SECRET: string;
@@ -58,8 +62,6 @@ const loadVariabales = (): EnvConfig => {
         "EMAIL_SMTP_FROM",
         "SWAGGER_USER",
         "SWAGGER_PASS",
-        "UPSTASH_REDIS_REST_URL",
-        "UPSTASH_REDIS_REST_TOKEN",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
         "CRON_SECRET"
@@ -73,6 +75,13 @@ const loadVariabales = (): EnvConfig => {
             );
         }
     });
+
+    if (!process.env.UPSTASH_REDIS_REST_URL && !process.env.REDIS_HOST && !process.env.REDIS_URL) {
+        throw new AppError(
+            status.INTERNAL_SERVER_ERROR,
+            "Redis configuration missing: Either REDIS_HOST/REDIS_URL or UPSTASH_REDIS_REST_URL must be set in the .env file"
+        );
+    }
 
     return {
         NODE_ENV: process.env.NODE_ENV as string,
@@ -94,8 +103,12 @@ const loadVariabales = (): EnvConfig => {
         EMAIL_SMTP_FROM: process.env.EMAIL_SMTP_FROM as string,
         SWAGGER_USER: process.env.SWAGGER_USER as string,
         SWAGGER_PASS: process.env.SWAGGER_PASS as string,
-        UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL as string,
-        UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN as string,
+        UPSTASH_REDIS_REST_URL: (process.env.UPSTASH_REDIS_REST_URL as string) || "",
+        UPSTASH_REDIS_REST_TOKEN: (process.env.UPSTASH_REDIS_REST_TOKEN as string) || "",
+        REDIS_HOST: process.env.REDIS_HOST || "",
+        REDIS_PORT: process.env.REDIS_PORT || "6379",
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
+        REDIS_URL: process.env.REDIS_URL || "",
         GOOGLE_CLIENT_ID: (process.env.GOOGLE_CLIENT_ID as string)?.trim().replace(/^["']|["']$/g, ""),
         GOOGLE_CLIENT_SECRET: (process.env.GOOGLE_CLIENT_SECRET as string)?.trim().replace(/^["']|["']$/g, ""),
         CRON_SECRET: process.env.CRON_SECRET as string,
