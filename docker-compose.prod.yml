@@ -4,6 +4,8 @@ services:
     container_name: freightagent-redis
     restart: unless-stopped
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-freightagent_secure_redis_pass}
+    ports:
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
     networks:
