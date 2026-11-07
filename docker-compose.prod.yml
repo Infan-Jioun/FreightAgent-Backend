@@ -3,7 +3,12 @@ services:
     image: redis:7-alpine
     container_name: freightagent-redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-freightagent_secure_redis_pass}
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-freightagent_secure_redis_pass}
+      --maxmemory 256mb
+      --maxmemory-policy noeviction
     ports:
       - "127.0.0.1:6379:6379"
     volumes:
