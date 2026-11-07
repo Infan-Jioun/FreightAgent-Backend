@@ -5,7 +5,11 @@
 [![Express 5](https://img.shields.io/badge/Express-v5.2-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![Prisma ORM](https://img.shields.io/badge/Prisma-v7.9-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Redis-Upstash-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://upstash.com/)
+[![Redis](https://img.shields.io/badge/Redis-v7%20Alpine-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/features/actions)
+[![AWS EC2](https://img.shields.io/badge/AWS-EC2%20Stockholm-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)](https://aws.amazon.com/ec2/)
+[![SSL](https://img.shields.io/badge/SSL-Let's%20Encrypt-003A70?style=for-the-badge&logo=letsencrypt&logoColor=white)](https://letsencrypt.org/)
 [![Socket.IO](https://img.shields.io/badge/Socket.IO-v4.8-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io/)
 [![Stripe](https://img.shields.io/badge/Stripe-v22-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://stripe.com/)
 [![OpenRouter](https://img.shields.io/badge/AI%20RAG-OpenRouter-6366F1?style=for-the-badge&logo=openai&logoColor=white)](https://openrouter.ai/)
@@ -35,7 +39,12 @@
 - [Database Setup & Migrations](#-database-setup--migrations)
 - [Getting Started & Local Development](#-getting-started--local-development)
 - [Security, Rate Limiting & Resilience](#-security-rate-limiting--resilience)
-- [Production Deployment](#-production-deployment)
+- [Production Deployment & Infrastructure](#-production-deployment--infrastructure)
+  - [CI/CD Automated Deployment Pipeline](#cicd-automated-deployment-pipeline)
+  - [Container Architecture (Docker Compose)](#container-architecture-docker-compose)
+  - [Dedicated Self-Hosted Redis Engine](#dedicated-self-hosted-redis-engine)
+  - [Live AWS EC2 & Nginx Reverse Proxy](#live-aws-ec2--nginx-reverse-proxy)
+  - [Administrative Inspection via Redis Insight](#administrative-inspection-via-redis-insight)
 
 ---
 
@@ -43,7 +52,7 @@
 
 **FreightAgent Backend** is an enterprise-grade Digital Freight Forwarding platform and Logistics Operating System. Engineered to automate end-to-end maritime and air cargo logistics, it provides automated cost calculation, intelligent agent assignment, shipment lifecycle tracking, verified agent credential compliance, real-time customer-agent communication, Stripe payment automation, and an OpenRouter-powered Retrieval-Augmented Generation (RAG) assistant.
 
-The backend is built with **Express 5**, strictly typed with **TypeScript**, persistent across a partitioned **Prisma 7 PostgreSQL schema**, and augmented by **Upstash Redis**, **BullMQ**, and **Socket.IO** for event-driven, high-concurrency performance.
+The backend is built with **Express 5**, strictly typed with **TypeScript**, persistent across a partitioned **Prisma 7 PostgreSQL schema**, and augmented by **Redis 7 (Containerized with AOF Persistence)**, **BullMQ**, and **Socket.IO** for event-driven, high-concurrency performance.
 
 ---
 
@@ -483,7 +492,12 @@ EMAIL_SMTP_FROM="FreightAgent Logistics" <noreply@freightagent.com>
 SWAGGER_USER=admin
 SWAGGER_PASS=freightagent2026!
 
-# Upstash Redis
+# Redis Configuration (Dual-Mode: Local Docker Redis or Remote Upstash)
+# For Local Docker / Production EC2:
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=freightagent_secure_redis_pass
+# For Remote Serverless Upstash Fallback (Optional):
 UPSTASH_REDIS_REST_URL=https://your-upstash-redis-url.upstash.io
 UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_rest_token
 
@@ -605,26 +619,144 @@ Upon startup, the terminal outputs the server status card:
 
 ---
 
-## 🚢 Production Deployment
+## 🚢 Production Deployment & Infrastructure
 
-### Build Command
-The project utilizes `tsup` for rapid bundling along with `shx` to bundle email templates:
+The FreightAgent production infrastructure is fully containerized, automated via GitHub Actions CI/CD, and hosted on a dedicated AWS EC2 instance in Stockholm (`eu-north-1`).
 
-```bash
-npm run build
+```mermaid
+flowchart LR
+    Dev[Developer Commit] -->|git push origin main| GHA[GitHub Actions Runner]
+    
+    subgraph CI["Stage 1: Continuous Integration"]
+        GHA --> TypeCheck[tsc --noEmit Typecheck]
+        TypeCheck --> BuildApp[tsup Bundler & Template Copy]
+    end
+
+    subgraph CD1["Stage 2: Docker Packaging"]
+        BuildApp --> Buildx[Docker Buildx Multi-Arch]
+        Buildx --> HubPush[(Docker Hub Registry)]
+    end
+
+    subgraph CD2["Stage 3: Automated AWS Deployment"]
+        HubPush --> SSHAction[appleboy/ssh-action]
+        SSHAction --> EC2Host[AWS EC2 Instance: eu-north-1]
+        EC2Host --> SCPCompose[Sync docker-compose.prod.yml]
+        SCPCompose --> PullImage[Docker Pull Latest Image]
+        PullImage --> MigrateDB[Prisma Migrate Deploy]
+        MigrateDB --> RestartStack[Docker Compose Rolling Recreate]
+        RestartStack --> PruneImages[Docker Image Prune]
+    end
+
+    subgraph Runtime["Live Container Runtime"]
+        RestartStack --> AppContainer[freightagent-backend:5000]
+        RestartStack --> RedisContainer[(freightagent-redis:6379)]
+        AppContainer <-->|Internal Bridge Network: <0.5ms| RedisContainer
+        NginxProxy[Nginx + Let's Encrypt SSL] -->|Reverse Proxy| AppContainer
+    end
 ```
 
-This generates:
-- Bundled server binary in `dist/server.js`.
-- Copies all EJS email templates into `dist/app/template/`.
+---
 
-### Start Production Server
+### 1. Automated 3-Stage CI/CD Pipeline
+
+The production pipeline is governed by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) and executes automatically on every push or merged pull request to the `main` branch:
+
+| Stage | Job Name | Primary Responsibilities |
+|---|---|---|
+| **1. CI** | `ci-pipeline` | Code checkout, Node.js 20 setup, dependency installation (`npm install`), `prisma generate`, TypeScript type check (`tsc --noEmit`), and production compilation (`npm run build`). |
+| **2. Delivery** | `docker-delivery` | Multi-platform QEMU setup, Docker Buildx initialization, Docker Hub authentication, container build with GitHub Actions layer cache, and tagged push (`latest` and short commit SHA). |
+| **3. CD** | `aws-deployment` | SCP transfer of `docker-compose.prod.yml` to EC2 host, SSH-driven image pull, automated Prisma database migration (`npx prisma migrate deploy`), zero-downtime rolling container restart (`docker compose up -d --remove-orphans`), and automated image pruning. |
+
+---
+
+### 2. Containerized Multi-Service Architecture
+
+The runtime stack is defined in [`docker-compose.prod.yml`](docker-compose.prod.yml) and runs on a dedicated internal Docker bridge network (`freightagent-network`):
+
+#### Services:
+1. **`freightagent-backend`**:
+   - Built on `node:20-slim` with a non-root security context (`USER node`).
+   - Includes production dependencies pruned with `npm install --omit=dev`.
+   - Embedded Docker healthcheck probe querying `http://localhost:5000/`.
+   - Persistent volume mount `uploads_data:/app/uploads` for local asset storage.
+   - Depends strictly on `redis` reaching `service_healthy` before initializing.
+
+2. **`freightagent-redis`**:
+   - Official `redis:7-alpine` image with lightweight memory footprint (~15 MB).
+   - Configured with Append-Only File (AOF) persistence (`--appendonly yes`) backed by named volume `redis_data:/data`.
+   - Internal password authentication (`--requirepass ${REDIS_PASSWORD}`).
+   - Port 6379 bound exclusively to `127.0.0.1` and internal Docker network — **zero exposure to public internet**.
+
+---
+
+### 3. Dedicated Self-Hosted Redis Engine vs Serverless
+
+To support BullMQ background workers without hitting serverless per-command quotas or cross-continental latency penalties, the backend features a dual-mode adapter ([`src/lib/redis.ts`](src/lib/redis.ts) & [`src/lib/emailQueue.ts`](src/lib/emailQueue.ts)):
+
+| Architecture Metric | Legacy Serverless (Upstash) | Dedicated Container (Redis 7) |
+|---|---|---|
+| **Monthly Command Cap** | 500,000 commands/month (Depleted in 2-3 days by BullMQ) | **Unlimited (Millions of operations/day)** |
+| **Network Roundtrip Latency** | 150ms – 250ms (Stockholm to Singapore / Virginia) | **< 0.5ms (In-memory loopback inside EC2 host)** |
+| **Recurring Cost** | Paid tier required for continuous polling | **$0.00 / month (Included in EC2 instance)** |
+| **Network Security** | Public internet endpoint with token auth | **100% isolated Docker bridge network** |
+| **Data Durability** | Cloud vendor snapshot | **AOF logs + RDB snapshots in Docker volume** |
+
+---
+
+### 4. Live Gateway & Reverse Proxy Configuration
+
+The live production API is accessible under SSL encryption:
+- **Production API URL**: `https://freightagent.duckdns.org`
+- **Reverse Proxy**: Nginx 1.24 on Ubuntu 24.04 LTS (AWS EC2 Stockholm `16.171.114.93`)
+- **SSL Certificate**: Automated Let's Encrypt TLS/SSL managed by Certbot
+- **Buffer Optimization**: Configured in `/etc/nginx/conf.d/proxy_buffers.conf` (`proxy_buffer_size 128k; proxy_buffers 4 256k;`) to accommodate high-entropy OAuth JWT callback tokens and session cookies without `502 Bad Gateway` truncation.
+- **WebSocket Gateway**: Nginx maps `Upgrade` and `Connection "upgrade"` headers directly to port 5000 for bidirectional Socket.IO logistics tracking and messaging.
+
+---
+
+### 5. Administrative Inspection via Redis Insight (SSH Tunnel)
+
+To visually monitor keys, BullMQ job queues, and live memory metrics without opening port 6379 to the internet:
+
+1. Download and launch [Redis Insight](https://redis.io/insight/).
+2. Select **Add Redis Database** > **Manually add database**.
+3. Configure connection settings:
+   - **Host**: `127.0.0.1`
+   - **Port**: `6379`
+   - **Password**: `freightagent_secure_redis_pass`
+4. Under the **Security** tab, enable **Use SSH Tunnel**:
+   - **SSH Host**: `16.171.114.93`
+   - **SSH Port**: `22`
+   - **SSH Username**: `ubuntu`
+   - **Authentication**: `Private Key`
+   - **Private Key File**: Select `freightagent-key.pem`
+5. Test connection and click **Add Redis Database**.
+
+---
+
+### 6. Manual Docker Operations (Server CLI Reference)
+
+To inspect or manage the production stack directly on the EC2 host:
+
 ```bash
-npm run start
-```
+# SSH into the server
+ssh -i freightagent-key.pem ubuntu@16.171.114.93
 
-### Vercel Serverless Deployment
-The repository includes a root `vercel.json` configuration and `trust proxy` configuration for serverless deployment. Cron routines can be scheduled via HTTP calls to `/api/cron/cleanup` using the `x-cron-secret` header.
+# Navigate to application directory
+cd ~/freightagent-backend
+
+# Check container health and runtime status
+docker ps
+
+# Stream live backend server logs
+docker logs -f freightagent-backend
+
+# Execute interactive Redis CLI inside the container
+docker exec -it freightagent-redis redis-cli -a freightagent_secure_redis_pass
+
+# Inspect persistent volume data on disk
+sudo ls -lh /var/lib/docker/volumes/freightagent-backend_redis_data/_data/
+```
 
 ---
 
