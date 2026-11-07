@@ -21,7 +21,7 @@ services:
         max-file: "3"
 
   backend:
-    image: ${DOCKER_IMAGE:-freightagent/freightagent-backend:latest}
+    image: ${DOCKER_IMAGE:-infanjioun/freightagent-backend:latest}
     container_name: freightagent-backend
     restart: unless-stopped
     depends_on:
