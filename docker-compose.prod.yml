@@ -1,8 +1,32 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: freightagent-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-freightagent_secure_redis_pass}
+    volumes:
+      - redis_data:/data
+    networks:
+      - freightagent-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-freightagent_secure_redis_pass}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   backend:
     image: ${DOCKER_IMAGE:-freightagent/freightagent-backend:latest}
     container_name: freightagent-backend
     restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
     ports:
       - "5000:5000"
     env_file:
@@ -10,8 +34,13 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-freightagent_secure_redis_pass}
     volumes:
       - uploads_data:/app/uploads
+    networks:
+      - freightagent-network
     logging:
       driver: "json-file"
       options:
@@ -27,4 +56,9 @@ services:
 volumes:
   uploads_data:
     driver: local
+  redis_data:
+    driver: local
 
+networks:
+  freightagent-network:
+    driver: bridge
