@@ -32,3 +32,4 @@ find "$BACKUP_DIR" -type f -name "dump_*.rdb" -mtime +7 -delete
 
 echo "[$(date)] Backup rotation completed. Active backups in $BACKUP_DIR:"
 ls -lh "$BACKUP_DIR"
+
