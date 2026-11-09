@@ -101,11 +101,17 @@ export class OpenRouterClient {
         const systemMessage = messages.find((m) => m.role === "system")?.content || "";
         const userQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
 
-        // Extract context section from system prompt if present
-        const contextIndex = systemMessage.indexOf("### VERIFIED PUBLIC DATA & SYSTEM KNOWLEDGE:");
+        // Extract context section from system prompt if present (excluding internal instructions)
+        const startTag = "### VERIFIED PUBLIC DATA & SYSTEM KNOWLEDGE:";
+        const endTag = "### RESPONSE INSTRUCTIONS:";
+        const contextIndex = systemMessage.indexOf(startTag);
+        const endIndex = systemMessage.indexOf(endTag);
         const liveData =
             contextIndex !== -1
-                ? systemMessage.substring(contextIndex + "### VERIFIED PUBLIC DATA & SYSTEM KNOWLEDGE:".length).trim()
+                ? systemMessage.substring(
+                      contextIndex + startTag.length,
+                      endIndex !== -1 ? endIndex : undefined
+                  ).trim()
                 : "";
 
         return (
