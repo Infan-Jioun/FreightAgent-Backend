@@ -4,13 +4,18 @@ import { IOpenRouterMessage, IOpenRouterResponse } from "./rag.interface";
 
 const OPENROUTER_API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 const REQUEST_TIMEOUT_MS = 15000;
-const RELIABLE_FALLBACK_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+const RELIABLE_FALLBACK_MODELS: string[] = [
+    "google/gemini-2.0-flash-exp:free",
+    "meta-llama/llama-3.1-8b-instruct:free",
+    "deepseek/deepseek-r1:free",
+];
+const PRIMARY_FREE_MODEL = "google/gemini-2.0-flash-exp:free";
 
 export class OpenRouterClient {
     private readonly defaultModel: string;
 
     constructor() {
-        this.defaultModel = envConfig.OPENROUTER_MODEL?.trim() || RELIABLE_FALLBACK_MODEL;
+        this.defaultModel = envConfig.OPENROUTER_MODEL?.trim() || PRIMARY_FREE_MODEL;
     }
 
     /** 
@@ -31,7 +36,7 @@ export class OpenRouterClient {
             candidateModel.includes("nemotron-3.5-super-vl") ||
             candidateModel.length > 80;
 
-        const model = isInvalidId ? RELIABLE_FALLBACK_MODEL : candidateModel;
+        const model: string = (isInvalidId ? PRIMARY_FREE_MODEL : candidateModel) || PRIMARY_FREE_MODEL;
 
         if (!apiKey) {
             console.warn(
@@ -84,28 +89,27 @@ export class OpenRouterClient {
                     `[OpenRouterClient] Error calling OpenRouter (${axiosErr.response?.status || "network"}): ${errorMsg}`
                 );
 
-                // Self-healing: if model ID was rejected, immediately retry with verified fallback model
-                if (model !== RELIABLE_FALLBACK_MODEL && errorMsg.toLowerCase().includes("valid model")) {
-                    console.warn(
-                        `[OpenRouterClient] Retrying completion with verified model '${RELIABLE_FALLBACK_MODEL}'...`
-                    );
-                    try {
-                        return await this.generateCompletion(messages, RELIABLE_FALLBACK_MODEL, temperature);
-                    } catch (retryErr) {
-                        console.error("[OpenRouterClient] Fallback retry failed:", retryErr);
-                    }
-                }
+                // Self-healing cascade: if model is rejected, 404, or unavailable for free, retry with reliable free models
+                const isModelUnavailable =
+                    axiosErr.response?.status === 404 ||
+                    errorMsg.toLowerCase().includes("unavailable for free") ||
+                    errorMsg.toLowerCase().includes("valid model") ||
+                    errorMsg.toLowerCase().includes("not found");
 
-                
-                // Self-healing: if model ID was rejected, immediately retry with verified fallback model
-                if (model !== RELIABLE_FALLBACK_MODEL && errorMsg.toLowerCase().includes("valid model")) {
-                    console.warn(
-                        `[OpenRouterClient] Retrying completion with verified model '${RELIABLE_FALLBACK_MODEL}'...`
-                    );
-                    try {
-                        return await this.generateCompletion(messages, RELIABLE_FALLBACK_MODEL, temperature);
-                    } catch (retryErr) {
-                        console.error("[OpenRouterClient] Fallback retry failed:", retryErr);
+                if (isModelUnavailable) {
+                    for (const fallback of RELIABLE_FALLBACK_MODELS) {
+                        if (fallback === model) continue;
+                        console.warn(
+                            `[OpenRouterClient] Model '${model}' unavailable. Retrying with '${fallback}'...`
+                        );
+                        try {
+                            const retryResult = await this.generateCompletion(messages, fallback, temperature);
+                            if (retryResult && !retryResult.modelUsed.includes("fallback")) {
+                                return retryResult;
+                            }
+                        } catch (retryErr) {
+                            console.error(`[OpenRouterClient] Fallback '${fallback}' failed:`, retryErr);
+                        }
                     }
                 }
 

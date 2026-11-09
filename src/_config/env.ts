@@ -118,7 +118,7 @@ const loadVariabales = (): EnvConfig => {
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
         STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
         OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY || "",
-        OPENROUTER_MODEL: process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free",
+        OPENROUTER_MODEL: process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-exp:free",
     };
 };
 
