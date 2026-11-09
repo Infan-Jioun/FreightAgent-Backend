@@ -97,6 +97,18 @@ export class OpenRouterClient {
                 }
 
                 
+                // Self-healing: if model ID was rejected, immediately retry with verified fallback model
+                if (model !== RELIABLE_FALLBACK_MODEL && errorMsg.toLowerCase().includes("valid model")) {
+                    console.warn(
+                        `[OpenRouterClient] Retrying completion with verified model '${RELIABLE_FALLBACK_MODEL}'...`
+                    );
+                    try {
+                        return await this.generateCompletion(messages, RELIABLE_FALLBACK_MODEL, temperature);
+                    } catch (retryErr) {
+                        console.error("[OpenRouterClient] Fallback retry failed:", retryErr);
+                    }
+                }
+
                 // Gracefully fallback to deterministic synthesis rather than crashing user experience
                 return {
                     text: this.generateDeterministicFallback(messages, errorMsg),
