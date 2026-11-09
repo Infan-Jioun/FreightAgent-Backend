@@ -3,13 +3,14 @@ import { envConfig } from "../../../_config/env";
 import { IOpenRouterMessage, IOpenRouterResponse } from "./rag.interface";
 
 const OPENROUTER_API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-const REQUEST_TIMEOUT_MS = 10000;
+const REQUEST_TIMEOUT_MS = 15000;
+const RELIABLE_FALLBACK_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 
 export class OpenRouterClient {
     private readonly defaultModel: string;
 
     constructor() {
-        this.defaultModel = envConfig.OPENROUTER_MODEL || "google/gemini-2.0-flash-001";
+        this.defaultModel = envConfig.OPENROUTER_MODEL?.trim() || RELIABLE_FALLBACK_MODEL;
     }
 
     /** 
@@ -21,7 +22,16 @@ export class OpenRouterClient {
         temperature = 0.2
     ): Promise<{ text: string; modelUsed: string }> {
         const apiKey = envConfig.OPENROUTER_API_KEY?.trim();
-        const model = modelOverride?.trim() || this.defaultModel;
+        const candidateModel = modelOverride?.trim() || envConfig.OPENROUTER_MODEL?.trim() || this.defaultModel;
+
+        // Auto-sanitize invalid or hallucinatory model identifiers
+        const isInvalidId =
+            candidateModel.includes("deepseek-v4") ||
+            candidateModel.includes("0731") ||
+            candidateModel.includes("nemotron-3.5-super-vl") ||
+            candidateModel.length > 80;
+
+        const model = isInvalidId ? RELIABLE_FALLBACK_MODEL : candidateModel;
 
         if (!apiKey) {
             console.warn(
@@ -74,6 +84,19 @@ export class OpenRouterClient {
                     `[OpenRouterClient] Error calling OpenRouter (${axiosErr.response?.status || "network"}): ${errorMsg}`
                 );
 
+                // Self-healing: if model ID was rejected, immediately retry with verified fallback model
+                if (model !== RELIABLE_FALLBACK_MODEL && errorMsg.toLowerCase().includes("valid model")) {
+                    console.warn(
+                        `[OpenRouterClient] Retrying completion with verified model '${RELIABLE_FALLBACK_MODEL}'...`
+                    );
+                    try {
+                        return await this.generateCompletion(messages, RELIABLE_FALLBACK_MODEL, temperature);
+                    } catch (retryErr) {
+                        console.error("[OpenRouterClient] Fallback retry failed:", retryErr);
+                    }
+                }
+
+                
                 // Gracefully fallback to deterministic synthesis rather than crashing user experience
                 return {
                     text: this.generateDeterministicFallback(messages, errorMsg),
