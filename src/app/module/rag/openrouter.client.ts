@@ -5,11 +5,12 @@ import { IOpenRouterMessage, IOpenRouterResponse } from "./rag.interface";
 const OPENROUTER_API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 const REQUEST_TIMEOUT_MS = 15000;
 const RELIABLE_FALLBACK_MODELS: string[] = [
-    "google/gemini-2.0-flash-exp:free",
-    "meta-llama/llama-3.1-8b-instruct:free",
-    "deepseek/deepseek-r1:free",
+    "nvidia/nemotron-3.5-lightning:free",
+    "nvidia/nemotron-3.5-super-vl:free",
+    "google/gemma-4-26b-a4b-it:free",
+    "google/gemma-4-31b-it:free",
 ];
-const PRIMARY_FREE_MODEL = "google/gemini-2.0-flash-exp:free";
+const PRIMARY_FREE_MODEL = "nvidia/nemotron-3.5-lightning:free";
 
 export class OpenRouterClient {
     private readonly defaultModel: string;
@@ -24,7 +25,8 @@ export class OpenRouterClient {
     public async generateCompletion(
         messages: IOpenRouterMessage[],
         modelOverride?: string | undefined,
-        temperature = 0.2
+        temperature = 0.2,
+        triedModels: Set<string> = new Set<string>()
     ): Promise<{ text: string; modelUsed: string }> {
         const apiKey = envConfig.OPENROUTER_API_KEY?.trim();
         const candidateModel = modelOverride?.trim() || envConfig.OPENROUTER_MODEL?.trim() || this.defaultModel;
@@ -33,10 +35,10 @@ export class OpenRouterClient {
         const isInvalidId =
             candidateModel.includes("deepseek-v4") ||
             candidateModel.includes("0731") ||
-            candidateModel.includes("nemotron-3.5-super-vl") ||
             candidateModel.length > 80;
 
         const model: string = (isInvalidId ? PRIMARY_FREE_MODEL : candidateModel) || PRIMARY_FREE_MODEL;
+        triedModels.add(model);
 
         if (!apiKey) {
             console.warn(
@@ -55,7 +57,7 @@ export class OpenRouterClient {
                     model,
                     messages,
                     temperature,
-                    max_tokens: 650,
+                    max_tokens: 380,
                 },
                 {
                     headers: {
@@ -98,12 +100,12 @@ export class OpenRouterClient {
 
                 if (isModelUnavailable) {
                     for (const fallback of RELIABLE_FALLBACK_MODELS) {
-                        if (fallback === model) continue;
+                        if (triedModels.has(fallback)) continue;
                         console.warn(
                             `[OpenRouterClient] Model '${model}' unavailable. Retrying with '${fallback}'...`
                         );
                         try {
-                            const retryResult = await this.generateCompletion(messages, fallback, temperature);
+                            const retryResult = await this.generateCompletion(messages, fallback, temperature, triedModels);
                             if (retryResult && !retryResult.modelUsed.includes("fallback")) {
                                 return retryResult;
                             }

@@ -15,7 +15,7 @@ import {
 const SESSION_PREFIX = "rag:session:";
 const SESSION_TTL_SECONDS = 86400; // 24 hours
 const QUERY_CACHE_PREFIX = "rag:query:cache:";
-const QUERY_CACHE_TTL_SECONDS = 600; // 10 minutes cache for identical questions
+const QUERY_CACHE_TTL_SECONDS = 86400; // 24 hours cache for identical questions
 const MAX_HISTORY_MESSAGES = 10;
 
 export class RagService {
@@ -223,7 +223,8 @@ export class RagService {
             `### VERIFIED PUBLIC DATA & SYSTEM KNOWLEDGE:\n` +
             `${contextText}\n\n` +
             `### RESPONSE INSTRUCTIONS:\n` +
-            `- Format your responses using clean Markdown with clear headings or bullet points where suitable.\n` +
+            `- Be concise, clear, and direct. Avoid unnecessary greetings, long preambles, or filler text.\n` +
+            `- Format your responses using clean Markdown with bullet points where suitable.\n` +
             `- Be professional, courteous, and accurate.`
         );
     }
