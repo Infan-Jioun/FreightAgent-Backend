@@ -57,7 +57,7 @@ export class OpenRouterClient {
                     model,
                     messages,
                     temperature,
-                    max_tokens: 650,
+                    max_tokens: 380,
                 },
                 {
                     headers: {
